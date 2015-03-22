@@ -1,0 +1,3 @@
+#skobkin_point_tools_homepage:
+#    path:     /hello/{name}
+#    defaults: { _controller: SkobkinPointToolsBundle:Default:index }
