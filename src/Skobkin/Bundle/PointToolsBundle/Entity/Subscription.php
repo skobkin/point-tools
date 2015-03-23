@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Subscription
  *
- * @ORM\Table(name="subscription")
+ * @ORM\Table(name="subscriptions")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionRepository")
  */
 class Subscription
