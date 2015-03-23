@@ -44,12 +44,27 @@ class User
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber")
      */
     private $subscriptions;
+    
+    /**
+     * @var ArrayCollection
+     * 
+     * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="subscriber")
+     */
+    private $newSubscriptionEvents;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author")
+     */
+    private $newSubscriberEvents;
 
 
     public function __construct()
     {
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
+        $this->newSubscriberEvents = new ArrayCollection();
+        $this->newSubscriptionEvents = new ArrayCollection();
     }
 
     /**
@@ -149,5 +164,71 @@ class User
     public function getSubscriptions()
     {
         return $this->subscriptions;
+    }
+
+    /**
+     * Add newSubscriptionEvents
+     *
+     * @param SubscriptionEvent $newSubscriptionEvents
+     * @return User
+     */
+    public function addNewSubscriptionEvent(SubscriptionEvent $newSubscriptionEvents)
+    {
+        $this->newSubscriptionEvents[] = $newSubscriptionEvents;
+
+        return $this;
+    }
+
+    /**
+     * Remove newSubscriptionEvents
+     *
+     * @param SubscriptionEvent $newSubscriptionEvents
+     */
+    public function removeNewSubscriptionEvent(SubscriptionEvent $newSubscriptionEvents)
+    {
+        $this->newSubscriptionEvents->removeElement($newSubscriptionEvents);
+    }
+
+    /**
+     * Get newSubscriptionEvents
+     *
+     * @return ArrayCollection
+     */
+    public function getNewSubscriptionEvents()
+    {
+        return $this->newSubscriptionEvents;
+    }
+
+    /**
+     * Add newSubscriberEvents
+     *
+     * @param SubscriptionEvent $newSubscriberEvents
+     * @return User
+     */
+    public function addNewSubscriberEvent(SubscriptionEvent $newSubscriberEvents)
+    {
+        $this->newSubscriberEvents[] = $newSubscriberEvents;
+
+        return $this;
+    }
+
+    /**
+     * Remove newSubscriberEvents
+     *
+     * @param SubscriptionEvent $newSubscriberEvents
+     */
+    public function removeNewSubscriberEvent(SubscriptionEvent $newSubscriberEvents)
+    {
+        $this->newSubscriberEvents->removeElement($newSubscriberEvents);
+    }
+
+    /**
+     * Get newSubscriberEvents
+     *
+     * @return ArrayCollection 
+     */
+    public function getNewSubscriberEvents()
+    {
+        return $this->newSubscriberEvents;
     }
 }
