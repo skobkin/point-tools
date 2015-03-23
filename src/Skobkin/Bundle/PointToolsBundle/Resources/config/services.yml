@@ -1,4 +1,10 @@
 services:
-#    skobkin_point_tools.example:
-#        class: Skobkin\Bundle\PointToolsBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    skobkin_point_tools.http_client:
+        class: %guzzle.client.class%
+        arguments: [ "http://point.im/" ]
+        tags:
+            - { name: guzzle.client }
+    
+    skobkin_point_tools.api_user:
+        class: Skobkin\Bundle\PointToolsBundle\UserApi
+        arguments: [ @skobkin_point_tools.http_client ]
