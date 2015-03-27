@@ -27,6 +27,13 @@ class User
     /**
      * @var string
      *
+     * @ORM\Column(name="login", type="string", length=255)
+     */
+    private $login;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
@@ -75,6 +82,42 @@ class User
     public function getId()
     {
         return $this->id;
+    }
+    
+    /**
+     * Set id of user (for API services only)
+     * 
+     * @param integer $id
+     * @return User
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+    
+    /**
+     * Set login
+     *
+     * @param string $login
+     * @return User
+     */
+    public function setLogin($login)
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    /**
+     * Get login
+     *
+     * @return string
+     */
+    public function getLogin()
+    {
+        return $this->login;
     }
 
     /**
