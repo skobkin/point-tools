@@ -4,7 +4,7 @@ services:
         arguments: [ "http://point.im/" ]
         tags:
             - { name: guzzle.client }
-    
+
     skobkin_point_tools.api_user:
         class: Skobkin\Bundle\PointToolsBundle\UserApi
         arguments: [ @skobkin_point_tools.http_client ]

@@ -13,15 +13,15 @@ class AbstractApi
      * @var Client HTTP-client from Guzzle
      */
     protected $client;
-    
+
     public function __construct($httpClient)
     {
         $this->client = $httpClient;
     }
-    
+
     /**
      * Make GET request and return Response object
-     * 
+     *
      * @param string $pathTemplate
      * @param array $parameters
      * @return GuzzleResponse
@@ -29,9 +29,9 @@ class AbstractApi
     public function sendGetRequest($pathTemplate, array $parameters = [])
     {
         $path = vsprintf($pathTemplate, $parameters);
-        
+
         $request = $this->client->get($path);
-        
+
         return $request->send();
     }
 }

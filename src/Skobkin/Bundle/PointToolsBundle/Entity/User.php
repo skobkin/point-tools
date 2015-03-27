@@ -30,7 +30,7 @@ class User
      * @ORM\Column(name="login", type="string", length=255)
      */
     private $login;
-    
+
     /**
      * @var string
      *
@@ -51,14 +51,14 @@ class User
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber")
      */
     private $subscriptions;
-    
+
     /**
      * @var ArrayCollection
-     * 
+     *
      * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="subscriber")
      */
     private $newSubscriptionEvents;
-    
+
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author")
@@ -83,20 +83,20 @@ class User
     {
         return $this->id;
     }
-    
+
     /**
      * Set id of user (for API services only)
-     * 
+     *
      * @param integer $id
      * @return User
      */
     public function setId($id)
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     /**
      * Set login
      *
@@ -169,7 +169,7 @@ class User
     /**
      * Get subscribers
      *
-     * @return ArrayCollection 
+     * @return ArrayCollection
      */
     public function getSubscribers()
     {
@@ -202,7 +202,7 @@ class User
     /**
      * Get subscriptions
      *
-     * @return ArrayCollection 
+     * @return ArrayCollection
      */
     public function getSubscriptions()
     {
@@ -268,7 +268,7 @@ class User
     /**
      * Get newSubscriberEvents
      *
-     * @return ArrayCollection 
+     * @return ArrayCollection
      */
     public function getNewSubscriberEvents()
     {
