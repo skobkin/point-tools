@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      @ORM\Index(name="date_idx", columns={"date"})
  * })
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class SubscriptionEvent
 {
@@ -57,6 +58,17 @@ class SubscriptionEvent
      * @ORM\Column(name="action", type="string", length=12, nullable=false)
      */
     private $action;
+
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onCreate()
+    {
+        if (!$this->date) {
+            $this->date = new \DateTime();
+        }
+    }
 
     /**
      * Get id

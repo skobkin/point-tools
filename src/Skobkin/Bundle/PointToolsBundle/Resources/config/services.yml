@@ -1,10 +1,18 @@
 services:
     skobkin_point_tools.http_client:
         class: %guzzle.client.class%
-        arguments: [ "http://point.im/" ]
+        arguments: [ "%point_base_url%" ]
         tags:
             - { name: guzzle.client }
 
     skobkin_point_tools.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
-        arguments: [ @skobkin_point_tools.http_client ]
+        arguments:
+            - @skobkin_point_tools.http_client
+            - "%point_use_https%"
+            - "%point_api_base_url%"
+            - @doctrine.orm.entity_manager
+
+    skobkin_point_tools.subscriptions_manager:
+        class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
+        arguments: [ @doctrine.orm.entity_manager ]

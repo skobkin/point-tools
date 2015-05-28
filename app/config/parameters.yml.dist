@@ -12,6 +12,11 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
+    point_base_url:    https://point.im/
+    point_api_base_url: https://point.im/api/
+    point_use_https: true
+    point_login: point-tools
+
     locale:            en
 
     # A secret key that's used to generate certain security-related tokens
