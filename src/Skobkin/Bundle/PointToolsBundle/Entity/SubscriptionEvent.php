@@ -7,7 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SubscriptionEvent
  *
- * @ORM\Table(name="subscriptions_events")
+ * @ORM\Table(name="subscriptions.log", indexes={
+ *      @ORM\Index(name="author_idx", columns={"author_id"}),
+ *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
+ *      @ORM\Index(name="date_idx", columns={"date"})
+ * })
  * @ORM\Entity
  */
 class SubscriptionEvent
@@ -23,29 +27,29 @@ class SubscriptionEvent
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
+
+    /**
+     * @var User Blog author
+     *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="newSubscriberEvents")
+     * @ORM\JoinColumn(name="author_id", nullable=false)
+     */
+    private $author;
+
     /**
      * @var User Blog subscriber
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="newSubscriptionEvents")
      * @ORM\JoinColumn(name="subscriber_id", nullable=false)
      */
     private $subscriber;
     
     /**
-     * @var User Blog author
-     * 
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="newSubscriberEvents")
-     * @ORM\JoinColumn(name="author_id", nullable=false)
-     */
-    private $author;
-    
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime", nullable=false)
      */
-    private $dateTime;
+    private $date;
 
     /**
      * @var string
@@ -57,7 +61,7 @@ class SubscriptionEvent
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -65,26 +69,26 @@ class SubscriptionEvent
     }
 
     /**
-     * Set dateTime
+     * Set date
      *
-     * @param \DateTime $dateTime
+     * @param \DateTime $date
      * @return SubscriptionEvent
      */
-    public function setDateTime($dateTime)
+    public function setDate($date)
     {
-        $this->dateTime = $dateTime;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Get dateTime
+     * Get date
      *
      * @return \DateTime 
      */
-    public function getDateTime()
+    public function getDate()
     {
-        return $this->dateTime;
+        return $this->date;
     }
 
     /**
