@@ -8,10 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * User
  *
- * @ORM\Table(name="users", indexes={
- *      @ORM\Index(name="idx_name", columns={"name"})
- * })
+ * @ORM\Table(name="users.users")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class User
 {
@@ -20,23 +19,29 @@ class User
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="login", type="string", length=255)
+     * @ORM\Column(name="login", type="string", length=255, nullable=false, unique=true)
      */
     private $login;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
 
     /**
      * @var ArrayCollection
@@ -72,6 +77,14 @@ class User
         $this->subscriptions = new ArrayCollection();
         $this->newSubscriberEvents = new ArrayCollection();
         $this->newSubscriptionEvents = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onCreate()
+    {
+        $this->createdAt = new \DateTime();
     }
 
     /**
@@ -273,5 +286,23 @@ class User
     public function getNewSubscriberEvents()
     {
         return $this->newSubscriberEvents;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return User
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 }
