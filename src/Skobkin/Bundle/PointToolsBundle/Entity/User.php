@@ -84,7 +84,9 @@ class User
      */
     public function onCreate()
     {
-        $this->createdAt = new \DateTime();
+        if (!$this->createdAt) {
+            $this->createdAt = new \DateTime();
+        }
     }
 
     /**
