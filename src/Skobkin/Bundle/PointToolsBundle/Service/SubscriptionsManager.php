@@ -76,7 +76,6 @@ class SubscriptionsManager
             ->andWhere('s.subscriber IN (:subscribers)')
         ;
 
-
         /** @var User $unsubscribedUser */
         foreach ($unsubscribedList as $unsubscribedUser) {
             $logEvent = new SubscriptionEvent();

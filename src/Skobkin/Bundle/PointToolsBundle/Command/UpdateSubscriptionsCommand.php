@@ -2,12 +2,13 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
-
 use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateSubscriptionsCommand extends ContainerAwareCommand
@@ -27,8 +28,17 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * @param Input $input
+     * @param Output $output
+     * @return bool
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $log = $this->getContainer()->get('logger');
+
+        $log->info('UpdateSubscriptionsCommand started.');
+
         /** @var UserApi $api */
         $api = $this->getContainer()->get('skobkin_point_tools.api_user');
         /** @var SubscriptionsManager $subscriptionsManager */
@@ -38,7 +48,9 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->findOneBy(['login' => $serviceUserName]);
 
         if (!$serviceUser) {
+            $log->info('Service user not found');
             // @todo Retrieving user
+
             return false;
         }
 
@@ -49,7 +61,13 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         try {
             $serviceSubscribers = $api->getUserSubscribersByLogin($serviceUserName);
         } catch (\Exception $e) {
+            // @todo fallback to the local subscribers list
             $output->writeln('Error while getting service subscribers');
+            $log->error('Error while getting service subscribers.' . PHP_EOL .
+                $e->getMessage() . PHP_EOL .
+                $e->getFile() . ':' . $e->getLine()
+            );
+
             return false;
         }
 
@@ -58,7 +76,16 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         }
 
         // Updating service subscribers
-        $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
+        try {
+            $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
+        } catch (\Exception $e) {
+            $log->error('Error while updating service subscribers' . PHP_EOL .
+                $e->getMessage() . PHP_EOL .
+                $e->getFile() . ':' . $e->getLine()
+            );
+
+            return false;
+        }
 
         if ($output->isVerbose()) {
             $output->writeln('Processing service subscribers');
@@ -67,19 +94,33 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         // Updating service users subscribers
         foreach ($serviceSubscribers as $user) {
             $output->writeln('  Processing @' . $user->getLogin());
+            $log->info('Processing @' . $user->getLogin());
 
             try {
                 $userCurrentSubscribers = $api->getUserSubscribersByLogin($user->getLogin());
             } catch (\Exception $e) {
                 $output->writeln('    Error while getting subscribers. Skipping.');
+                $log->error('Error while getting subscribers.' . PHP_EOL .
+                    $e->getMessage() . PHP_EOL .
+                    $e->getFile() . ':' . $e->getLine()
+                );
+
                 continue;
             }
 
             if ($output->isVerbose()) {
-                $output->writeln('    Updating service subscribers');
+                $output->writeln('    Updating user subscribers');
             }
 
-            $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
+            try {
+                // Updating user subscribers
+                $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
+            } catch (\Exception $e) {
+                $log->error('Error while updating user subscribers' . PHP_EOL .
+                    $e->getMessage() . PHP_EOL .
+                    $e->getFile() . ':' . $e->getLine()
+                );
+            }
 
             // @todo some pause for lower API load
         }
