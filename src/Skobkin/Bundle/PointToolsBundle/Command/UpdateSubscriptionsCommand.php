@@ -39,16 +39,45 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
 
         if (!$serviceUser) {
             // @todo Retrieving user
+            return false;
         }
 
-        $serviceSubscribers = $api->getUserSubscribersByLogin($serviceUserName);
+        if ($output->isVerbose()) {
+            $output->writeln('Getting service subscribers');
+        }
+
+        try {
+            $serviceSubscribers = $api->getUserSubscribersByLogin($serviceUserName);
+        } catch (\Exception $e) {
+            $output->writeln('Error while getting service subscribers');
+            return false;
+        }
+
+        if ($output->isVerbose()) {
+            $output->writeln('Updating service subscribers');
+        }
 
         // Updating service subscribers
         $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
 
+        if ($output->isVerbose()) {
+            $output->writeln('Processing service subscribers');
+        }
+
         // Updating service users subscribers
         foreach ($serviceSubscribers as $user) {
-            $userCurrentSubscribers = $api->getUserSubscribersByLogin($user->getLogin());
+            $output->writeln('  Processing @' . $user->getLogin());
+
+            try {
+                $userCurrentSubscribers = $api->getUserSubscribersByLogin($user->getLogin());
+            } catch (\Exception $e) {
+                $output->writeln('    Error while getting subscribers. Skipping.');
+                continue;
+            }
+
+            if ($output->isVerbose()) {
+                $output->writeln('    Updating service subscribers');
+            }
 
             $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
 
