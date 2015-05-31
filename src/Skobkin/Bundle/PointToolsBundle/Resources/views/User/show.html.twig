@@ -22,7 +22,7 @@
                     <div class="panel-body">
                         <ul class="users mosaic">
                             {% for sub in user.subscribers %}
-                                <li><a href="{{ url('user_show', {login: sub.subscriber.login}) }}" {# class="user" #}>@{{ sub.subscriber.login }}</a></li>
+                                <li><a href="{{ url('user_show', {login: sub.subscriber.login}) }}">@{{ sub.subscriber.login }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -55,10 +55,10 @@
                                 {% for event in log %}
                                     <tr>
                                         <td>
-                                            <a href="{{ url('user_show', {login: event.subscriber.login}) }}" {# class="user" #}>@{{ event.subscriber.login }}</a>
+                                            <a href="{{ url('user_show', {login: event.subscriber.login}) }}">@{{ event.subscriber.login }}</a>
                                         </td>
                                         <td>
-                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <span class="glyphicon {% if event.action == 'subscribe' %}glyphicon-plus{% elseif event.action == 'unsubscribe' %}glyphicon-minus{% endif %}"></span>
                                         </td>
                                         <td>
                                             {# Use DateTime helper: https://sonata-project.org/bundles/intl/master/doc/reference/datetime.html #}
