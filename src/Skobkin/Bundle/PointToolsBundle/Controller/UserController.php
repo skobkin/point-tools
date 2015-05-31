@@ -9,6 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
@@ -71,5 +72,18 @@ class UserController extends Controller
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
             'top_users' => $topUsers
         ]);
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function searchUserAction(Request $request)
+    {
+        $login = $request->request->get('login');
+
+        if (!$login) {
+            throw new \InvalidArgumentException('No login information present');
+        }
+        return $this->redirectToRoute('user_show', ['login' => $login]);
     }
 }

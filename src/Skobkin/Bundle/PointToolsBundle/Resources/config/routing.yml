@@ -2,6 +2,11 @@ index:
     path:     /
     defaults: { _controller: SkobkinPointToolsBundle:Main:index }
 
+user_search:
+    path:     /search
+    defaults: { _controller: SkobkinPointToolsBundle:User:searchUser }
+    methods: [POST]
+
 user_show:
     path:     /user/{login}
     defaults: { _controller: SkobkinPointToolsBundle:User:show }

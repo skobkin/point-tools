@@ -2,12 +2,13 @@
 
 {% block content %}
     <div class="well well-lg">
-        <form class="form-inline">
+        {# @todo rewrite to Symfony forms #}
+        <form class="form-inline" method="post" action="{{ url('user_search') }}">
             <div class="form-group">
                 <label class="sr-only" for="index-input-username">Username</label>
                 <div class="input-group">
                     <div class="input-group-addon">@</div>
-                    <input type="text" class="form-control" id="index-input-username" placeholder="username">
+                    <input name="login" type="text" class="form-control" id="index-input-username" placeholder="username">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
