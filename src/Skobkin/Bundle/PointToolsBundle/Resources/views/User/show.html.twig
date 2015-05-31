@@ -21,8 +21,8 @@
                 <div id="collapse-subscribers" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="users mosaic">
-                            {% for sub in user.subscribers %}
-                                <li><a href="{{ url('user_show', {login: sub.subscriber.login}) }}">@{{ sub.subscriber.login }}</a></li>
+                            {% for user in subscribers %}
+                                <li><a href="{{ url('user_show', {login: user.login}) }}">@{{ user.login }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
