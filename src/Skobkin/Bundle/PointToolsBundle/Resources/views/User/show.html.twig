@@ -1,7 +1,76 @@
 {% extends "::base.html.twig" %}
 
-{% block title %}SkobkinPointToolsBundle:User:show{% endblock %}
+{% block header_title %}{{ user.login }} @ Point Tools{% endblock %}
 
-{% block body %}
-<h1>Welcome to the User:show page</h1>
+{% block content %}
+    <h1 class="user-login">
+        <img src="{{ avatar_url }}">
+        <a href="//{{ user.login }}.point.im/blog/" target="_blank">{{ user.login }}</a>
+    </h1>
+
+    <div class="user-subscribers">
+        <div class="panel-group" id="accordion-subscribers">
+            <div class="panel panel-default">
+                <div class="panel-heading"id="headingOne">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion-subscribers" aria-expanded="true" href="#collapse-subscribers">
+                            <span class="glyphicon glyphicon-collapse-down"></span> {{ 'Subscribers'|trans }}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-subscribers" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="users mosaic">
+                            {% for sub in user.subscribers %}
+                                <li><a href="{{ url('user_show', {login: sub.subscriber.login}) }}" {# class="user" #}>@{{ sub.subscriber.login }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-subscribers">
+        <div class="panel-group" id="accordion-log">
+            <div class="panel panel-default">
+                <div class="panel-heading" id="headingOne">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion-log" aria-expanded="true" href="#collapse-log">
+                            <span class="glyphicon glyphicon-collapse-down"></span> {{ 'Subscriptions log'|trans }}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-log" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <td>{{ 'User'|trans }}</td>
+                                    <td>{{ 'Action'|trans }}</td>
+                                    <td>{{ 'Date'|trans }}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in log %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('user_show', {login: event.subscriber.login}) }}" {# class="user" #}>@{{ event.subscriber.login }}</a>
+                                        </td>
+                                        <td>
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </td>
+                                        <td>
+                                            {# Use DateTime helper: https://sonata-project.org/bundles/intl/master/doc/reference/datetime.html #}
+                                            {{ event.date|date('H:i:s d F Y') }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

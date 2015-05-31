@@ -34,6 +34,14 @@ body > .container {
     padding: 60px 15px 0;
 }
 
+.user-subscribers {
+    margin-top: 30px;
+}
+
+h4.panel-title a {
+    text-decoration: none;
+}
+
 .user:before {
     position: relative;
     top: 1px;
@@ -58,11 +66,18 @@ body > .container {
 
 }
 
+h1.user-login a {
+    text-decoration: none;
+    margin-left: 10px;
+}
+
 ul.users.mosaic {
     list-style: none;
     columns: 140px auto;
     -webkit-columns: 140px auto;
     -moz-columns: 140px auto;
+    padding-left: 0px;
+    margin-left: 8px;
 }
 
 ul.users.mosaic li {
@@ -77,10 +92,6 @@ ul.users.mosaic li {
 
 ul.users.mosaic li:nth-child(odd) {
     background-color: #EFEFEF;
-}
-
-#travel-client-data-form {
-    margin-top: 20px;
 }
 
 /* Required quick fix */

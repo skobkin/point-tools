@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block header_title %}Point-Tools{% endblock %}
+{% block header_title %}Point Tools{% endblock %}
 
 {% block css %}
     {{ parent() }}
@@ -19,13 +19,13 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ path('index') }}">Point-Tools</a>
+                    <a class="navbar-brand" href="{{ path('index') }}">Point Tools</a>
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     {% block header_navbar_menus %}
                         <ul class="nav navbar-nav">
-                            <li><a href="{{ path('index') }}">{{ 'Main'|trans }}</a></li>
-                            <li><a href="{{ path('users_top') }}">TOP</a></li>
+                            <li><a href="{{ path('index') }}"><span class="glyphicon glyphicon-home"></span> {{ 'Main'|trans }}</a></li>
+                            <li><a href="{{ path('users_top') }}"><span class="glyphicon glyphicon-stats"></span> TOP</a></li>
                         </ul>
                     {% endblock %}
                 </div>
@@ -45,7 +45,7 @@
         <div class="copyright col-sm-6 col-xs-12">
             <p>
                 &copy; 2015{% if 2015 != 'now'|date('Y') %}-{{ 'now'|date('Y') }}{% endif %}
-                <a href="https://skobk.in/" target="_blank">Alexey Skobkin</a>
+                <a href="https://skobk.in/" target="_blank">Alexey Skobkin</a> aka <a href="https://skobkin-ru.point.im/" target="_blank">@skobkin-ru</a>
             </p>
         </div>
     </div>
