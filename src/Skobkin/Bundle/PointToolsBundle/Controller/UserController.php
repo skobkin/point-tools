@@ -4,7 +4,6 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Skobkin\Bundle\PointToolsBundle\Entity\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
@@ -14,14 +13,27 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends Controller
 {
     /**
-     * @param User $user
-     * @ParamConverter("user", class="SkobkinPointToolsBundle:User", options={"login" = "login"})
+     * @param string $login
      */
-    public function showAction(User $user)
+    public function showAction($login)
     {
+        /** @var QueryBuilder $qb */
+        $qb = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->createQueryBuilder('u');
+
+        $user = $qb
+            ->select('u')
+            ->where('LOWER(u.login) = LOWER(:login)')
+            ->setMaxResults(1)
+            ->setParameter('login', $login)
+            ->getQuery()->getOneOrNullResult()
+        ;
+
+        if (!$user) {
+            throw $this->createNotFoundException('User ' . $login . ' not found.');
+        }
+
         $userApi = $this->container->get('skobkin_point_tools.api_user');
 
-        /** @var QueryBuilder $qb */
         $qb = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->createQueryBuilder('u');
 
         $subscribers = $qb
