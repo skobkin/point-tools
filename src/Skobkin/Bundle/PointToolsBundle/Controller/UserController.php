@@ -28,6 +28,7 @@ class UserController extends Controller
             ->select('u')
             ->innerJoin('u.subscriptions', 's')
             ->where('s.author = :author')
+            ->orderBy('u.login', 'asc')
             ->setParameter('author', $user->getId())
             ->getQuery()->getResult()
         ;
