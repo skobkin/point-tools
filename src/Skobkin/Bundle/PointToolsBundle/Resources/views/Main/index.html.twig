@@ -1,9 +1,31 @@
 {% extends "::base.html.twig" %}
 
-{% block title %}SkobkinPointToolsBundle:Main:index{% endblock %}
+{% block content %}
+    <div class="well well-lg">
+        <form class="form-inline">
+            <div class="form-group">
+                <label class="sr-only" for="index-input-username">Username</label>
+                <div class="input-group">
+                    <div class="input-group-addon">@</div>
+                    <input type="text" class="form-control" id="index-input-username" placeholder="username">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
 
-{% block body %}
-    <h1>{{ users_count }}</h1>
-    <h1>{{ subscribers_count }}</h1>
-    <h1>{{ events_count }}</h1>
+    <div class="container service-stats">
+        <div class="row">
+            <div class="col-xs-2"><span class="glyphicon glyphicon-user"></span> {{ 'All users'|trans }}</div>
+            <div class="col-xs-2">{{ users_count }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2"><span class="glyphicon glyphicon-user"></span> {{ 'Subscribed users'|trans }}</div>
+            <div class="col-xs-2"><a href="{{ url('user_show', {'login': service_login}) }}">{{ subscribers_count }}</a></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2"><span class="glyphicon glyphicon-list"></span> {{ 'Last events'|trans }}</div>
+            <div class="col-xs-2">{{ events_count }}</div>
+        </div>
+    </div>
 {% endblock %}

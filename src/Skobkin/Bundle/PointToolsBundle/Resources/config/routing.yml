@@ -5,6 +5,8 @@ index:
 user_show:
     path:     /user/{login}
     defaults: { _controller: SkobkinPointToolsBundle:User:show }
+    requirements:
+        login: "[\w-]+"
 
 users_top:
     path:     /top

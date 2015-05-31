@@ -45,6 +45,7 @@ class MainController extends Controller
             'users_count' => $usersCount,
             'subscribers_count' => $subscribersCount,
             'events_count' => $eventsCount,
+            'service_login' => $this->container->getParameter('point_login'),
         ]);
     }
 
