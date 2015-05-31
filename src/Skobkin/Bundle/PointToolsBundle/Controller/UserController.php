@@ -82,7 +82,7 @@ class UserController extends Controller
         $login = $request->request->get('login');
 
         if (!$login) {
-            throw new \InvalidArgumentException('No login information present');
+            return $this->redirectToRoute('index');
         }
         return $this->redirectToRoute('user_show', ['login' => $login]);
     }
