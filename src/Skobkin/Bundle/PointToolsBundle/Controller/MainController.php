@@ -24,7 +24,7 @@ class MainController extends Controller
         // Service subscribers count
         $subscribersCount = $qb
             ->select('COUNT(s)')
-            ->join('s.author', 'a')
+            ->innerJoin('s.author', 'a')
             ->where('a.login = :login')
             ->setParameter('login', $this->container->getParameter('point_login'))
             ->getQuery()->getSingleScalarResult()
