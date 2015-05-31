@@ -60,6 +60,25 @@ class UserApi extends AbstractApi
     }
 
     /**
+     * Get user subscribers by user id
+     *
+     * @param int $id
+     * @return User[]
+     */
+    public function getUserSubscribersById($id)
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException('$id must be an integer');
+        }
+
+        $usersList = $this->getGetRequestData('/api/user/id/' . (int) $id . '/subscribers', [], true);
+
+        $users = $this->getUsersFromList($usersList);
+
+        return $users;
+    }
+
+    /**
      * @return User[]
      */
     private function getUsersFromList(array $users = [])
