@@ -1,13 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+{% extends '::layout.html.twig' %}
+
+{% block header_title %}Point-Tools{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/skobkinpointtools/css/main.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block header_navbar %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            {%- block header_navbar_container -%}
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">{{ 'Toggle navigation'|trans }}</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ path('index') }}">Point-Tools</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    {% block header_navbar_menus %}
+                        <ul class="nav navbar-nav">
+                            <li><a href="{{ path('index') }}">{{ 'Main'|trans }}</a></li>
+                            <li><a href="{{ path('users_top') }}">TOP</a></li>
+                        </ul>
+                    {% endblock %}
+                </div>
+            {%- endblock -%}
+        </div>
+    </nav>
+{% endblock %}
+
+{% block container %}
+    <div class="row content">
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div class="row">
+        <div class="copyright col-sm-6 col-xs-12">
+            <p>
+                &copy; 2015{% if 2015 != 'now'|date('Y') %}-{{ 'now'|date('Y') }}{% endif %}
+                <a href="https://skobk.in/" target="_blank">Alexey Skobkin</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
