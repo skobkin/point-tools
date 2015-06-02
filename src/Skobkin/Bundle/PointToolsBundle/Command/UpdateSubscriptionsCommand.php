@@ -44,8 +44,14 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         /** @var SubscriptionsManager $subscriptionsManager */
         $subscriptionsManager = $this->getContainer()->get('skobkin_point_tools.subscriptions_manager');
 
-        $serviceUserName = $this->getContainer()->getParameter('point_login');
-        $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->findOneBy(['login' => $serviceUserName]);
+        try {
+            $serviceUserId = $this->getContainer()->getParameter('point_id');
+        } catch (\InvalidArgumentException $e) {
+            $log->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
+            return false;
+        }
+
+        $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->find($serviceUserId);
 
         if (!$serviceUser) {
             $log->info('Service user not found');
@@ -59,7 +65,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         }
 
         try {
-            $serviceSubscribers = $api->getUserSubscribersByLogin($serviceUserName);
+            $serviceSubscribers = $api->getUserSubscribersById($serviceUserId);
         } catch (\Exception $e) {
             // @todo fallback to the local subscribers list
             $output->writeln('Error while getting service subscribers');
@@ -97,7 +103,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             $log->info('Processing @' . $user->getLogin());
 
             try {
-                $userCurrentSubscribers = $api->getUserSubscribersByLogin($user->getLogin());
+                $userCurrentSubscribers = $api->getUserSubscribersById($user->getId());
             } catch (\Exception $e) {
                 $output->writeln('    Error while getting subscribers. Skipping.');
                 $log->error('Error while getting subscribers.' . PHP_EOL .
