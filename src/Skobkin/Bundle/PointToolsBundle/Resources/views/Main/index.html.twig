@@ -3,7 +3,7 @@
 {% block content %}
     <div class="well well-lg">
         {# @todo rewrite to Symfony forms #}
-        <form class="form-inline" method="post" action="{{ url('user_search') }}">
+        <form class="form-inline" method="post" action="{{ path('user_search') }}">
             <div class="form-group">
                 <label class="sr-only" for="index-input-username">{{ 'Username'|trans }}</label>
                 <div class="input-group">
