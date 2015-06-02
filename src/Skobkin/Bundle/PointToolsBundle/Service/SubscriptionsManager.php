@@ -18,6 +18,7 @@ class SubscriptionsManager
     protected $em;
 
 
+    // @todo Add logger
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
@@ -81,7 +82,7 @@ class SubscriptionsManager
             $logEvent = new SubscriptionEvent();
             $logEvent
                 ->setSubscriber($unsubscribedUser)
-                ->setAction($user)
+                ->setAuthor($user)
                 ->setAction(SubscriptionEvent::ACTION_UNSUBSCRIBE)
             ;
 
