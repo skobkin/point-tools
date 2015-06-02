@@ -69,7 +69,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         } catch (\Exception $e) {
             // @todo fallback to the local subscribers list
             $output->writeln('Error while getting service subscribers');
-            $log->error('Error while getting service subscribers.', ['message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+            $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
             return false;
         }
@@ -82,7 +82,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         try {
             $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
         } catch (\Exception $e) {
-            $log->error('Error while updating service subscribers', ['message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+            $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
             return false;
         }
@@ -100,7 +100,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 $userCurrentSubscribers = $api->getUserSubscribersById($user->getId());
             } catch (\Exception $e) {
                 $output->writeln('    Error while getting subscribers. Skipping.');
-                $log->error('Error while getting subscribers.', ['message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->error('Error while getting subscribers.', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
                 continue;
             }
@@ -113,7 +113,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 // Updating user subscribers
                 $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
             } catch (\Exception $e) {
-                $log->error('Error while updating user subscribers', ['message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->error('Error while updating user subscribers', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
             }
 
             // @todo move to the config
