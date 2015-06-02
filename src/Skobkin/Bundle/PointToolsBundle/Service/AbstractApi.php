@@ -25,6 +25,16 @@ class AbstractApi
     protected $useHttps;
 
     /**
+     * @var string Authentication token for API
+     */
+    protected $authToken;
+
+    /**
+     * @var string CSRF-token for API
+     */
+    protected $csRfToken;
+
+    /**
      * @param Client $httpClient HTTP-client from Guzzle
      * @param bool $https Use HTTPS instead of HTTP
      * @param string $baseUrl Base URL for API
@@ -41,14 +51,14 @@ class AbstractApi
 
     /**
      * Make GET request and return Response object
-     **
+     *
      * @param string $path Request path
      * @param array $parameters Key => Value array of query parameters
      * @return GuzzleResponse
      */
     public function sendGetRequest($path, array $parameters = [])
     {
-        /** @var $request GuzzleRequest */
+        /** @var GuzzleRequest $request */
         $request = $this->client->get($path);
 
         $query = $request->getQuery();
@@ -61,13 +71,30 @@ class AbstractApi
     }
 
     /**
+     * Make POST request and return Response object
+     *
+     * @param string $path Request path
+     * @param array $parameters Key => Value array of request data
+     * @return GuzzleResponse
+     */
+    public function sendPostRequest($path, array $parameters = [])
+    {
+        /** @var GuzzleRequest $request */
+        $request = $this->client->post($path, null, null, [
+            'form_params' => $parameters,
+        ]);
+
+        return $request->send();
+    }
+
+    /**
      * Make GET request and return data from response
      *
      * @param string $path Path template
      * @param array $parameters Parameters array used to fill path template
      * @param bool $decodeJsonResponse Decode JSON or return plaintext
      * @param bool $decodeJsonToObjects Decode JSON objects to PHP objects instead of arrays
-     * @return array|string
+     * @return mixed
      */
     public function getGetRequestData($path, array $parameters = [], $decodeJsonResponse = false, $decodeJsonToObjects = false)
     {
@@ -86,11 +113,26 @@ class AbstractApi
 
     /**
      * Make POST request and return data from response
-     * @todo implement method
+     *
+     * @param string $path Path template
+     * @param array $parameters Parameters array used to fill path template
+     * @param bool $decodeJsonResponse Decode JSON or return plaintext
+     * @param bool $decodeJsonToObjects Decode JSON objects to PHP objects instead of arrays
+     * @return mixed
      */
-    public function getPostRequestData()
+    public function getPostRequestData($path, array $parameters = [], $decodeJsonResponse = false, $decodeJsonToObjects = false)
     {
+        $response = $this->sendPostRequest($path, $parameters);
 
+        if ($decodeJsonResponse) {
+            if ($decodeJsonToObjects) {
+                return json_decode($response->getBody(true));
+            } else {
+                return $response->json();
+            }
+        } else {
+            return $response->getBody(true);
+        }
     }
 
     /**
