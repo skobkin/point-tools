@@ -67,7 +67,7 @@
                                             </td>
                                             <td>
                                                 {# Use DateTime helper: https://sonata-project.org/bundles/intl/master/doc/reference/datetime.html #}
-                                                {{ event.date|date('H:i:s d F Y') }}
+                                                {{ event.date|date('d F Y H:i:s') }}
                                             </td>
                                         </tr>
                                     {% endfor %}
