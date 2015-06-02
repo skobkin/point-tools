@@ -12,14 +12,14 @@
         {% if subscribers|length > 0 %}
             <div class="panel-group" id="accordion-subscribers">
                 <div class="panel panel-default">
-                    <div class="panel-heading"id="headingOne">
+                    <div class="panel-heading" id="heading-subscribers">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion-subscribers" aria-expanded="false" href="#collapse-subscribers">
                                 <span class="glyphicon glyphicon-collapse-down"></span> {{ 'Subscribers'|trans }}
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse-subscribers" class="panel-collapse collapse">
+                    <div id="collapse-subscribers" class="panel-collapse collapse" aria-labelledby="heading-subscribers">
                         <div class="panel-body">
                             <ul class="users mosaic">
                                 {% for user in subscribers %}
@@ -39,14 +39,14 @@
         {% if log|length > 0 %}
             <div class="panel-group" id="accordion-log">
                 <div class="panel panel-default">
-                    <div class="panel-heading" id="headingOne">
+                    <div class="panel-heading" id="heading-subscriptions-log">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion-log" aria-expanded="true" href="#collapse-log">
                                 <span class="glyphicon glyphicon-collapse-down"></span> {{ 'Subscriptions log'|trans }}
                             </a>
                         </h4>
                     </div>
-                    <div id="collapse-log" class="panel-collapse collapse in">
+                    <div id="collapse-log" class="panel-collapse collapse in" aria-labelledby="heading-subscriptions-log">
                         <div class="panel-body">
                             <table class="table table-striped">
                                 <thead>
