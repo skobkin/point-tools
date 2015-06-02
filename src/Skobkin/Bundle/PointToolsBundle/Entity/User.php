@@ -184,7 +184,7 @@ class User
     /**
      * Get subscribers
      *
-     * @return ArrayCollection
+     * @return Subscription[]|ArrayCollection
      */
     public function getSubscribers()
     {

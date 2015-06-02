@@ -67,11 +67,22 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         try {
             $serviceSubscribers = $api->getUserSubscribersById($serviceUserId);
         } catch (\Exception $e) {
-            // @todo fallback to the local subscribers list
             $output->writeln('Error while getting service subscribers');
             $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
-            return false;
+            $serviceSubscribers = [];
+
+            foreach ($serviceUser->getSubscribers() as $subscription) {
+                $serviceSubscribers[] = $subscription->getSubscriber();
+            }
+
+            $output->writeln('Fallback to local list');
+            $log->error('Fallback to local list');
+
+            if (!count($serviceSubscribers)) {
+                $log->info('No local subscribers. Finishing.');
+                return false;
+            }
         }
 
         if ($output->isVerbose()) {
