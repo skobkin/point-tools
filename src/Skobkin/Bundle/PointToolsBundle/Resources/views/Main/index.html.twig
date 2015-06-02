@@ -17,16 +17,16 @@
 
     <div class="container service-stats">
         <div class="row">
-            <div class="col-xs-3"><span class="glyphicon glyphicon-user"></span> {{ 'All users'|trans }}</div>
-            <div class="col-xs-2">{{ users_count }}</div>
+            <div class="col-xs-8 col-sm-3"><span class="glyphicon glyphicon-user"></span> {{ 'All users'|trans }}</div>
+            <div class="col-xs-4 col-sm-2">{{ users_count }}</div>
         </div>
         <div class="row">
-            <div class="col-xs-3"><span class="glyphicon glyphicon-user"></span> {{ 'Subscribed users'|trans }}</div>
-            <div class="col-xs-2"><a href="{{ url('user_show', {'login': service_login}) }}">{{ subscribers_count }}</a></div>
+            <div class="col-xs-8 col-sm-3"><span class="glyphicon glyphicon-user"></span> {{ 'Subscribed users'|trans }}</div>
+            <div class="col-xs-4 col-sm-2"><a href="{{ url('user_show', {'login': service_login}) }}">{{ subscribers_count }}</a></div>
         </div>
         <div class="row">
-            <div class="col-xs-3"><span class="glyphicon glyphicon-list"></span> {{ '24 hours events'|trans }}</div>
-            <div class="col-xs-2">{{ events_count }}</div>
+            <div class="col-xs-8 col-sm-3"><span class="glyphicon glyphicon-list"></span> {{ '24 hours events'|trans }}</div>
+            <div class="col-xs-4 col-sm-2">{{ events_count }}</div>
         </div>
     </div>
 {% endblock %}
