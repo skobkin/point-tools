@@ -44,8 +44,14 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         /** @var SubscriptionsManager $subscriptionsManager */
         $subscriptionsManager = $this->getContainer()->get('skobkin_point_tools.subscriptions_manager');
 
-        $serviceUserName = $this->getContainer()->getParameter('point_login');
-        $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->findOneBy(['login' => $serviceUserName]);
+        try {
+            $serviceUserId = $this->getContainer()->getParameter('point_id');
+        } catch (\InvalidArgumentException $e) {
+            $log->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
+            return false;
+        }
+
+        $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->find($serviceUserId);
 
         if (!$serviceUser) {
             $log->info('Service user not found');
@@ -59,16 +65,24 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         }
 
         try {
-            $serviceSubscribers = $api->getUserSubscribersByLogin($serviceUserName);
+            $serviceSubscribers = $api->getUserSubscribersById($serviceUserId);
         } catch (\Exception $e) {
-            // @todo fallback to the local subscribers list
             $output->writeln('Error while getting service subscribers');
-            $log->error('Error while getting service subscribers.' . PHP_EOL .
-                $e->getMessage() . PHP_EOL .
-                $e->getFile() . ':' . $e->getLine()
-            );
+            $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
-            return false;
+            $serviceSubscribers = [];
+
+            foreach ($serviceUser->getSubscribers() as $subscription) {
+                $serviceSubscribers[] = $subscription->getSubscriber();
+            }
+
+            $output->writeln('Fallback to local list');
+            $log->error('Fallback to local list');
+
+            if (!count($serviceSubscribers)) {
+                $log->info('No local subscribers. Finishing.');
+                return false;
+            }
         }
 
         if ($output->isVerbose()) {
@@ -79,10 +93,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         try {
             $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
         } catch (\Exception $e) {
-            $log->error('Error while updating service subscribers' . PHP_EOL .
-                $e->getMessage() . PHP_EOL .
-                $e->getFile() . ':' . $e->getLine()
-            );
+            $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
             return false;
         }
@@ -97,13 +108,10 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             $log->info('Processing @' . $user->getLogin());
 
             try {
-                $userCurrentSubscribers = $api->getUserSubscribersByLogin($user->getLogin());
+                $userCurrentSubscribers = $api->getUserSubscribersById($user->getId());
             } catch (\Exception $e) {
                 $output->writeln('    Error while getting subscribers. Skipping.');
-                $log->error('Error while getting subscribers.' . PHP_EOL .
-                    $e->getMessage() . PHP_EOL .
-                    $e->getFile() . ':' . $e->getLine()
-                );
+                $log->error('Error while getting subscribers.', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
                 continue;
             }
@@ -116,10 +124,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 // Updating user subscribers
                 $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
             } catch (\Exception $e) {
-                $log->error('Error while updating user subscribers' . PHP_EOL .
-                    $e->getMessage() . PHP_EOL .
-                    $e->getFile() . ':' . $e->getLine()
-                );
+                $log->error('Error while updating user subscribers', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
             }
 
             // @todo move to the config

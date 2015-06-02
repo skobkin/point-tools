@@ -38,6 +38,10 @@ body > .container {
     margin-top: 30px;
 }
 
+.user-subscriptions-log {
+    margin-top: 30px;
+}
+
 h4.panel-title a {
     text-decoration: none;
 }

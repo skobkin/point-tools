@@ -16,6 +16,7 @@ parameters:
     point_api_base_url: https://point.im/api/
     point_use_https: true
     point_login: point-tools
+    point_id: 435
 
     locale:            en
 

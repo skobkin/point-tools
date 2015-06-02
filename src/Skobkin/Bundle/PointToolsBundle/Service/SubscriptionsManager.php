@@ -18,6 +18,7 @@ class SubscriptionsManager
     protected $em;
 
 
+    // @todo Add logger
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
@@ -38,6 +39,14 @@ class SubscriptionsManager
             $oldSubscribersList[] = $subscription->getSubscriber();
         }
 
+        $isFirstTime = false;
+
+        // Preventing to add garbage subscriptions for first processing
+        // @todo improve algorithm
+        if ((count($oldSubscribersList) === 0) && (count($newSubscribersList) > 1)) {
+            $isFirstTime = true;
+        }
+
         unset($tmpOldSubscribers);
 
         $subscribedList = $this->getUsersListsDiff($newSubscribersList, $oldSubscribersList);
@@ -53,17 +62,20 @@ class SubscriptionsManager
 
             $user->addSubscriber($subscription);
 
-            $logEvent = new SubscriptionEvent();
-            $logEvent
-                ->setSubscriber($subscribedUser)
-                ->setAuthor($user)
-                ->setAction(SubscriptionEvent::ACTION_SUBSCRIBE)
-            ;
+            // If it's not first processing
+            if (!$isFirstTime) {
+                $logEvent = new SubscriptionEvent();
+                $logEvent
+                    ->setSubscriber($subscribedUser)
+                    ->setAuthor($user)
+                    ->setAction(SubscriptionEvent::ACTION_SUBSCRIBE);
 
-            $user->addNewSubscriberEvent($logEvent);
+                $user->addNewSubscriberEvent($logEvent);
+
+                $this->em->persist($logEvent);
+            }
 
             $this->em->persist($subscription);
-            $this->em->persist($logEvent);
         }
 
         unset($subscribedList);
@@ -81,7 +93,7 @@ class SubscriptionsManager
             $logEvent = new SubscriptionEvent();
             $logEvent
                 ->setSubscriber($unsubscribedUser)
-                ->setAction($user)
+                ->setAuthor($user)
                 ->setAction(SubscriptionEvent::ACTION_UNSUBSCRIBE)
             ;
 
