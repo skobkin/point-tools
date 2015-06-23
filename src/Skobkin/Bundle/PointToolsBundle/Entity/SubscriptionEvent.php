@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
  *      @ORM\Index(name="date_idx", columns={"date"})
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEventRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class SubscriptionEvent
