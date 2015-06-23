@@ -16,3 +16,7 @@ user_show:
 users_top:
     path:     /top
     defaults: { _controller: SkobkinPointToolsBundle:User:top }
+
+events_last:
+    path:     /last
+    defaults: { _controller: SkobkinPointToolsBundle:Events:last }
