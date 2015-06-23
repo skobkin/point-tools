@@ -6,21 +6,15 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Guzzle\Service\Client;
+use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
  * Basic Point.im user API functions from /api/user/*
  */
-class UserApi extends AbstractApi
+class PostApi extends AbstractApi
 {
-    const AVATAR_SIZE_SMALL = '24';
-    const AVATAR_SIZE_MEDIUM = '40';
-    const AVATAR_SIZE_LARGE = '80';
-
-    /**
-     * @var string Base URL for user avatars
-     */
-    protected $avatarsBaseUrl = 'point.im/avatar/';
+    const PATH_ALL_POSTS = '/api/all';
 
     /**
      * @var EntityManager
@@ -37,22 +31,7 @@ class UserApi extends AbstractApi
 
     public function getName()
     {
-        return 'skobkin_point_tools_api_user';
-    }
-
-    /**
-     * Get user subscribers by user login
-     *
-     * @param string $login
-     * @return User[]
-     */
-    public function getUserSubscribersByLogin($login)
-    {
-        $usersList = $this->getGetRequestData('/api/user/' . $login . '/subscribers', [], true);
-
-        $users = $this->getUsersFromList($usersList);
-
-        return $users;
+        return 'skobkin_point_tools_api_post';
     }
 
     /**
@@ -75,6 +54,7 @@ class UserApi extends AbstractApi
     }
 
     /**
+     * @param array $users
      * @return User[]
      */
     private function getUsersFromList(array $users = [])
@@ -88,7 +68,7 @@ class UserApi extends AbstractApi
             if (array_key_exists('id', $userData) && array_key_exists('login', $userData) && array_key_exists('name', $userData) && is_numeric($userData['id'])) {
 
                 // @todo Optimize with prehashed id's list
-                $user = $userRepo->find($userData['id']);
+                $user = $userRepo->findOneBy(['id' => $userData['id']]);
 
                 if (!$user) {
                     $user = new User();
@@ -114,10 +94,47 @@ class UserApi extends AbstractApi
     }
 
     /**
-     * @param $login
+     * @param array $posts
      */
-    public function getAvatarUrl(User $user, $size)
+    private function getPostsFromList(array $posts = [])
     {
-        return ($this->useHttps ? 'https://' : 'http://') . $this->avatarsBaseUrl . $user->getLogin() . '/' . $size;
+        /** @var EntityRepository $postRepo */
+        $postRepo = $this->em->getRepository('SkobkinPointToolsBundle:Blogs\Post');
+
+        $resultUsers = [];
+
+        foreach ($posts as $postData) {
+            if (array_key_exists('id', $postData) && array_key_exists('uid', $postData) && array_key_exists('post', $postData)) {
+
+                // @todo Optimize with prehashed id's list
+                $post = $postRepo->findOneBy(['id' => $postData['id']]);
+
+                if (!$post) {
+                    $post = new Post();
+                    $post
+                        ->setId($postData['id'])
+                        ->setText($postData['post']['text'])
+                        //->setCreatedAt()
+                        //->setAuthor()
+                        ->setType($postData['post']['type'])
+                    ;
+                    $this->em->persist($post);
+                }
+
+                // Updating data
+                if ($post->getLogin() !== $postData['login']) {
+                    $post->setLogin($postData['login']);
+                }
+                if ($post->getName() !== $postData['name']) {
+                    $post->setName($postData['name']);
+                }
+
+                $resultUsers[] = $post;
+            }
+        }
+
+        $this->em->flush();
+
+        return $resultUsers;
     }
 }
