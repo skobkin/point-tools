@@ -18,6 +18,7 @@ class MainController extends Controller
             'subscribers_count' => $em->getRepository('SkobkinPointToolsBundle:Subscription')->getUserSubscribersCountById($this->container->getParameter('point_id')),
             'events_count' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getLastDayEventsCount(),
             'service_login' => $this->container->getParameter('point_login'),
+            'last_events' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getLastSubscriptionEvents(10),
         ]);
     }
 }

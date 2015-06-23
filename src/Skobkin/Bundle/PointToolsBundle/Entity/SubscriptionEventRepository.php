@@ -3,6 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class SubscriptionEventRepository extends EntityRepository
 {
@@ -43,6 +44,31 @@ class SubscriptionEventRepository extends EntityRepository
             ->setMaxResults($limit)
             ->setParameter('author', $user)
             ->getQuery()->getResult()
+        ;
+    }
+
+    /**
+     * Get last $limit subscriptions
+     *
+     * @param integer $limit
+     * @return SubscriptionEvent[]
+     */
+    public function getLastSubscriptionEvents($limit)
+    {
+        if (!is_int($limit)) {
+            throw new \InvalidArgumentException('$limit must be an integer');
+        }
+
+        $qb = $this->createQueryBuilder('se');
+
+        return $qb
+            ->select()
+            ->orderBy('se.date', 'desc')
+            ->setMaxResults($limit)
+            ->getQuery()
+                ->setFetchMode('SkobkinPointToolsBundle:SubscriptionEvent', 'author', ClassMetadata::FETCH_EAGER)
+                ->setFetchMode('SkobkinPointToolsBundle:SubscriptionEvent', 'subscriber', ClassMetadata::FETCH_EAGER)
+            ->getResult()
         ;
     }
 }
