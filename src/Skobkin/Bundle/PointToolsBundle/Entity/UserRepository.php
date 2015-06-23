@@ -67,7 +67,8 @@ class UserRepository extends EntityRepository
             throw new \InvalidArgumentException('$limit must be an integer');
         }
 
-        $qb = $this->createQueryBuilder('s');
+        // TODO: refactor query
+        $qb = $this->getEntityManager()->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
 
         return $qb
             ->select(['COUNT(s.subscriber) as cnt', 'NEW SkobkinPointToolsBundle:TopUserDTO(a.login, COUNT(s.subscriber))'])
