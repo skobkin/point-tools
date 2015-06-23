@@ -22,4 +22,27 @@ class SubscriptionEventRepository extends EntityRepository
             ->getQuery()->getSingleScalarResult()
         ;
     }
+
+    /**
+     * @param User $user
+     * @param integer $limit
+     * @return SubscriptionEvent[]
+     */
+    public function getUserLastSubscriptionEventsById(User $user, $limit)
+    {
+        if (!is_int($limit)) {
+            throw new \InvalidArgumentException('$limit must be an integer');
+        }
+
+        $qb = $this->createQueryBuilder('se');
+
+        return $qb
+            ->select()
+            ->where('se.author = :author')
+            ->orderBy('se.date', 'desc')
+            ->setMaxResults($limit)
+            ->setParameter('author', $user)
+            ->getQuery()->getResult()
+        ;
+    }
 }

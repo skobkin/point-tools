@@ -2,9 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManager;
-use Skobkin\Bundle\PointToolsBundle\Entity\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,16 +15,11 @@ class UserController extends Controller
      */
     public function showAction($login)
     {
-        /** @var QueryBuilder $qb */
-        $qb = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->createQueryBuilder('u');
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
 
-        $user = $qb
-            ->select('u')
-            ->where('LOWER(u.login) = LOWER(:login)')
-            ->setMaxResults(1)
-            ->setParameter('login', $login)
-            ->getQuery()->getOneOrNullResult()
-        ;
+        /** @var User $user */
+        $user = $em->getRepository('SkobkinPointToolsBundle:User')->findUserByLogin($login);
 
         if (!$user) {
             throw $this->createNotFoundException('User ' . $login . ' not found.');
@@ -34,56 +27,18 @@ class UserController extends Controller
 
         $userApi = $this->container->get('skobkin_point_tools.api_user');
 
-        $qb = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->createQueryBuilder('u');
-
-        $subscribers = $qb
-            ->select('u')
-            ->innerJoin('u.subscriptions', 's')
-            ->where('s.author = :author')
-            ->orderBy('u.login', 'asc')
-            ->setParameter('author', $user->getId())
-            ->getQuery()->getResult()
-        ;
-
-        $qb = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createQueryBuilder('se');
-
-        $subscriptionsEvents = $qb
-            ->select()
-            ->where('se.author = :author')
-            ->orderBy('se.date', 'desc')
-            ->setMaxResults(10)
-            ->setParameter('author', $user)
-            ->getQuery()->getResult()
-        ;
-
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
-            'subscribers' => $subscribers,
-            'log' => $subscriptionsEvents,
+            'subscribers' => $em->getRepository('SkobkinPointToolsBundle:User')->findUserSubscribersById($user->getId()),
+            'log' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getUserLastSubscriptionEventsById($user, 10),
             'avatar_url' => $userApi->getAvatarUrl($user, UserApi::AVATAR_SIZE_LARGE),
         ]);
     }
 
     public function topAction()
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var QueryBuilder $qb */
-        $qb = $em->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
-
-        /** @var TopUserDTO[] $topUsers */
-        $topUsers = $qb
-            ->select(['COUNT(s.subscriber) as cnt', 'NEW SkobkinPointToolsBundle:TopUserDTO(a.login, COUNT(s.subscriber))'])
-            ->innerJoin('s.author', 'a')
-            ->orderBy('cnt', 'desc')
-            ->groupBy('a.id')
-            ->setMaxResults(30)
-            ->getQuery()->getResult()
-        ;
-
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
-            'top_users' => $topUsers
+            'top_users' => $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:Subscription')->getTopUsers(),
         ]);
     }
 
