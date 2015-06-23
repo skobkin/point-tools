@@ -57,4 +57,25 @@ class UserRepository extends EntityRepository
             ->getQuery()->getResult()
         ;
     }
+
+    /**
+     * @return TopUserDTO[]
+     */
+    public function getTopUsers($limit = 30)
+    {
+        if (!is_int($limit)) {
+            throw new \InvalidArgumentException('$limit must be an integer');
+        }
+
+        $qb = $this->createQueryBuilder('s');
+
+        return $qb
+            ->select(['COUNT(s.subscriber) as cnt', 'NEW SkobkinPointToolsBundle:TopUserDTO(a.login, COUNT(s.subscriber))'])
+            ->innerJoin('s.author', 'a')
+            ->orderBy('cnt', 'desc')
+            ->groupBy('a.id')
+            ->setMaxResults($limit)
+            ->getQuery()->getResult()
+        ;
+    }
 }

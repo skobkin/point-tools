@@ -25,21 +25,4 @@ class SubscriptionRepository extends EntityRepository
             ->getQuery()->getSingleScalarResult()
         ;
     }
-
-    /**
-     * @return TopUserDTO[]
-     */
-    public function getTopUsers()
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        return $qb
-            ->select(['COUNT(s.subscriber) as cnt', 'NEW SkobkinPointToolsBundle:TopUserDTO(a.login, COUNT(s.subscriber))'])
-            ->innerJoin('s.author', 'a')
-            ->orderBy('cnt', 'desc')
-            ->groupBy('a.id')
-            ->setMaxResults(30)
-            ->getQuery()->getResult()
-        ;
-    }
 }

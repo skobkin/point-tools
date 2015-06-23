@@ -38,7 +38,7 @@ class UserController extends Controller
     public function topAction()
     {
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
-            'top_users' => $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:Subscription')->getTopUsers(),
+            'top_users' => $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->getTopUsers(),
         ]);
     }
 
