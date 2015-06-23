@@ -15,7 +15,7 @@ class SubscriptionEventRepository extends EntityRepository
 
         $now = new \DateTime();
 
-        $eventsCount = $qb
+        return $qb
             ->select('COUNT(se)')
             ->where('se.date > :time')
             ->setParameter('time', $now->sub(new \DateInterval('PT24H')))
