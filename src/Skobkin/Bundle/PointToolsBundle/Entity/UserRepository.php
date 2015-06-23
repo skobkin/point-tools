@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityRepository;
 class UserRepository extends EntityRepository
 {
     /**
+     * Case-insensitive user search
+     *
      * @param string $login
      * @return User[]
      * @throws \Doctrine\ORM\NonUniqueResultException

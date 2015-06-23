@@ -20,5 +20,4 @@ class MainController extends Controller
             'service_login' => $this->container->getParameter('point_login'),
         ]);
     }
-
 }
