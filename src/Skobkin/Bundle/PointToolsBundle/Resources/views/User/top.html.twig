@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <td>&#35;</td>
                 <td>{{ 'User'|trans }}</td>
                 <td>{{ 'Subscribers count'|trans }}</td>
             </tr>
@@ -15,6 +16,7 @@
         <tbody>
             {% for user in top_users %}
                 <tr>
+                    <td>{{ loop.index }}</td>
                     <td><a href="{{ url('user_show', {login: user.login}) }}">@{{ user.login }}</a></td>
                     <td>{{ user.subscribersCount }}</td>
                 </tr>
