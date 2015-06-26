@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Misd\GuzzleBundle\MisdGuzzleBundle(),
+            new Ob\HighchartsBundle\ObHighchartsBundle(),
             new Skobkin\Bundle\PointToolsBundle\SkobkinPointToolsBundle(),
         );
 
