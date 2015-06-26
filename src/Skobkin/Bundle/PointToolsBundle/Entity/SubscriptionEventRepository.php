@@ -29,7 +29,7 @@ class SubscriptionEventRepository extends EntityRepository
      * @param integer $limit
      * @return SubscriptionEvent[]
      */
-    public function getUserLastSubscriptionEventsById(User $user, $limit)
+    public function getUserLastSubscribersEventsById(User $user, $limit)
     {
         if (!is_int($limit)) {
             throw new \InvalidArgumentException('$limit must be an integer');
@@ -38,7 +38,8 @@ class SubscriptionEventRepository extends EntityRepository
         $qb = $this->createQueryBuilder('se');
 
         return $qb
-            ->select()
+            ->select(['se', 's'])
+            ->join('se.subscriber', 's')
             ->where('se.author = :author')
             ->orderBy('se.date', 'desc')
             ->setMaxResults($limit)

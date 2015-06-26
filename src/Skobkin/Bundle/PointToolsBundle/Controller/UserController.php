@@ -32,7 +32,7 @@ class UserController extends Controller
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
             'subscribers' => $em->getRepository('SkobkinPointToolsBundle:User')->findUserSubscribersById($user->getId()),
-            'log' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getUserLastSubscriptionEventsById($user, 10),
+            'log' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getUserLastSubscribersEventsById($user, 10),
             'avatar_url' => $userApi->getAvatarUrl($user, UserApi::AVATAR_SIZE_LARGE),
         ]);
     }
