@@ -66,7 +66,7 @@
                                                 <span class="glyphicon {% if event.action == 'subscribe' %}glyphicon-plus{% elseif event.action == 'unsubscribe' %}glyphicon-minus{% endif %}"></span>
                                             </td>
                                             <td>
-                                                {# Use DateTime helper: https://sonata-project.org/bundles/intl/master/doc/reference/datetime.html #}
+                                                {# @todo Use DateTime helper: https://sonata-project.org/bundles/intl/master/doc/reference/datetime.html #}
                                                 {{ event.date|date('d F Y H:i:s') }}
                                             </td>
                                         </tr>
