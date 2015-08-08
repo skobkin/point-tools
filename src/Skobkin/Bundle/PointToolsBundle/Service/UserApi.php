@@ -79,6 +79,40 @@ class UserApi extends AbstractApi
     }
 
     /**
+     * Get user subscriptions by user login
+     *
+     * @param string $login
+     * @return User[]
+     */
+    public function getUserSubscriptionsByLogin($login)
+    {
+        $usersList = $this->getGetRequestData('/api/user/' . $login . '/subscriptions', [], true);
+
+        $users = $this->getUsersFromList($usersList);
+
+        return $users;
+    }
+
+    /**
+     * Get user subscriptions by user id
+     *
+     * @param int $id
+     * @return User[]
+     */
+    public function getUserSubscriptionsById($id)
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException('$id must be an integer');
+        }
+
+        $usersList = $this->getGetRequestData('/api/user/id/' . (int) $id . '/subscriptions', [], true);
+
+        $users = $this->getUsersFromList($usersList);
+
+        return $users;
+    }
+
+    /**
      * @return User[]
      */
     private function getUsersFromList(array $users = [])
