@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SubscriptionEvent
  *
- * @ORM\Table(name="subscriptions.log", indexes={
+ * @ORM\Table(name="subscriptions.log", schema="subscriptions", indexes={
  *      @ORM\Index(name="author_idx", columns={"author_id"}),
  *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
  *      @ORM\Index(name="date_idx", columns={"date"})
