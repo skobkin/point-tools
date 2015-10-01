@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Guzzle\Service\Client;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 
 /**
  * Basic Point.im user API functions from /api/user/*
@@ -136,6 +137,12 @@ class UserApi extends AbstractApi
                     $user = new User();
                     $user->setId((int) $userData['id']);
                     $this->em->persist($user);
+
+                    try {
+                        $this->em->flush();
+                    } catch (\Exception $e) {
+                        throw new ApiException(sprintf('Error while flushing new user [%d] %s', $user->getId(), $user->getLogin()), 0, $e);
+                    }
                 }
 
                 // Updating data
@@ -146,11 +153,15 @@ class UserApi extends AbstractApi
                     $user->setName($userData['name']);
                 }
 
+                try {
+                    $this->em->flush();
+                } catch (\Exception $e) {
+                    throw new ApiException(sprintf('Error while flushing changes for [%d] %s', $user->getId(), $user->getLogin()), 0, $e);
+                }
+
                 $resultUsers[] = $user;
             }
         }
-
-        $this->em->flush();
 
         return $resultUsers;
     }
