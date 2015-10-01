@@ -135,13 +135,16 @@ class UserApi extends AbstractApi
 
                 if (!$user) {
                     $user = new User();
-                    $user->setId((int) $userData['id']);
+                    $user
+                        ->setId((int) $userData['id'])
+                        ->setLogin($userData['login'])
+                    ;
                     $this->em->persist($user);
 
                     try {
                         $this->em->flush();
                     } catch (\Exception $e) {
-                        throw new ApiException(sprintf('Error while flushing new user [%d] %s', $user->getId(), $user->getLogin()), 0, $e);
+                        throw new ApiException(sprintf('Error while flushing new user [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
                     }
                 }
 
@@ -156,7 +159,7 @@ class UserApi extends AbstractApi
                 try {
                     $this->em->flush();
                 } catch (\Exception $e) {
-                    throw new ApiException(sprintf('Error while flushing changes for [%d] %s', $user->getId(), $user->getLogin()), 0, $e);
+                    throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
                 }
 
                 $resultUsers[] = $user;
