@@ -32,12 +32,18 @@ class UserApi extends AbstractApi
      */
     protected $em;
 
+    /**
+     * @var EntityRepository
+     */
+    protected $userRepository;
+
 
     public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManagerInterface $entityManager)
     {
         parent::__construct($httpClient, $https, $baseUrl);
 
         $this->em = $entityManager;
+        $this->userRepository = $this->em->getRepository('SkobkinPointToolsBundle:User');
     }
 
     public function getName()
@@ -190,13 +196,10 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('$userInfo must be an array');
         }
 
-        /** @var EntityRepository $userRepo */
-        $userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
-
         // @todo Return ID existance check when @ap-Codkelden will fix this API behaviour
         if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
             /** @var User $user */
-            if (null === ($user = $userRepo->find($userInfo['id']))) {
+            if (null === ($user = $this->userRepository->find($userInfo['id']))) {
                 // Creating new user
                 $user = new User($userInfo['id']);
                 $this->em->persist($user);
@@ -234,9 +237,6 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('$users must be an array');
         }
 
-        /** @var EntityRepository $userRepo */
-        $userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
-
         /** @var User[] $resultUsers */
         $resultUsers = [];
 
@@ -244,7 +244,7 @@ class UserApi extends AbstractApi
             if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
 
                 // @todo Optimize with prehashed id's list
-                if (null === ($user = $userRepo->find($userInfo['id']))) {
+                if (null === ($user = $this->userRepository->find($userInfo['id']))) {
                     $user = new User((int) $userInfo['id']);
                     $this->em->persist($user);
                 }
