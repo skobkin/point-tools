@@ -63,7 +63,7 @@ class UserApi extends AbstractApi
     public function getUserSubscribersByLogin($login)
     {
         try {
-            $usersList = $this->getGetRequestData('/api/user/'.$login.'/subscribers', [], true);
+            $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscribers', [], true);
         } catch (ClientErrorResponseException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
@@ -115,7 +115,7 @@ class UserApi extends AbstractApi
     public function getUserSubscriptionsByLogin($login)
     {
         try {
-            $usersList = $this->getGetRequestData('/api/user/'.$login.'/subscriptions', [], true);
+            $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscriptions', [], true);
         } catch (ClientErrorResponseException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
@@ -166,7 +166,7 @@ class UserApi extends AbstractApi
     public function getUserByLogin($login)
     {
         try {
-            $userInfo = $this->getGetRequestData('/api/user/login/'.$login, [], true);
+            $userInfo = $this->getGetRequestData('/api/user/login/'.urlencode($login), [], true);
         } catch (ClientErrorResponseException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
@@ -306,6 +306,6 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See UserApi class AVATAR_SIZE_* constants.');
         }
 
-        return $this->avatarsBaseUrl.$user->getLogin().'/'.$size;
+        return $this->avatarsBaseUrl.urlencode($user->getLogin()).'/'.$size;
     }
 }
