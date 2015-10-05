@@ -26,7 +26,7 @@
         </div>
         <div class="row">
             <div class="col-xs-8 col-sm-3"><span class="glyphicon glyphicon-list"></span> {{ '24 hours events'|trans }}</div>
-            <div class="col-xs-4 col-sm-2">{{ events_count }}</div>
+            <div class="col-xs-4 col-sm-2"><a href="{{ url('events_last') }}">{{ events_count }}</a></div>
         </div>
     </div>
 {% endblock %}
