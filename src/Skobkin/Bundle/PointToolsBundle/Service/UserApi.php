@@ -156,7 +156,30 @@ class UserApi extends AbstractApi
     }
 
     /**
-     * Get user by id
+     * Get single user by login
+     *
+     * @param string $login
+     * @return User
+     * @throws UserNotFoundException
+     * @throws ClientErrorResponseException
+     */
+    public function getUserByLogin($login)
+    {
+        try {
+            $userInfo = $this->getGetRequestData('/api/user/login/'.$login, [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, null, $login);
+            } else {
+                throw $e;
+            }
+        }
+
+        return $this->getUserFromUserInfo($userInfo);
+    }
+
+    /**
+     * Get single user by id
      *
      * @param $id
      * @return User
