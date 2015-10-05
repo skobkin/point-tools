@@ -5,19 +5,19 @@ namespace Skobkin\Bundle\PointToolsBundle\Service;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Service\Client;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
+use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\UserNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Basic Point.im user API functions from /api/user/*
  */
 class UserApi extends AbstractApi
 {
-    const PATH_USER_INFO = '/api/user/%s';
-    const PATH_USER_SUBSCRIPTIONS = '/api/user/%s/subscriptions';
-    const PATH_USER_SUBSCRIBERS = '/api/user/%s/subscribers';
-
     const AVATAR_SIZE_SMALL = '24';
     const AVATAR_SIZE_MEDIUM = '40';
     const AVATAR_SIZE_LARGE = '80';
@@ -25,7 +25,7 @@ class UserApi extends AbstractApi
     /**
      * @var string Base URL for user avatars
      */
-    protected $avatarsBaseUrl = 'point.im/avatar/';
+    protected $avatarsBaseUrl = '//point.im/avatar/';
 
     /**
      * @var EntityManager
@@ -50,21 +50,33 @@ class UserApi extends AbstractApi
      *
      * @param string $login
      * @return User[]
+     * @throws ApiException
+     * @throws InvalidResponseException
+     * @throws UserNotFoundException
      */
     public function getUserSubscribersByLogin($login)
     {
-        $usersList = $this->getGetRequestData('/api/user/' . $login . '/subscribers', [], true);
+        try {
+            $usersList = $this->getGetRequestData('/api/user/'.$login.'/subscribers', [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, null, $login);
+            } else {
+                throw $e;
+            }
+        }
 
-        $users = $this->getUsersFromList($usersList);
-
-        return $users;
+        return $this->getUsersFromList($usersList);
     }
 
     /**
      * Get user subscribers by user id
      *
-     * @param int $id
+     * @param $id
      * @return User[]
+     * @throws ApiException
+     * @throws InvalidResponseException
+     * @throws UserNotFoundException
      */
     public function getUserSubscribersById($id)
     {
@@ -72,11 +84,17 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('$id must be an integer');
         }
 
-        $usersList = $this->getGetRequestData('/api/user/id/' . (int) $id . '/subscribers', [], true);
+        try {
+            $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscribers', [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, $id);
+            } else {
+                throw $e;
+            }
+        }
 
-        $users = $this->getUsersFromList($usersList);
-
-        return $users;
+        return $this->getUsersFromList($usersList);
     }
 
     /**
@@ -84,21 +102,33 @@ class UserApi extends AbstractApi
      *
      * @param string $login
      * @return User[]
+     * @throws ApiException
+     * @throws InvalidResponseException
+     * @throws UserNotFoundException
      */
     public function getUserSubscriptionsByLogin($login)
     {
-        $usersList = $this->getGetRequestData('/api/user/' . $login . '/subscriptions', [], true);
+        try {
+            $usersList = $this->getGetRequestData('/api/user/'.$login.'/subscriptions', [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, null, $login);
+            } else {
+                throw $e;
+            }
+        }
 
-        $users = $this->getUsersFromList($usersList);
-
-        return $users;
+        return $this->getUsersFromList($usersList);
     }
 
     /**
      * Get user subscriptions by user id
      *
-     * @param int $id
+     * @param $id
      * @return User[]
+     * @throws ApiException
+     * @throws InvalidResponseException
+     * @throws UserNotFoundException
      */
     public function getUserSubscriptionsById($id)
     {
@@ -106,15 +136,97 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('$id must be an integer');
         }
 
-        $usersList = $this->getGetRequestData('/api/user/id/' . (int) $id . '/subscriptions', [], true);
+        try {
+            $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscriptions', [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, $id);
+            } else {
+                throw $e;
+            }
+        }
 
-        $users = $this->getUsersFromList($usersList);
-
-        return $users;
+        return $this->getUsersFromList($usersList);
     }
 
     /**
+     * Get user by id
+     *
+     * @param $id
+     * @return User
+     * @throws UserNotFoundException
+     * @throws ClientErrorResponseException
+     */
+    public function getUserById($id)
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException('$id must be an integer');
+        }
+
+        try {
+            $userInfo = $this->getGetRequestData('/api/user/id/'.(int) $id, [], true);
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new UserNotFoundException('User not found', 0, $e, $id);
+            } else {
+                throw $e;
+            }
+        }
+
+        return $this->getUserFromUserInfo($userInfo);
+    }
+
+    /**
+     * Finds and updates or create new user from API response data
+     *
+     * @param array $userInfo
+     * @return User
+     * @throws ApiException
+     * @throws InvalidResponseException
+     */
+    public function getUserFromUserInfo(array $userInfo)
+    {
+        if (!is_array($userInfo)) {
+            throw new \InvalidArgumentException('$userInfo must be an array');
+        }
+
+        /** @var EntityRepository $userRepo */
+        $userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
+
+        // @todo Return ID existance check when @ap-Codkelden will fix this API behaviour
+        if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
+            /** @var User $user */
+            if (null === ($user = $userRepo->find($userInfo['id']))) {
+                // Creating new user
+                $user = new User($userInfo['id']);
+                $this->em->persist($user);
+            }
+
+            // Updating data
+            $user
+                ->setLogin($userInfo['login'])
+                ->setName($userInfo['name'])
+            ;
+
+            try {
+                $this->em->flush($user);
+            } catch (\Exception $e) {
+                throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
+            }
+
+            return $user;
+        }
+
+        throw new InvalidResponseException('Invalid API response. Mandatory fields do not exist.');
+    }
+
+    /**
+     * Get array of User objects from API response containing user list
+     *
+     * @param array $users
      * @return User[]
+     * @throws ApiException
+     * @throws InvalidResponseException
      */
     private function getUsersFromList(array $users = [])
     {
@@ -125,44 +237,33 @@ class UserApi extends AbstractApi
         /** @var EntityRepository $userRepo */
         $userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
 
+        /** @var User[] $resultUsers */
         $resultUsers = [];
 
-        foreach ($users as $userData) {
-            if (array_key_exists('id', $userData) && array_key_exists('login', $userData) && array_key_exists('name', $userData) && is_numeric($userData['id'])) {
+        foreach ($users as $userInfo) {
+            if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
 
                 // @todo Optimize with prehashed id's list
-                $user = $userRepo->findOneBy(['id' => $userData['id']]);
-
-                if (!$user) {
-                    $user = new User();
-                    $user
-                        ->setId((int) $userData['id'])
-                        ->setLogin($userData['login'])
-                    ;
+                if (null === ($user = $userRepo->find($userInfo['id']))) {
+                    $user = new User((int) $userInfo['id']);
                     $this->em->persist($user);
-
-                    try {
-                        $this->em->flush();
-                    } catch (\Exception $e) {
-                        throw new ApiException(sprintf('Error while flushing new user [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
-                    }
                 }
 
                 // Updating data
-                if ($user->getLogin() !== $userData['login']) {
-                    $user->setLogin($userData['login']);
-                }
-                if ($user->getName() !== $userData['name']) {
-                    $user->setName($userData['name']);
-                }
+                $user
+                    ->setLogin($userInfo['login'])
+                    ->setName($userInfo['name'])
+                ;
 
                 try {
-                    $this->em->flush();
+                    $this->em->flush($user);
                 } catch (\Exception $e) {
                     throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
                 }
 
                 $resultUsers[] = $user;
+            } else {
+                throw new InvalidResponseException('Invalid API response. Mandatory fields do not exist.');
             }
         }
 
@@ -170,10 +271,18 @@ class UserApi extends AbstractApi
     }
 
     /**
-     * @param $login
+     * Creates avatar with specified size URL for user
+     *
+     * @param User $user
+     * @param int $size
+     * @return string
      */
     public function getAvatarUrl(User $user, $size)
     {
-        return ($this->useHttps ? 'https://' : 'http://') . $this->avatarsBaseUrl . $user->getLogin() . '/' . $size;
+        if (!in_array($size, [self::AVATAR_SIZE_SMALL, self::AVATAR_SIZE_MEDIUM, self::AVATAR_SIZE_LARGE], true)) {
+            throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See UserApi class AVATAR_SIZE_* constants.');
+        }
+
+        return $this->avatarsBaseUrl.$user->getLogin().'/'.$size;
     }
 }
