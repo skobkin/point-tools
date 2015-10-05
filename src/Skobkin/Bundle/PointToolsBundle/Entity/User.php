@@ -71,8 +71,17 @@ class User
     private $newSubscriberEvents;
 
 
-    public function __construct()
+    /**
+     * @param int $id
+     * @param string $login
+     * @param string $name
+     */
+    public function __construct($id = null, $login = null, $name = null)
     {
+        $this->id = $id;
+        $this->login = $login;
+        $this->name = $name;
+
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->newSubscriberEvents = new ArrayCollection();
