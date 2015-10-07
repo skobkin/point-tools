@@ -25,6 +25,7 @@ class ApiController extends Controller
             ->select(['se', 'sub'])
             ->innerJoin('se.subscriber', 'sub')
             ->where($qb->expr()->eq('se.author', ':author'))
+            ->orderBy('se.date', 'desc')
             ->setParameter('author', $user)
             ->setMaxResults(20)
         ;
