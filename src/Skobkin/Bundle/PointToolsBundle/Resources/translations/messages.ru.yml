@@ -5,6 +5,7 @@ Toggle navigation: Переключить навигацию
 Main: Главная
 Top: Топ
 Report a bug: Сообщить об ошибке
+Last: Последнее
 
 # Подвал
 Source code: Исходный код
@@ -13,6 +14,9 @@ Source code: Исходный код
 All users: Всего пользователей
 Subscribed users: Подписчиков сервиса
 24 hours events: Событий за сутки
+Author: Автор
+Subscriber: Подписчик
+Last events: Последние события
 
 Username: Имя пользователя
 Search: Поиск
@@ -30,3 +34,4 @@ No log data found: Лог отсутствует
 # Топ пользователей
 Top users: Популярные пользователи
 Subscribers count: Подписчиков
+amount: Количество

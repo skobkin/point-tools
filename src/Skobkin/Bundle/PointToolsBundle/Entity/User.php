@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * User
  *
- * @ORM\Table(name="users.users")
- * @ORM\Entity
+ * @ORM\Table(name="users.users", schema="users")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class User
@@ -25,7 +25,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="login", type="string", length=255, nullable=false, unique=true)
+     * @ORM\Column(name="login", type="string", length=255, nullable=false)
      */
     private $login;
 
@@ -71,8 +71,17 @@ class User
     private $newSubscriberEvents;
 
 
-    public function __construct()
+    /**
+     * @param int $id
+     * @param string $login
+     * @param string $name
+     */
+    public function __construct($id = null, $login = null, $name = null)
     {
+        $this->id = $id;
+        $this->login = $login;
+        $this->name = $name;
+
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->newSubscriberEvents = new ArrayCollection();

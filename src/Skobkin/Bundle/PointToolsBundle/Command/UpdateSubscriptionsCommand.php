@@ -128,7 +128,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             }
 
             // @todo move to the config
-            usleep(200000);
+            usleep(500000);
         }
     }
 }

@@ -2,23 +2,17 @@
 
 {% block header_title %}Top @ Point Tools{% endblock %}
 
-{% block content %}
-    <h1>{{ 'Top users'|trans }}</h1>
+{% block head_js %}
+    {{ parent() }}
+    <script src="//yastatic.net/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//code.highcharts.com/4.0.1/highcharts.js"></script>
+    <script src="//code.highcharts.com/4.0.1/modules/exporting.js"></script>
+{% endblock %}
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <td>{{ 'User'|trans }}</td>
-                <td>{{ 'Subscribers count'|trans }}</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in top_users %}
-                <tr>
-                    <td><a href="{{ url('user_show', {login: user.login}) }}">@{{ user.login }}</a></td>
-                    <td>{{ user.subscribersCount }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block content %}
+    <script type="text/javascript">
+        {{ chart(top_chart) }}
+    </script>
+
+    <div id="top-chart" style="min-width: 400px; height: 600px; margin: 0 auto;"></div>
 {% endblock %}

@@ -16,3 +16,11 @@ user_show:
 users_top:
     path:     /top
     defaults: { _controller: SkobkinPointToolsBundle:User:top }
+
+events_last:
+    path:     /last
+    defaults: { _controller: SkobkinPointToolsBundle:Events:last }
+
+skobkin_point_tools:
+    resource: "@SkobkinPointToolsBundle/Resources/config/api/routing.yml"
+    prefix:   /api/v1
