@@ -2,12 +2,8 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Guzzle\Service\Client;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\PostFactory;
 
 /**
@@ -34,11 +30,11 @@ class PostApi extends AbstractApi
     }
 
     /**
-     * Get post with comments by id
+     * Get post with tags and comments by id
      *
      * @param $id
      *
-     * @return User[]
+     * @return Post[]
      */
     public function getPostById($id)
     {

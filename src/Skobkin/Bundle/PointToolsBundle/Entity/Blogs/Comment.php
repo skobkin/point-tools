@@ -55,7 +55,7 @@ class Comment
      * @var Post
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post")
+     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post", inversedBy="comments")
      * @ORM\JoinColumn(name="post_id")
      */
     private $post;

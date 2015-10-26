@@ -73,6 +73,8 @@ class Post
 
     /**
      * @var Comment[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post", fetch="EXTRA_LAZY")
      */
     private $comments;
 
@@ -212,7 +214,7 @@ class Post
     /**
      * Get tags
      *
-     * @return ArrayCollection
+     * @return Tag[]|ArrayCollection
      */
     public function getTags()
     {
@@ -250,5 +252,38 @@ class Post
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Add comments
+     *
+     * @param Comment $comment
+     * @return Post
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Remove comments
+     *
+     * @param Comment $comment
+     */
+    public function removeComment(Comment $comment)
+    {
+        $this->comments->removeElement($comment);
+    }
+
+    /**
+     * Get comments
+     *
+     * @return Comment[]|ArrayCollection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

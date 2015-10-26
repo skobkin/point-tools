@@ -6,10 +6,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
+use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\CommentFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\TagFactory;
 
 
 class PostFactory
@@ -51,6 +49,13 @@ class PostFactory
         $this->postRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Post');
     }
 
+    /**
+     * @param array $data
+     *
+     * @return Post
+     * @throws ApiException
+     * @throws InvalidResponseException
+     */
     public function createFromArray(array $data)
     {
         $this->validateData($data);
@@ -82,14 +87,36 @@ class PostFactory
             }
         }
 
+        // Flushing post before linking comments
+        try {
+            $this->em->flush($post);
+        } catch (\Exception $e) {
+            throw new ApiException(sprintf('Error while flushing changes for #%s: %s', $data['post']['id'], $e->getMessage()), 0, $e);
+        }
+
         // Comments
         $comments = $this->commentFactory->createFromListArray($data['comments']);
 
         // Marking removed comments
+        foreach ($post->getComments() as $comment) {
+            if (false === in_array($comment, $comments, true)) {
+                $comment->setDeleted(true);
+            }
+        }
+
+        // Adding comments
+        foreach ($comments as $comment) {
+            $post->addComment($comment);
+        }
 
         return $post;
     }
 
+    /**
+     * @param array $data
+     *
+     * @throws InvalidResponseException
+     */
     private function validateData(array $data)
     {
         if (!array_key_exists('post', $data)) {
