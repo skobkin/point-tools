@@ -219,7 +219,7 @@ class UserApi extends AbstractApi
             throw new \InvalidArgumentException('$userInfo must be an array');
         }
 
-        // @todo Return ID existance check when @ap-Codkelden will fix this API behaviour
+        // @todo Refactor to UserFactory->createFromArray()
         if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
             /** @var User $user */
             if (null === ($user = $this->userRepository->find($userInfo['id']))) {
