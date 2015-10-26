@@ -7,7 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Tag
  *
- * @ORM\Table(name="posts.tags")
+ * @ORM\Table(name="posts.tags", schema="posts", indexes={
+ *      @ORM\Index(name="idx_tag_text", columns={"text"})
+ * })
  * @ORM\Entity
  */
 class Tag
@@ -24,10 +26,18 @@ class Tag
     /**
      * @var string
      *
-     * @ORM\Column(name="text", type="string", length=128, unique=true)
+     * @ORM\Column(name="text", type="text", unique=true)
      */
     private $text;
 
+
+    /**
+     * @param string $text
+     */
+    public function __construct($text)
+    {
+        $this->text = $text;
+    }
 
     /**
      * Get id

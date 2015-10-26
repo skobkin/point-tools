@@ -3,14 +3,15 @@
 namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
  * Post
  *
- * @ORM\Table(name="posts.posts")
+ * @ORM\Table(name="posts.posts", schema="posts", indexes={
+ *      @ORM\Index(name="idx_post_created_at", columns={"created_at"})
+ * })
  * @ORM\Entity
  */
 class Post
@@ -24,13 +25,6 @@ class Post
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="uid", type="integer")
-     */
-    private $uid;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="text", type="text")
@@ -40,7 +34,7 @@ class Post
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
@@ -52,6 +46,13 @@ class Post
     private $type;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_deleted", type="boolean")
+     */
+    private $deleted = false;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
@@ -60,7 +61,7 @@ class Post
     private $author;
 
     /**
-     * @var Tag[]|Collection
+     * @var Tag[]|ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="posts.posts_tags",
@@ -71,13 +72,19 @@ class Post
     private $tags;
 
     /**
-     * @var Comment[]|Collection
+     * @var Comment[]|ArrayCollection
      */
     private $comments;
 
 
-    public function __construct()
+    public function __construct($id, $type, $text, \DateTime $createdAt, User $author = null)
     {
+        $this->id = $id;
+        $this->type = $type;
+        $this->createdAt = $createdAt;
+        $this->text = $text;
+        $this->author = $author;
+
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
@@ -90,29 +97,6 @@ class Post
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set uid
-     *
-     * @param integer $uid
-     * @return Post
-     */
-    public function setUid($uid)
-    {
-        $this->uid = $uid;
-
-        return $this;
-    }
-
-    /**
-     * Get uid
-     *
-     * @return integer 
-     */
-    public function getUid()
-    {
-        return $this->uid;
     }
 
     /**
@@ -202,29 +186,15 @@ class Post
         return $this;
     }
 
-
-    /**
-     * Set id
-     *
-     * @param string $id
-     * @return Post
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     /**
      * Add tags
      *
-     * @param Tag $tags
+     * @param Tag $tag
      * @return Post
      */
-    public function addTag(Tag $tags)
+    public function addTag(Tag $tag)
     {
-        $this->tags[] = $tags;
+        $this->tags[] = $tag;
 
         return $this;
     }
@@ -232,20 +202,53 @@ class Post
     /**
      * Remove tags
      *
-     * @param Tag $tags
+     * @param Tag $tag
      */
-    public function removeTag(Tag $tags)
+    public function removeTag(Tag $tag)
     {
-        $this->tags->removeElement($tags);
+        $this->tags->removeElement($tag);
     }
 
     /**
      * Get tags
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Set deleted
+     *
+     * @param boolean $deleted
+     * @return Post
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean 
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
     }
 }

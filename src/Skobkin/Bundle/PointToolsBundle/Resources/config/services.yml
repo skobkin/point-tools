@@ -13,6 +13,30 @@ services:
             - "%point_api_base_url%"
             - @doctrine.orm.entity_manager
 
+    skobkin_point_tools.api_post:
+        class: Skobkin\Bundle\PointToolsBundle\Service\PostApi
+        arguments:
+            - @skobkin_point_tools.http_client
+            - "%point_use_https%"
+            - "%point_api_base_url%"
+            - @doctrine.orm.entity_manager
+
     skobkin_point_tools.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
         arguments: [ @doctrine.orm.entity_manager ]
+
+    skobkin__point_tools.service_factory.user_factory:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
+        arguments: [ @doctrine.orm.entity_manager ]
+
+    skobkin__point_tools.service_factory.comment_factory:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\CommentFactory
+        arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory ]
+
+    skobkin__point_tools.service_factory.tag_factory:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\TagFactory
+        arguments: [ @doctrine.orm.entity_manager ]
+
+    skobkin__point_tools.service_factory.post_factory:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\PostFactory
+        arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory, @skobkin__point_tools.service_factory.comment_factory, @skobkin__point_tools.service_factory.tag_factory ]

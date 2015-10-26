@@ -8,7 +8,9 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 /**
  * Comment
  *
- * @ORM\Table(name="posts.comments")
+ * @ORM\Table(name="posts.comments", schema="posts", indexes={
+ *      @ORM\Index(name="idx_comment_created_at", columns={"created_at"})
+ * })
  * @ORM\Entity
  */
 class Comment
@@ -18,7 +20,6 @@ class Comment
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -32,27 +33,28 @@ class Comment
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="isRec", type="boolean")
+     * @ORM\Column(name="is_rec", type="boolean")
      */
-    private $isRec;
+    private $rec;
 
     /**
-     * @var int
+     * @var bool
      *
-     * @ORM\Column(name="number", type="integer")
+     * @ORM\Column(name="is_deleted", type="boolean")
      */
-    private $number;
+    private $deleted = false;
 
     /**
      * @var Post
      *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post")
      * @ORM\JoinColumn(name="post_id")
      */
@@ -67,13 +69,42 @@ class Comment
     private $author;
 
     /**
-     * @var Comment
+     * @var Comment|null
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment")
      * @ORM\JoinColumn(name="to_comment_id", nullable=true)
      */
     private $toComment;
 
+    /**
+     * @param int $id
+     * @param Post $post
+     * @param User $author
+     * @param Comment|null $toComment
+     * @param string $text
+     * @param \DateTime $createdAt
+     * @param bool $isRec
+     */
+    public function __construct($id, Post $post, User $author, Comment $toComment = null, $text, \DateTime $createdAt, $isRec)
+    {
+        if (!is_numeric($id)) {
+            throw new \InvalidArgumentException('$id must be an integer');
+        }
+        if (!is_bool($isRec)) {
+            throw new \InvalidArgumentException('$isRec must be boolean');
+        }
+        if (!is_string($text)) {
+            throw new \InvalidArgumentException('$text must be a string');
+        }
+
+        $this->id = (int)$id;
+        $this->post = $post;
+        $this->author = $author;
+        $this->toComment = $toComment;
+        $this->text = $text;
+        $this->createdAt = $createdAt;
+        $this->rec = $isRec;
+    }
 
     /**
      * Get id
@@ -134,12 +165,12 @@ class Comment
     /**
      * Set isRec
      *
-     * @param boolean $isRec
+     * @param boolean $rec
      * @return Comment
      */
-    public function setIsRec($isRec)
+    public function setRec($rec)
     {
-        $this->isRec = $isRec;
+        $this->rec = $rec;
 
         return $this;
     }
@@ -151,26 +182,17 @@ class Comment
      */
     public function isRec()
     {
-        return $this->isRec;
+        return $this->rec;
     }
 
     /**
-     * @return int
+     * Get isRec
+     *
+     * @return boolean
      */
-    public function getNumber()
+    public function getRec()
     {
-        return $this->number;
-    }
-
-    /**
-     * @param int $number
-     * @return Comment
-     */
-    public function setNumber($number)
-    {
-        $this->number = $number;
-
-        return $this;
+        return $this->rec;
     }
 
     /**
@@ -230,5 +252,36 @@ class Comment
         return $this;
     }
 
+    /**
+     * Set deleted
+     *
+     * @param boolean $deleted
+     * @return Comment
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
 
+        return $this;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean 
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
 }
