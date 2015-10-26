@@ -16,15 +16,8 @@ class UpdatePostsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('point:update:posts')
-            ->setDescription('Update posts from /all')
-            ->addOption(
-                'check-only',
-                null,
-                InputOption::VALUE_NONE,
-                'If set, command will not perform write operations in the database'
-            )
-            // @todo add option for checking only selected user
+            ->setName('point:messages:receive')
+            ->setDescription('Receives last posts and comments and saves them to the database')
         ;
     }
 
@@ -42,6 +35,6 @@ class UpdatePostsCommand extends ContainerAwareCommand
         /** @var UserApi $api */
         $api = $this->getContainer()->get('skobkin_point_tools.api_user');
 
-
+        // @todo
     }
 }
