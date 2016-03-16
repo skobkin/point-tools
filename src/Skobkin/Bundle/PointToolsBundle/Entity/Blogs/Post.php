@@ -10,14 +10,18 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
  * Post
  *
  * @ORM\Table(name="posts.posts", schema="posts", indexes={
- *      @ORM\Index(name="idx_post_created_at", columns={"created_at"})
+ *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
+ *      @ORM\Index(name="idx_post_private", columns={"private"}),
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostRepository")
  */
 class Post
 {
+    const TYPE_POST = 'post';
+    const TYPE_FEED = 'feed';
+
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="string", length=16)
      * @ORM\Id
@@ -44,6 +48,13 @@ class Post
      * @ORM\Column(name="type", type="string", length=6)
      */
     private $type;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="private", type="boolean", nullable=true)
+     */
+    private $private;
 
     /**
      * @var bool
@@ -77,10 +88,20 @@ class Post
     private $comments;
 
 
-    public function __construct($id, $type, $text, \DateTime $createdAt, User $author = null)
+    /**
+     * Post constructor.
+     * @param string $id
+     * @param string $type
+     * @param bool $private
+     * @param string $text
+     * @param \DateTime $createdAt
+     * @param User|null $author
+     */
+    public function __construct($id, $type, $private, $text, \DateTime $createdAt, User $author = null)
     {
         $this->id = $id;
         $this->type = $type;
+        $this->private = $private;
         $this->createdAt = $createdAt;
         $this->text = $text;
         $this->author = $author;
@@ -250,5 +271,28 @@ class Post
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set private
+     *
+     * @param boolean $private
+     * @return Post
+     */
+    public function setPrivate($private)
+    {
+        $this->private = $private;
+
+        return $this;
+    }
+
+    /**
+     * Get private
+     *
+     * @return boolean 
+     */
+    public function getPrivate()
+    {
+        return $this->private;
     }
 }
