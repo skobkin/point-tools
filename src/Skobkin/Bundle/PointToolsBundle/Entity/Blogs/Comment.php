@@ -4,6 +4,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Comment
@@ -18,6 +19,8 @@ class Comment
     /**
      * @var integer
      *
+     * @Serializer\Groups("post_show")
+     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      */
@@ -26,12 +29,16 @@ class Comment
     /**
      * @var string
      *
+     * @Serializer\Groups("post_show")
+     *
      * @ORM\Column(name="text", type="text")
      */
     private $text;
 
     /**
      * @var \DateTime
+     *
+     * @Serializer\Groups("post_show")
      *
      * @ORM\Column(name="created_at", type="datetime")
      */
@@ -40,12 +47,16 @@ class Comment
     /**
      * @var boolean
      *
+     * @Serializer\Groups("post_show")
+     *
      * @ORM\Column(name="is_rec", type="boolean")
      */
     private $rec;
 
     /**
      * @var bool
+     *
+     * @Serializer\Groups("post_show")
      *
      * @ORM\Column(name="is_deleted", type="boolean")
      */
@@ -55,13 +66,15 @@ class Comment
      * @var Post
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post")
+     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post", inversedBy="comments")
      * @ORM\JoinColumn(name="post_id")
      */
     private $post;
 
     /**
      * @var User
+     *
+     * @Serializer\Groups("post_show")
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
      * @ORM\JoinColumn(name="author_id")
@@ -70,6 +83,8 @@ class Comment
 
     /**
      * @var Comment|null
+     *
+     * @Serializer\Groups("post_show")
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment")
      * @ORM\JoinColumn(name="to_comment_id", nullable=true)

@@ -6,6 +6,9 @@ imports:
 framework:
     #esi:             ~
     translator:      { fallbacks: ["%locale%"] }
+    serializer:
+        #enabled: true
+        enable_annotations: true
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"

@@ -5,6 +5,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Post
@@ -23,6 +24,8 @@ class Post
     /**
      * @var int
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\Column(name="id", type="string", length=16)
      * @ORM\Id
      */
@@ -31,6 +34,8 @@ class Post
     /**
      * @var string
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\Column(name="text", type="text")
      */
     private $text;
@@ -38,12 +43,16 @@ class Post
     /**
      * @var \DateTime
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
     /**
      * @var string
+     *
+     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\Column(name="type", type="string", length=6)
      */
@@ -66,6 +75,8 @@ class Post
     /**
      * @var User
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
      * @ORM\JoinColumn(name="author")
      */
@@ -73,6 +84,8 @@ class Post
 
     /**
      * @var Tag[]|ArrayCollection
+     *
+     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="posts.posts_tags",
@@ -84,6 +97,10 @@ class Post
 
     /**
      * @var Comment[]|ArrayCollection
+     *
+     * @Serializer\Groups({"post_show"})
+     *
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post")
      */
     private $comments;
 
