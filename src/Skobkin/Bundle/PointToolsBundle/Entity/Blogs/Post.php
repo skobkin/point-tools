@@ -5,19 +5,26 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Post
  *
  * @ORM\Table(name="posts.posts", schema="posts", indexes={
- *      @ORM\Index(name="idx_post_created_at", columns={"created_at"})
+ *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
+ *      @ORM\Index(name="idx_post_private", columns={"private"}),
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostRepository")
  */
 class Post
 {
+    const TYPE_POST = 'post';
+    const TYPE_FEED = 'feed';
+
     /**
-     * @var integer
+     * @var int
+     *
+     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\Column(name="id", type="string", length=16)
      * @ORM\Id
@@ -27,12 +34,16 @@ class Post
     /**
      * @var string
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\Column(name="text", type="text")
      */
     private $text;
 
     /**
      * @var \DateTime
+     *
+     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\Column(name="created_at", type="datetime")
      */
@@ -41,9 +52,18 @@ class Post
     /**
      * @var string
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\Column(name="type", type="string", length=6)
      */
     private $type;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="private", type="boolean", nullable=true)
+     */
+    private $private;
 
     /**
      * @var bool
@@ -55,6 +75,8 @@ class Post
     /**
      * @var User
      *
+     * @Serializer\Groups({"posts_list", "post_show"})
+     *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
      * @ORM\JoinColumn(name="author")
      */
@@ -62,6 +84,8 @@ class Post
 
     /**
      * @var Tag[]|ArrayCollection
+     *
+     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="posts.posts_tags",
@@ -74,15 +98,27 @@ class Post
     /**
      * @var Comment[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post", fetch="EXTRA_LAZY")
+     * @Serializer\Groups({"post_show"})
+     *
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post")
      */
     private $comments;
 
 
-    public function __construct($id, $type, $text, \DateTime $createdAt, User $author = null)
+    /**
+     * Post constructor.
+     * @param string $id
+     * @param string $type
+     * @param bool $private
+     * @param string $text
+     * @param \DateTime $createdAt
+     * @param User|null $author
+     */
+    public function __construct($id, $type, $private, $text, \DateTime $createdAt, User $author = null)
     {
         $this->id = $id;
         $this->type = $type;
+        $this->private = $private;
         $this->createdAt = $createdAt;
         $this->text = $text;
         $this->author = $author;
@@ -252,6 +288,29 @@ class Post
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set private
+     *
+     * @param boolean $private
+     * @return Post
+     */
+    public function setPrivate($private)
+    {
+        $this->private = $private;
+
+        return $this;
+    }
+
+    /**
+     * Get private
+     *
+     * @return boolean
+     */
+    public function getPrivate()
+    {
+        return $this->private;
     }
 
     /**

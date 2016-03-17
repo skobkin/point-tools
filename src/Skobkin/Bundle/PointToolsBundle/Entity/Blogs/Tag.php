@@ -3,6 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Tag
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="posts.tags", schema="posts", indexes={
  *      @ORM\Index(name="idx_tag_text", columns={"text"})
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\TagRepository")
  */
 class Tag
 {
@@ -25,6 +26,8 @@ class Tag
 
     /**
      * @var string
+     *
+     * @Serializer\Groups("post_show")
      *
      * @ORM\Column(name="text", type="text", unique=true)
      */
