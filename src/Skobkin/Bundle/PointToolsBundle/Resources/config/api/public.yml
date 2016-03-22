@@ -1,4 +1,4 @@
-last_user_events:
+api_public_last_user_events:
     path:     /user/id/{id}/events/subscribers
     defaults: { _controller: SkobkinPointToolsBundle:Api:lastUserSubscribersById, _format: json }
     requirements:

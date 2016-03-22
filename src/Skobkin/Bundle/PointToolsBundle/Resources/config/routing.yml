@@ -21,6 +21,10 @@ events_last:
     path:     /last
     defaults: { _controller: SkobkinPointToolsBundle:Events:last }
 
-skobkin_point_tools:
-    resource: "@SkobkinPointToolsBundle/Resources/config/api/routing.yml"
+api_public:
+    resource: "@SkobkinPointToolsBundle/Resources/config/api/public.yml"
     prefix:   /api/v1
+
+api_crawler:
+    resource: "@SkobkinPointToolsBundle/Resources/config/api/crawler.yml"
+    prefix:   /api/crawler
