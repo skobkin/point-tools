@@ -2,56 +2,68 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler;
 
-use Symfony\Component\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation as JMSS;
 
+/**
+ * @JMSS\ExclusionPolicy("none")
+ * @JMSS\AccessType("public_method")
+ */
 class Post
 {
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("id")
+     * @JMSS\Type("string")
      */
     private $id;
 
     /**
      * @var string[]
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("tags")
+     * @JMSS\Type("array<string>")
      */
     private $tags;
 
     /**
      * @var User
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("author")
+     * @JMSS\Type("Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User")
+     * @JMSS\MaxDepth(1)
      */
     private $author;
 
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("text")
+     * @JMSS\Type("string")
      */
     private $text;
 
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("created")
+     * @JMSS\Type("string")
      */
     private $created;
 
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("type")
+     * @JMSS\Type("string")
      */
     private $type;
 
     /**
      * @var bool
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("private")
+     * @JMSS\Type("boolean")
      */
     private $private;
 
@@ -86,7 +98,7 @@ class Post
      * @param string[] $tags
      * @return Post
      */
-    public function setTags(array $tags)
+    public function setTags($tags)
     {
         $this->tags = $tags;
         return $this;

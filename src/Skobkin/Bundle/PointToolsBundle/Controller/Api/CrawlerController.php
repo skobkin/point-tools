@@ -11,12 +11,12 @@ class CrawlerController extends AbstractApiController
         $token = $request->request->get('token');
         $json = $request->request->get('json');
 
-        $serializer = $this->get('serializer');
+        $serializer = $this->get('jms_serializer');
 
-        $data = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage', 'json', ['groups' => ['import_post_page']]);
+        $page = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage', 'json');
 
         return $this->createSuccessResponse([
-            'continue' => true,
+            'continue' => false,
         ]);
     }
 }

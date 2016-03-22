@@ -2,28 +2,35 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler;
 
-use Symfony\Component\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation as JMSS;
 
+/**
+ * @JMSS\ExclusionPolicy("none")
+ * @JMSS\AccessType("public_method")
+ */
 class User
 {
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("id")
+     * @JMSS\Type("integer")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("login")
+     * @JMSS\Type("string")
      */
     private $login;
 
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("name")
+     * @JMSS\Type("string")
      */
     private $name;
 

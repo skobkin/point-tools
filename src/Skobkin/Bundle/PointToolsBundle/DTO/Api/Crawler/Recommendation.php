@@ -2,28 +2,36 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler;
 
-use Symfony\Component\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation as JMSS;
 
+/**
+ * @JMSS\ExclusionPolicy("none")
+ * @JMSS\AccessType("public_method")
+ */
 class Recommendation
 {
     /**
      * @var string
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("text")
+     * @JMSS\Type("string")
      */
     private $text;
 
     /**
      * @var int|null
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("comment_id")
+     * @JMSS\Type("integer")
      */
-    private $comment_id;
+    private $commentId;
 
     /**
      * @var User
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("author")
+     * @JMSS\Type("Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User")
+     * @JMSS\MaxDepth(1)
      */
     private $author;
 
@@ -49,18 +57,18 @@ class Recommendation
     /**
      * @return int|null
      */
-    public function getComment_id()
+    public function getCommentId()
     {
-        return $this->comment_id;
+        return $this->commentId;
     }
 
     /**
-     * @param int|null $comment_id
+     * @param int|null $commentId
      * @return Recommendation
      */
-    public function setComment_id($comment_id)
+    public function setCommentId($commentId)
     {
-        $this->comment_id = $comment_id;
+        $this->commentId = $commentId;
         return $this;
     }
 

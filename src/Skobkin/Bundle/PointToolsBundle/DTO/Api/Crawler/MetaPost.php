@@ -2,21 +2,29 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler;
 
-use Symfony\Component\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation as JMSS;
 
+/**
+ * @JMSS\ExclusionPolicy("none")
+ * @JMSS\AccessType("public_method")
+ */
 class MetaPost
 {
     /**
      * @var Recommendation
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("rec")
+     * @JMSS\Type("Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\Recommendation")
+     * @JMSS\MaxDepth(2)
      */
     private $rec;
 
     /**
      * @var Post
      *
-     * @Serializer\Groups({"import_post_page"})
+     * @JMSS\SerializedName("post")
+     * @JMSS\Type("Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\Post")
+     * @JMSS\MaxDepth(2)
      */
     private $post;
 
