@@ -179,6 +179,14 @@ class Post
     /**
      * @return boolean
      */
+    public function getPrivate()
+    {
+        return $this->private;
+    }
+
+    /**
+     * @return boolean
+     */
     public function isPrivate()
     {
         return $this->private;
