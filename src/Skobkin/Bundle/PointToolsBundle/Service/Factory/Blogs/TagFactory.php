@@ -1,6 +1,6 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
+namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;

@@ -4,7 +4,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Guzzle\Service\Client;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\PostFactory;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 
 /**
  * Basic Point.im user API functions from /api/post

@@ -30,13 +30,13 @@ services:
         arguments: [ @doctrine.orm.entity_manager ]
 
     skobkin__point_tools.service_factory.comment_factory:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\CommentFactory
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
         arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory ]
 
     skobkin__point_tools.service_factory.tag_factory:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\TagFactory
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
         arguments: [ @doctrine.orm.entity_manager ]
 
     skobkin__point_tools.service_factory.post_factory:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\PostFactory
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
         arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory, @skobkin__point_tools.service_factory.comment_factory, @skobkin__point_tools.service_factory.tag_factory ]

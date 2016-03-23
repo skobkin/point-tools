@@ -1,6 +1,6 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
+namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
 
 class PostFactory
