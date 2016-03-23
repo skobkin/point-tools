@@ -5,7 +5,6 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Post
@@ -15,6 +14,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
  *      @ORM\Index(name="idx_post_private", columns={"private"}),
  * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Post
 {
@@ -24,8 +24,6 @@ class Post
     /**
      * @var int
      *
-     * @Serializer\Groups({"posts_list", "post_show"})
-     *
      * @ORM\Column(name="id", type="string", length=16)
      * @ORM\Id
      */
@@ -34,8 +32,6 @@ class Post
     /**
      * @var string
      *
-     * @Serializer\Groups({"posts_list", "post_show"})
-     *
      * @ORM\Column(name="text", type="text")
      */
     private $text;
@@ -43,16 +39,19 @@ class Post
     /**
      * @var \DateTime
      *
-     * @Serializer\Groups({"posts_list", "post_show"})
-     *
      * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
     /**
-     * @var string
+     * @var \DateTime
      *
-     * @Serializer\Groups({"posts_list", "post_show"})
+     * @ORM\Column(name="updated_at", type="datetime")
+     */
+    private $updatedAt;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="type", type="string", length=6)
      */
@@ -75,8 +74,6 @@ class Post
     /**
      * @var User
      *
-     * @Serializer\Groups({"posts_list", "post_show"})
-     *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
      * @ORM\JoinColumn(name="author")
      */
@@ -84,8 +81,6 @@ class Post
 
     /**
      * @var Tag[]|ArrayCollection
-     *
-     * @Serializer\Groups({"posts_list", "post_show"})
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="posts.posts_tags",
@@ -98,8 +93,6 @@ class Post
     /**
      * @var Comment[]|ArrayCollection
      *
-     * @Serializer\Groups({"post_show"})
-     *
      * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post")
      */
     private $comments;
@@ -108,23 +101,21 @@ class Post
     /**
      * Post constructor.
      * @param string $id
-     * @param string $type
-     * @param bool $private
-     * @param string $text
-     * @param \DateTime $createdAt
-     * @param User|null $author
      */
-    public function __construct($id, $type, $private, $text, \DateTime $createdAt, User $author = null)
+    public function __construct($id)
     {
         $this->id = $id;
-        $this->type = $type;
-        $this->private = $private;
-        $this->createdAt = $createdAt;
-        $this->text = $text;
-        $this->author = $author;
 
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime();
     }
 
     /**
@@ -181,6 +172,14 @@ class Post
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 
     /**

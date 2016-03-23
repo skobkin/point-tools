@@ -3,7 +3,6 @@
 namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * Tag
@@ -26,8 +25,6 @@ class Tag
 
     /**
      * @var string
-     *
-     * @Serializer\Groups("post_show")
      *
      * @ORM\Column(name="text", type="text", unique=true)
      */

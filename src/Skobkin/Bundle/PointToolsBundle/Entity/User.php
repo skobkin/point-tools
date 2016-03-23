@@ -44,6 +44,13 @@ class User
     private $createdAt;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     */
+    private $updatedAt;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="author")
@@ -96,6 +103,14 @@ class User
         if (!$this->createdAt) {
             $this->createdAt = new \DateTime();
         }
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime();
     }
 
     /**
@@ -315,5 +330,13 @@ class User
     {
         $this->createdAt = $createdAt;
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 }
