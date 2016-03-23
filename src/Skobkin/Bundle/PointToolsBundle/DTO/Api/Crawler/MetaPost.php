@@ -11,15 +11,6 @@ use JMS\Serializer\Annotation as JMSS;
 class MetaPost
 {
     /**
-     * @var Recommendation
-     *
-     * @JMSS\SerializedName("rec")
-     * @JMSS\Type("Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\Recommendation")
-     * @JMSS\MaxDepth(2)
-     */
-    private $rec;
-
-    /**
      * @var Post
      *
      * @JMSS\SerializedName("post")
@@ -28,24 +19,6 @@ class MetaPost
      */
     private $post;
 
-
-    /**
-     * @return Recommendation
-     */
-    public function getRec()
-    {
-        return $this->rec;
-    }
-
-    /**
-     * @param Recommendation $rec
-     * @return MetaPost
-     */
-    public function setRec(Recommendation $rec)
-    {
-        $this->rec = $rec;
-        return $this;
-    }
 
     /**
      * @return Post
