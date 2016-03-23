@@ -5,8 +5,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User as UserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
+use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\InvalidUserDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
 
@@ -40,9 +42,8 @@ class UserFactory
      */
     public function createFromArray(array $data)
     {
-        $this->validateData($data);
+        $this->validateArrayData($data);
 
-        // @todo Return ID existance check when @ap-Codkelden will fix this API behaviour
         /** @var User $user */
         if (null === ($user = $this->userRepository->find($data['id']))) {
             // Creating new user
@@ -66,14 +67,59 @@ class UserFactory
     }
 
     /**
+     * @param UserDTO $userData
+     *
+     * @return User
+     * @throws ApiException
+     * @throws InvalidUserDataException
+     */
+    public function createFromDTO(UserDTO $userData)
+    {
+        $this->validateDTOData($userData);
+
+        /** @var User $user */
+        if (null === ($user = $this->userRepository->find($userData->getId()))) {
+            // Creating new user
+            $user = new User($userData->getId());
+            $this->em->persist($user);
+        }
+
+        // Updating data
+        $user
+            ->setLogin($userData->getLogin())
+            ->setName($userData->getName())
+        ;
+
+        try {
+            $this->em->flush($user);
+        } catch (\Exception $e) {
+            throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
+        }
+
+        return $user;
+    }
+
+    /**
      * @param array $data
      *
      * @throws InvalidResponseException
      */
-    private function validateData(array $data)
+    private function validateArrayData(array $data)
     {
-        if (!(array_key_exists('id', $data) && array_key_exists('login', $data) && array_key_exists('name', $data))) {
+        if (!(array_key_exists('id', $data) || !!array_key_exists('login', $data) || !array_key_exists('name', $data))) {
             throw new InvalidResponseException('Invalid user data');
+        }
+    }
+
+    /**
+     * @param array $data
+     *
+     * @throws InvalidResponseException
+     */
+    private function validateDTOData(UserDTO $data)
+    {
+        if (!$data->getId() || !$data->getLogin()) {
+            throw new InvalidUserDataException('User have no id or login', $data);
         }
     }
 }
