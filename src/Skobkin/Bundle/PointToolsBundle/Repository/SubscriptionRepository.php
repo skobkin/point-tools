@@ -1,6 +1,6 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Entity;
+namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

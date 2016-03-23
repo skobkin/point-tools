@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
  * @ORM\Table(name="posts.tags", schema="posts", indexes={
  *      @ORM\Index(name="idx_tag_text", columns={"text"})
  * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\TagRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository")
  */
 class Tag
 {

@@ -1,8 +1,10 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Entity;
+namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO;
+use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class UserRepository extends EntityRepository
 {
@@ -71,7 +73,7 @@ class UserRepository extends EntityRepository
         $qb = $this->getEntityManager()->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
 
         return $qb
-            ->select(['COUNT(s.subscriber) as cnt', 'NEW SkobkinPointToolsBundle:TopUserDTO(a.login, COUNT(s.subscriber))'])
+            ->select(['COUNT(s.subscriber) as cnt', 'NEW Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO(a.login, COUNT(s.subscriber))'])
             ->innerJoin('s.author', 'a')
             ->orderBy('cnt', 'desc')
             ->groupBy('a.id')

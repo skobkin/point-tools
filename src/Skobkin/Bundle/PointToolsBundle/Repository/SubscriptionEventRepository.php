@@ -1,9 +1,11 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Entity;
+namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
+use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class SubscriptionEventRepository extends EntityRepository
 {

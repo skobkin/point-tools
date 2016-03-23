@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Annotation as Serializer;
  *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
  *      @ORM\Index(name="idx_post_private", columns={"private"}),
  * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository")
  */
 class Post
 {

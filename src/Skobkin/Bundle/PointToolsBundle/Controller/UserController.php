@@ -3,7 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Skobkin\Bundle\PointToolsBundle\Entity\TopUserDTO;
+use Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
