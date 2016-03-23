@@ -82,18 +82,14 @@ class Post
     /**
      * @var Tag[]|ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="posts.posts_tags",
-     *      joinColumns={@ORM\JoinColumn(name="post_id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="tag_id")}
-     * )
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag", mappedBy="post", fetch="EXTRA_LAZY", cascade={"persist"}, orphanRemoval=true)
      */
-    private $tags;
+    private $postTags;
 
     /**
      * @var Comment[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post")
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post", cascade={"persist"})
      */
     private $comments;
 
@@ -106,7 +102,7 @@ class Post
     {
         $this->id = $id;
 
-        $this->tags = new ArrayCollection();
+        $this->postTags = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
 
@@ -224,14 +220,14 @@ class Post
     }
 
     /**
-     * Add tags
+     * Add post tags
      *
-     * @param Tag $tag
+     * @param PostTag $tag
      * @return Post
      */
-    public function addTag(Tag $tag)
+    public function addPostTag(PostTag $tag)
     {
-        $this->tags[] = $tag;
+        $this->postTags[] = $tag;
 
         return $this;
     }
@@ -239,21 +235,21 @@ class Post
     /**
      * Remove tags
      *
-     * @param Tag $tag
+     * @param PostTag $tag
      */
-    public function removeTag(Tag $tag)
+    public function removePostTag(PostTag $tag)
     {
-        $this->tags->removeElement($tag);
+        $this->postTags->removeElement($tag);
     }
 
     /**
      * Get tags
      *
-     * @return Tag[]|ArrayCollection
+     * @return PostTag[]|ArrayCollection
      */
-    public function getTags()
+    public function getPostTags()
     {
-        return $this->tags;
+        return $this->postTags;
     }
 
     /**

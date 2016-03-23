@@ -2,6 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
@@ -16,10 +17,11 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 class Comment
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
+     * @ORM\GeneratedValue
      */
     private $id;
 
@@ -54,16 +56,22 @@ class Comment
     /**
      * @var Post
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post", inversedBy="comments")
      * @ORM\JoinColumn(name="post_id")
      */
     private $post;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="number", type="smallint")
+     */
+    private $number;
+
+    /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User", fetch="EAGER")
      * @ORM\JoinColumn(name="author_id")
      */
     private $author;
@@ -71,39 +79,22 @@ class Comment
     /**
      * @var Comment|null
      *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment")
-     * @ORM\JoinColumn(name="to_comment_id", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", nullable=true)
      */
-    private $toComment;
+    private $parent;
 
     /**
-     * @param int $id
-     * @param Post $post
-     * @param User $author
-     * @param Comment|null $toComment
-     * @param string $text
-     * @param \DateTime $createdAt
-     * @param bool $isRec
+     * @var Comment[]
+     * 
+     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", fetch="EXTRA_LAZY", mappedBy="parent")
      */
-    public function __construct($id, Post $post, User $author, Comment $toComment = null, $text, \DateTime $createdAt, $isRec)
-    {
-        if (!is_numeric($id)) {
-            throw new \InvalidArgumentException('$id must be an integer');
-        }
-        if (!is_bool($isRec)) {
-            throw new \InvalidArgumentException('$isRec must be boolean');
-        }
-        if (!is_string($text)) {
-            throw new \InvalidArgumentException('$text must be a string');
-        }
+    private $children;
 
-        $this->id = (int)$id;
-        $this->post = $post;
-        $this->author = $author;
-        $this->toComment = $toComment;
-        $this->text = $text;
-        $this->createdAt = $createdAt;
-        $this->rec = $isRec;
+
+    public function __construct()
+    {
+        $this->children = new ArrayCollection();
     }
 
     /**
@@ -215,6 +206,29 @@ class Comment
     }
 
     /**
+     * Set number
+     *
+     * @param int $number
+     * @return Comment
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    /**
+     * Get number
+     *
+     * @return int
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
      * @return User
      */
     public function getAuthor()
@@ -236,18 +250,18 @@ class Comment
     /**
      * @return Comment
      */
-    public function getToComment()
+    public function getParent()
     {
-        return $this->toComment;
+        return $this->parent;
     }
 
     /**
-     * @param Comment $toComment
+     * @param Comment $parent
      * @return Comment
      */
-    public function setToComment($toComment)
+    public function setParent($parent)
     {
-        $this->toComment = $toComment;
+        $this->parent = $parent;
 
         return $this;
     }
@@ -283,5 +297,51 @@ class Comment
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Comment
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Add children
+     *
+     * @param Comment $children
+     * @return Comment
+     */
+    public function addChild(Comment $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * Remove children
+     *
+     * @param Comment $children
+     */
+    public function removeChild(Comment $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Get children
+     *
+     * @return ArrayCollection
+     */
+    public function getChildren()
+    {
+        return $this->children;
     }
 }
