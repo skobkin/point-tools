@@ -46,7 +46,7 @@ class Post
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="updated_at", type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
 
@@ -55,7 +55,7 @@ class Post
      *
      * @ORM\Column(name="type", type="string", length=6)
      */
-    private $type;
+    private $type = self::TYPE_POST;
 
     /**
      * @var bool
@@ -227,6 +227,7 @@ class Post
      */
     public function addPostTag(PostTag $tag)
     {
+        $tag->setPost($this);
         $this->postTags[] = $tag;
 
         return $this;

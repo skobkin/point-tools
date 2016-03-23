@@ -35,8 +35,8 @@ services:
 
     skobkin__point_tools.service_factory.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
-        arguments: [ @doctrine.orm.entity_manager ]
+        arguments: [ @logger, @doctrine.orm.entity_manager ]
 
     skobkin__point_tools.service_factory.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
-        arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory, @skobkin__point_tools.service_factory.comment_factory, @skobkin__point_tools.service_factory.tag_factory ]
+        arguments: [ @logger, @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory, @skobkin__point_tools.service_factory.comment_factory, @skobkin__point_tools.service_factory.tag_factory ]

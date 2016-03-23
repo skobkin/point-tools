@@ -5,8 +5,8 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
 
@@ -18,6 +18,11 @@ class TagFactory
     private $em;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var EntityRepository
      */
     private $tagRepository;
@@ -25,60 +30,54 @@ class TagFactory
     /**
      * @param EntityManager $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
     {
+        $this->log = $log;
         $this->em = $em;
         $this->tagRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Tag');
     }
 
     /**
-     * @param $data
-     *
-     * @return Tag
-     * @throws ApiException
-     * @throws InvalidResponseException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function createFromArray($data)
-    {
-        $this->validateData($data);
-
-        $qb = $this->tagRepository->createQueryBuilder('t');
-        $qb
-            ->select()
-            ->where($qb->expr()->eq('lower(t.text)', 'lower(:text)'))
-            ->setParameter('text', $data)
-        ;
-
-        if (null === ($tag = $qb->getQuery()->getOneOrNullResult())) {
-            $tag = new Tag($data);
-            $this->em->persist($tag);
-        }
-
-        try {
-            $this->em->flush($tag);
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $tag->getId(), $tag->getText(), $e->getMessage()), 0, $e);
-        }
-
-        return $tag;
-    }
-
-    /**
-     * @param array $data
+     * @param string[] $tagStrings
      *
      * @return Tag[]
-     * @throws ApiException
      */
-    public function createFromListArray(array $data)
+    public function createFromStringsArray(array $tagStrings)
     {
         $tags = [];
 
-        foreach ($data as $text) {
-            $tags[] = $this->createFromArray($text);
+        foreach ($tagStrings as $string) {
+            try {
+                $tag = $this->createFromString($string);
+                $tags[] = $tag;
+            } catch (\Exception $e) {
+                $this->log->error('Error while creating tag from DTO', ['tag' => $string, 'message' => $e->getMessage()]);
+                continue;
+            }
         }
 
         return $tags;
+    }
+
+    /**
+     * @param $text
+     *
+     * @return Tag
+     * @throws InvalidResponseException
+     */
+    public function createFromString($text)
+    {
+        $this->validateData($text);
+
+        if (null === ($tag = $this->tagRepository->findOneByLowerText($text))) {
+            // Creating new tag
+            $tag = new Tag($text);
+            $this->em->persist($tag);
+        }
+
+        $this->em->flush($tag);
+
+        return $tag;
     }
 
     /**
@@ -89,6 +88,7 @@ class TagFactory
     private function validateData($data)
     {
         if (!is_string($data)) {
+            // @todo Change exception
             throw new InvalidResponseException('Tag data must be a string');
         }
     }
