@@ -77,6 +77,17 @@ class Comment
     private $author;
 
     /**
+     * @var File[]|ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
+     * @ORM\JoinTable(name="posts.comments_files", schema="posts",
+     *     joinColumns={@ORM\JoinColumn(name="comment_id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
+     * )
+     */
+    private $files;
+
+    /**
      * @var Comment|null
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", inversedBy="children")
@@ -94,6 +105,7 @@ class Comment
 
     public function __construct()
     {
+        $this->files = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
 
@@ -245,6 +257,39 @@ class Comment
         $this->author = $author;
 
         return $this;
+    }
+
+    /**
+     * Add files
+     *
+     * @param File $files
+     * @return Comment
+     */
+    public function addFile(File $files)
+    {
+        $this->files[] = $files;
+
+        return $this;
+    }
+
+    /**
+     * Remove files
+     *
+     * @param File $files
+     */
+    public function removeFile(File $files)
+    {
+        $this->files->removeElement($files);
+    }
+
+    /**
+     * Get files
+     *
+     * @return File[]|ArrayCollection
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**

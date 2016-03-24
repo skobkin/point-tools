@@ -27,6 +27,14 @@ class Post
     private $tags;
 
     /**
+     * @var string[]
+     *
+     * @JMSS\SerializedName("files")
+     * @JMSS\Type("array<string>")
+     */
+    private $files;
+
+    /**
      * @var User
      *
      * @JMSS\SerializedName("author")
@@ -101,6 +109,26 @@ class Post
     public function setTags($tags)
     {
         $this->tags = $tags;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param string[] $files
+     *
+     * @return Post
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
         return $this;
     }
 

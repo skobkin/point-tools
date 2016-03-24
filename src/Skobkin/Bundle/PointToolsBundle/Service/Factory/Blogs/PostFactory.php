@@ -40,6 +40,11 @@ class PostFactory
     private $userFactory;
 
     /**
+     * @var FileFactory
+     */
+    private $fileFactory;
+
+    /**
      * @var CommentFactory
      */
     private $commentFactory;
@@ -52,10 +57,11 @@ class PostFactory
     /**
      * @param EntityManager $em
      */
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em, UserFactory $userFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
+    public function __construct(LoggerInterface $log, EntityManagerInterface $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
     {
         $this->log = $log;
         $this->userFactory = $userFactory;
+        $this->fileFactory = $fileFactory;
         $this->commentFactory = $commentFactory;
         $this->tagFactory = $tagFactory;
         $this->em = $em;
@@ -140,6 +146,7 @@ class PostFactory
         ;
 
         $this->updatePostTags($post, $postData->getPost()->getTags());
+        $this->updatePostFiles($post, $postData->getPost()->getFiles());
 
         $this->em->flush($post);
 
@@ -186,6 +193,29 @@ class PostFactory
         foreach ($post->getPostTags() as $postTag) {
             if (!array_key_exists(mb_strtolower($postTag->getOriginalTagText()), $newTagsHash)) {
                 $post->removePostTag($postTag);
+            }
+        }
+    }
+
+    /**
+     * @param Post $post
+     * @param array $urls
+     */
+    private function updatePostFiles(Post $post, array $urls)
+    {
+        $files = $this->fileFactory->createFromUrlsArray($urls);
+
+        // Adding missing files
+        foreach ($files as $file) {
+            if (!$post->getFiles()->contains($file)) {
+                $post->addFile($file);
+            }
+        }
+
+        // Removing deleted files
+        foreach ($post->getFiles() as $file) {
+            if (!in_array($file, $files, true)) {
+                $post->removeFile($file);
             }
         }
     }

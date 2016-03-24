@@ -80,6 +80,17 @@ class Post
     private $author;
 
     /**
+     * @var File[]|ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
+     * @ORM\JoinTable(name="posts.posts_files", schema="posts",
+     *     joinColumns={@ORM\JoinColumn(name="post_id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
+     * )
+     */
+    private $files;
+
+    /**
      * @var Tag[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag", mappedBy="post", fetch="EXTRA_LAZY", cascade={"persist"}, orphanRemoval=true)
@@ -102,6 +113,7 @@ class Post
     {
         $this->id = $id;
 
+        $this->files = new ArrayCollection();
         $this->postTags = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
@@ -217,6 +229,39 @@ class Post
     {
         $this->author = $author;
         return $this;
+    }
+
+    /**
+     * Add files
+     *
+     * @param File $files
+     * @return Post
+     */
+    public function addFile(File $files)
+    {
+        $this->files[] = $files;
+
+        return $this;
+    }
+
+    /**
+     * Remove files
+     *
+     * @param File $files
+     */
+    public function removeFile(File $files)
+    {
+        $this->files->removeElement($files);
+    }
+
+    /**
+     * Get files
+     *
+     * @return File[]|ArrayCollection
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**
