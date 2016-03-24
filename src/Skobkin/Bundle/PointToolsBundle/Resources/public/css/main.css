@@ -103,3 +103,14 @@ ul.users.mosaic li:nth-child(odd) {
     content: " *";
     color: red;
 }
+
+a.tag {
+    position: relative;
+    display: inline-block;
+    margin: .8em .8em 0 0;
+    padding: .25em .5em;
+    background: #ebeef2;
+    /* font-size: .85em; */
+    color: #35587c;
+    text-decoration: none;
+}

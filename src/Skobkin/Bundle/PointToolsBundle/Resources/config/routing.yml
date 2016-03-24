@@ -3,7 +3,7 @@ index:
     defaults: { _controller: SkobkinPointToolsBundle:Main:index }
 
 user_search:
-    path:     /search
+    path:     /user/search
     defaults: { _controller: SkobkinPointToolsBundle:User:searchUser }
     methods: [POST]
 
@@ -14,12 +14,18 @@ user_show:
         login: "[\w-]+"
 
 users_top:
-    path:     /top
+    path:     /users/top
     defaults: { _controller: SkobkinPointToolsBundle:User:top }
 
 events_last:
-    path:     /last
+    path:     /events/last
     defaults: { _controller: SkobkinPointToolsBundle:Events:last }
+
+post_show:
+    path:     /{id}
+    defaults: { _controller: SkobkinPointToolsBundle:Post:show }
+    requirements:
+        id: "[a-z]+"
 
 api_public:
     resource: "@SkobkinPointToolsBundle/Resources/config/api/public.yml"

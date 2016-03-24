@@ -1,0 +1,40 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}SkobkinPointToolsBundle:Post:show{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-1">
+                <img src="{{ avatar_url }}" alt="Avatar">
+            </div>
+            <div class="col-xs-11">
+                <a href="{{ path('user_show', {'login': post.author.login}) }}">@{{ post.author.login }}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                {{ post.text }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                {% for file in post.files %}
+                    <div class="post-attachment">
+                        <img src="{{ file.remoteUrl }}" />
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                {% for pt in post.postTags %}
+                    <a href="#" class="tag">{{ pt.text }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12"><a href="https://point.im/{{ post.id }}">#{{ post.id }}</a></div>
+        </div>
+    </div>
+{% endblock %}
