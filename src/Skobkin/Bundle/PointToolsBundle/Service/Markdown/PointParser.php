@@ -201,6 +201,10 @@ class PointParser extends MarkdownParser
         $href = $this->router->generate('post_show', ['id' => $postId]);
         $tail = htmlspecialchars($matches[3]);
 
-        return $this->hashPart('<a href="'.$href.'" class="post">#'.$postId.'</a>'.$tail);
+        return $this->hashPart(
+            '<a href="'.$href.'" class="post">#'.$postId.'</a>'
+            //.'<a href="https://point.im/'.$postId.'"><span class="glyphicon glyphicon-link"></span></a>'
+            .$tail
+        );
     }
 }
