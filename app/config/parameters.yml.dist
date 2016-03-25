@@ -22,3 +22,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # Token for Go crawler https://bitbucket.org/skobkin/point-tools-crawler
+    crawler_token:     test_token

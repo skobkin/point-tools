@@ -4,12 +4,19 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CrawlerController extends AbstractApiController
 {
     public function receiveAllPageAction(Request $request)
     {
-        $token = $request->request->get('token');
+        $remoteToken = $request->request->get('token');
+        $localToken = $this->getParameter('crawler_token');
+
+        if (!$localToken || ($localToken !== $remoteToken)) {
+            return $this->createErrorResponse('Token error. Please check it in crawler and API parameters.', Response::HTTP_FORBIDDEN);
+        }
+
         $json = $request->request->get('json');
 
         $serializer = $this->get('jms_serializer');
