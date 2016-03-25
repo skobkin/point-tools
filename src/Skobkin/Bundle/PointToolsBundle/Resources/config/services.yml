@@ -51,3 +51,10 @@ services:
             - @skobkin__point_tools.service_factory.comment_factory
             - @skobkin__point_tools.service_factory.tag_factory
 
+    markdown.parser.point:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
+        arguments:
+            - []
+            - @router
+        tags:
+            - { name: markdown.parser }
