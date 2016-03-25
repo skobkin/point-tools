@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Misd\GuzzleBundle\MisdGuzzleBundle(),
             new Ob\HighchartsBundle\ObHighchartsBundle(),
+            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Skobkin\Bundle\PointToolsBundle\SkobkinPointToolsBundle(),
         );
 
