@@ -92,7 +92,13 @@ class PostFactory
                 $post = $this->createFromDTO($postData);
                 $posts[] = $post;
             } catch (\Exception $e) {
-                $this->log->error('Error while processing post DTO', ['post_id' => $postData->getPost()->getId()]);
+                $this->log->error('Error while processing post DTO', [
+                    'post_id' => $postData->getPost()->getId(),
+                    'exception' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
             }
         }
 
@@ -127,7 +133,12 @@ class PostFactory
             throw new InvalidPostDataException('Post author does not contain id', $postData);
         }
 
-        $user = $this->userFactory->createFromDTO($postData->getPost()->getAuthor());
+        try {
+            $user = $this->userFactory->createFromDTO($postData->getPost()->getAuthor());
+        } catch (\Exception $e) {
+            $this->log->error('Error while creating user from DTO');
+            throw $e;
+        }
 
         if (null === ($post = $this->postRepository->find($postData->getPost()->getId()))) {
             // Creating new post
@@ -145,10 +156,26 @@ class PostFactory
             ->setPrivate($postData->getPost()->getPrivate())
         ;
 
-        $this->updatePostTags($post, $postData->getPost()->getTags());
-        $this->updatePostFiles($post, $postData->getPost()->getFiles());
+        try {
+            $this->updatePostTags($post, $postData->getPost()->getTags() ?: []);
+        } catch (\Exception $e) {
+            $this->log->error('Error while updating post tags');
+            throw $e;
+        }
 
-        $this->em->flush($post);
+        try {
+            $this->updatePostFiles($post, $postData->getPost()->getFiles() ?: []);
+        } catch (\Exception $e) {
+            $this->log->error('Error while updating post files');
+            throw $e;
+        }
+
+        try {
+            $this->em->flush($post);
+        } catch (\Exception $e) {
+            $this->log->error('Error while flushing post entity');
+            throw $e;
+        }
 
         return $post;
     }
