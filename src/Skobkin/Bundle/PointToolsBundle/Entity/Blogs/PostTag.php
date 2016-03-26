@@ -40,7 +40,7 @@ class PostTag
     /**
      * @var string
      *
-     * @ORM\Column(name="text", type="string", length=128)
+     * @ORM\Column(name="text", type="text")
      */
     private $text;
 

@@ -24,7 +24,7 @@ class File
     /**
      * @var string
      *
-     * @ORM\Column(name="remoteUrl", type="string", length=128, unique=true)
+     * @ORM\Column(name="remote_url", type="text", unique=true)
      */
     private $remoteUrl;
 

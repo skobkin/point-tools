@@ -24,7 +24,7 @@ class Post
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="string", length=16)
+     * @ORM\Column(name="id", type="text")
      * @ORM\Id
      */
     private $id;
