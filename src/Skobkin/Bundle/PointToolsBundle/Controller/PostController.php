@@ -20,8 +20,7 @@ class PostController extends Controller
         $userApi = $this->container->get('skobkin_point_tools.api_user');
 
         return $this->render('SkobkinPointToolsBundle:Post:show.html.twig', [
-            'post' => $post,
-            'avatar_url' => $userApi->getAvatarUrl($post->getAuthor(), UserApi::AVATAR_SIZE_LARGE),
+            'post' => $this->getDoctrine()->getRepository('SkobkinPointToolsBundle:Blogs\Post')->getPostWithComments($post->getId()),
         ]);
     }
 
