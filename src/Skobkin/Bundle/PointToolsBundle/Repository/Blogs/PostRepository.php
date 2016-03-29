@@ -16,6 +16,7 @@ class PostRepository extends EntityRepository
             ->leftJoin('p.comments', 'c')
             ->leftJoin('c.author', 'a')
             ->where($qb->expr()->eq('p.id', ':post_id'))
+            ->orderBy('c.number', 'asc')
             ->setParameter('post_id', $postId)
             ->getQuery()->getOneOrNullResult()
         ;
