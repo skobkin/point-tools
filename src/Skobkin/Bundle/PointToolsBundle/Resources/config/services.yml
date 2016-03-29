@@ -51,6 +51,7 @@ services:
             - @skobkin__point_tools.service_factory.comment_factory
             - @skobkin__point_tools.service_factory.tag_factory
 
+    # Custom Markdown parser
     markdown.parser.point:
         class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
         arguments:
@@ -58,3 +59,9 @@ services:
             - @router
         tags:
             - { name: markdown.parser }
+
+    # Event listener
+    point_tools.event_listener.user_rename_subscriber:
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UserRenameSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
