@@ -27,9 +27,13 @@ Subscriptions log: Лог подписок
 User: Пользователь
 Action: Действие
 Date: Дата
+Rename log: Лог переименований
+Old login: Старый логин
+New login: Новый логин
 
 No subscribers data found: Информация о подписчиках отсутствует
-No log data found: Лог отсутствует
+No rename log data found: Лог переименований отсутствует
+No subscribers log data found: Лог подписчиков отсутствует
 
 # Топ пользователей
 Top users: Популярные пользователи

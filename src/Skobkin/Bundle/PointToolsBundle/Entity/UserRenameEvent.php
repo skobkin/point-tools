@@ -47,19 +47,11 @@ class UserRenameEvent
      */
     private $oldLogin;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="new_login", type="text")
-     */
-    private $newLogin;
 
-
-    public function __construct(User $user, $old, $new)
+    public function __construct(User $user, $old)
     {
         $this->user = $user;
         $this->oldLogin = $old;
-        $this->newLogin = $new;
     }
 
     /**
@@ -124,29 +116,6 @@ class UserRenameEvent
     public function getOldLogin()
     {
         return $this->oldLogin;
-    }
-
-    /**
-     * Set newLogin
-     *
-     * @param string $newLogin
-     * @return UserRenameEvent
-     */
-    public function setNewLogin($newLogin)
-    {
-        $this->newLogin = $newLogin;
-
-        return $this;
-    }
-
-    /**
-     * Get newLogin
-     *
-     * @return string 
-     */
-    public function getNewLogin()
-    {
-        return $this->newLogin;
     }
 
     /**

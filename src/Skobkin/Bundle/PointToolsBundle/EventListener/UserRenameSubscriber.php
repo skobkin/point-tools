@@ -36,10 +36,7 @@ class UserRenameSubscriber implements EventSubscriber
         }
 
         if ($event->hasChangedField('login')) {
-            $old = $event->getOldValue('login');
-            $new = $event->getNewValue('login');
-
-            $this->items[] = new UserRenameEvent($entity, $old, $new);
+            $this->items[] = new UserRenameEvent($entity, $event->getOldValue('login'));
         }
     }
 
