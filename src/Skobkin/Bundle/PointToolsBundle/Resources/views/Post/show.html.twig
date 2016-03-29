@@ -16,7 +16,7 @@
     <div class="container post-block">
         <div class="row">
             <div class="col-xs-1">
-                <img src="{{ avatar_url }}" alt="Avatar">
+                <img src="{{ point_avatar_large(post.author.login) }}" alt="Avatar">
             </div>
             <div class="col-xs-11">
                 <div><a href="{{ path('user_show', {'login': post.author.login}) }}">@{{ post.author.login }}</a></div>
@@ -33,7 +33,7 @@
                 {{ post.text|markdown('markdown.parser.point') }}
             </div>
         </div>
-        <div class="row">
+        <div class="row post-files">
             <div class="col-xs-2">
                 {% for file in post.files %}
                     <div class="post-attachment">
@@ -45,5 +45,19 @@
         <div class="row">
             <div class="col-xs-12"><a href="https://point.im/{{ post.id }}" class="post">#{{ post.id }}</a></div>
         </div>
+
+        {% if post.comments|length > 0 %}
+        <div class="row comments">
+            {#
+            {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
+                'comments': post.firstLevelComments
+            } only %}
+            #}
+
+            {% include '@SkobkinPointTools/Post/comments_list.html.twig' with {
+                'comments': post.comments
+            } %}
+        </div>
+        {% endif %}
     </div>
 {% endblock %}

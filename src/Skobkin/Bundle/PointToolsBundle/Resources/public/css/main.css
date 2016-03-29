@@ -134,3 +134,20 @@ a.tag {
 a.post {
     font-weight: bold;
 }
+
+/* Comments */
+.comment {
+    margin-top: 20px;
+}
+
+.comment .comment-text {
+    margin-top: 5px;
+}
+
+.comment .comment-footer .comment-number {
+    margin-top: -8px;
+}
+
+.comments .children .comment {
+    margin-left: 20px;
+}

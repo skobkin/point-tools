@@ -1,0 +1,48 @@
+<a name="{{ comment.number }}"></a>
+<div class="comment">
+    <div class="container content">
+        <div class="row">
+            <div class="col-xs-1">
+                <div class="userpic">
+                    <img src="{{ point_avatar_medium(comment.author.login) }}" alt="{{ comment.author.login }} avatar">
+                </div>
+                <div class="post-date">
+                    {{ comment.createdAt|date('j M Y G:i') }}
+                </div>
+            </div>
+            <div class="col-xs-11">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <a href="{{ path('user_show', {'login': comment.author.login}) }}">@{{ comment.author.login }}</a>
+                        </div>
+                    </div>
+                    <div class="row comment-text">
+                        <div class="col-xs-12">
+                            {{ comment.text|markdown('markdown.parser.point') }}
+                        </div>
+                    </div>
+                    <div class="row comment-footer">
+                        <div class="col-xs-12 comment-number">
+                            <a href="#{{ comment.number }}" class="post">#{{ comment.post.id }}/{{ comment.number }}</a>
+                            {% if comment.parent is not null %}
+                                {{ 'in response to'|trans }} <a href="#{{ comment.parent.number }}" class="post">/{{ comment.parent.number }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {% block comment_children %}
+        {% if comment.children|length > 0 %}
+            <div class="children">
+                {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
+                'comments': comment.children
+                } only %}
+            </div>
+        {% endif %}
+    {% endblock %}
+</div>
