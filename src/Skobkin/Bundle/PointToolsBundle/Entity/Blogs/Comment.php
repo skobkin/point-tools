@@ -345,19 +345,6 @@ class Comment
     }
 
     /**
-     * Set id
-     *
-     * @param integer $id
-     * @return Comment
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Add children
      *
      * @param Comment $children
