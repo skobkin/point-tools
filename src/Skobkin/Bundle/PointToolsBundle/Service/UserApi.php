@@ -294,7 +294,7 @@ class UserApi extends AbstractApi
     }
 
     /**
-     * Creates avatar with specified size URL for user
+     * Creates URL of avatar with specified size by User object
      *
      * @param User $user
      * @param int $size
@@ -302,10 +302,23 @@ class UserApi extends AbstractApi
      */
     public function getAvatarUrl(User $user, $size)
     {
+        return $this->getAvatarUrlByLogin($user->getLogin(), $size);
+    }
+
+    /**
+     * Creates URL of avatar with specified size by login string
+     *
+     * @param $login
+     * @param $size
+     *
+     * @return string
+     */
+    public function getAvatarUrlByLogin($login, $size)
+    {
         if (!in_array($size, [self::AVATAR_SIZE_SMALL, self::AVATAR_SIZE_MEDIUM, self::AVATAR_SIZE_LARGE], true)) {
             throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See UserApi class AVATAR_SIZE_* constants.');
         }
 
-        return $this->avatarsBaseUrl.urlencode($user->getLogin()).'/'.$size;
+        return $this->avatarsBaseUrl.urlencode($login).'/'.$size;
     }
 }

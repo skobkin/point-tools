@@ -65,3 +65,11 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserRenameSubscriber
         tags:
             - { name: doctrine.event_subscriber, connection: default }
+
+    # Twig extensions
+    point_tools.twig.point_avatar_extension:
+        class: Skobkin\Bundle\PointToolsBundle\Twig\PointAvatarExtension
+        public: false
+        arguments: ['@skobkin_point_tools.api_user']
+        tags:
+            - { name: twig.extension }
