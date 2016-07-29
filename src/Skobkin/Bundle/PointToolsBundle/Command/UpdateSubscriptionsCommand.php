@@ -19,6 +19,12 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             ->setName('point:update:subscriptions')
             ->setDescription('Update subscriptions of users subscribed to service')
             ->addOption(
+                'all-users',
+                null,
+                InputOption::VALUE_NONE,
+                'If set, command will check subscribers of all service users instead of service subscribers only'
+            )
+            ->addOption(
                 'check-only',
                 null,
                 InputOption::VALUE_NONE,
@@ -36,6 +42,8 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $log = $this->getContainer()->get('logger');
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
 
         $log->info('UpdateSubscriptionsCommand started.');
 
@@ -51,59 +59,63 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             return false;
         }
 
-        $serviceUser = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('SkobkinPointToolsBundle:User')->find($serviceUserId);
+        if ($input->getOption('all-users')) {
+            $usersForUpdate = $userRepository->findAll();
+        } else {
+            $serviceUser = $userRepository->find($serviceUserId);
 
-        if (!$serviceUser) {
-            $log->info('Service user not found');
-            // @todo Retrieving user
+            if (!$serviceUser) {
+                $log->info('Service user not found');
+                // @todo Retrieving user
 
-            return false;
-        }
-
-        if ($output->isVerbose()) {
-            $output->writeln('Getting service subscribers');
-        }
-
-        try {
-            $serviceSubscribers = $api->getUserSubscribersById($serviceUserId);
-        } catch (\Exception $e) {
-            $output->writeln('Error while getting service subscribers');
-            $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
-
-            $serviceSubscribers = [];
-
-            foreach ($serviceUser->getSubscribers() as $subscription) {
-                $serviceSubscribers[] = $subscription->getSubscriber();
+                return false;
             }
 
-            $output->writeln('Fallback to local list');
-            $log->error('Fallback to local list');
+            if ($output->isVerbose()) {
+                $output->writeln('Getting service subscribers');
+            }
 
-            if (!count($serviceSubscribers)) {
-                $log->info('No local subscribers. Finishing.');
+            try {
+                $usersForUpdate = $api->getUserSubscribersById($serviceUserId);
+            } catch (\Exception $e) {
+                $output->writeln('Error while getting service subscribers');
+                $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+
+                $usersForUpdate = [];
+
+                foreach ($serviceUser->getSubscribers() as $subscription) {
+                    $usersForUpdate[] = $subscription->getSubscriber();
+                }
+
+                $output->writeln('Fallback to local list');
+                $log->error('Fallback to local list');
+
+                if (!count($usersForUpdate)) {
+                    $log->info('No local subscribers. Finishing.');
+                    return false;
+                }
+            }
+
+            if ($output->isVerbose()) {
+                $output->writeln('Updating service subscribers');
+            }
+
+            // Updating service subscribers
+            try {
+                $subscriptionsManager->updateUserSubscribers($serviceUser, $usersForUpdate);
+            } catch (\Exception $e) {
+                $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+
                 return false;
             }
         }
 
         if ($output->isVerbose()) {
-            $output->writeln('Updating service subscribers');
+            $output->writeln('Processing users subscribers');
         }
 
-        // Updating service subscribers
-        try {
-            $subscriptionsManager->updateUserSubscribers($serviceUser, $serviceSubscribers);
-        } catch (\Exception $e) {
-            $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
-
-            return false;
-        }
-
-        if ($output->isVerbose()) {
-            $output->writeln('Processing service subscribers');
-        }
-
-        // Updating service users subscribers
-        foreach ($serviceSubscribers as $user) {
+        // Updating users subscribers
+        foreach ($usersForUpdate as $user) {
             $output->writeln('  Processing @' . $user->getLogin());
             $log->info('Processing @' . $user->getLogin());
 
