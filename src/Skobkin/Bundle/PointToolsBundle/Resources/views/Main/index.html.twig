@@ -1,18 +1,52 @@
 {% extends "::base.html.twig" %}
 
+{% block head_js %}
+    {{ parent() }}
+    <script src="{{ asset('js/bootstrap3-typeahead.min.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="well well-lg">
-        {# @todo rewrite to Symfony forms #}
-        <form class="form-inline" method="post" action="{{ path('user_search') }}">
+        {{ form_start(form, {'attr': {'class': 'form-inline'} }) }}
             <div class="form-group">
-                <label class="sr-only" for="index-input-username">{{ 'Username'|trans }}</label>
-                <div class="input-group">
-                    <div class="input-group-addon">@</div>
-                    <input name="login" type="text" class="form-control" id="index-input-username" placeholder="username">
-                </div>
+                {{ form_errors(form.login) }}
+                {{ form_widget(form.login, {'attr': {'autocomplete': 'off'}}) }}
+
+                <script type="text/javascript">
+                    $(function() {
+                        $field = $('#{{ form.login.vars.id }}');
+
+                        $field.typeahead({
+                            minLength: 2,
+                            delay: 500,
+                            autoSelect: true,
+                            source: function (query, processCallback) {
+                                $.get('{{ path('user_search_ajax', {'login': ''}) }}' + query, function (data) {
+                                    processCallback(data);
+                                });
+                            },
+                            afterSelect: function () {
+                                $field.parents('form').first().submit();
+                            },
+                            displayText: function (item) {
+                                // Crutches to place only login into the field after selecting the item
+                                if (typeof item === 'object') {
+                                    return item.login+(item.name ? ' ('+item.name+')' : '');
+                                } else if (typeof item === 'string') {
+                                    return item;
+                                }
+                            },
+                            updater: function (item) {
+                                // Crutches to place only login into the field after selecting the item
+                                return item.login;
+                            }
+                        });
+                    });
+                </script>
+
+                <input type="submit" value="{{ 'Search'|trans }}" class="btn btn-default" />
             </div>
-            <button type="submit" class="btn btn-primary">{{ 'Search'|trans }}</button>
-        </form>
+        {{ form_end(form) }}
     </div>
 
     <div class="container service-stats">

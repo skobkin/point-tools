@@ -12,7 +12,7 @@ class UserRepository extends EntityRepository
      * Case-insensitive user search
      *
      * @param string $login
-     * @return User[]
+     * @return User|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findUserByLogin($login)
@@ -25,6 +25,31 @@ class UserRepository extends EntityRepository
             ->setMaxResults(1)
             ->setParameter('login', $login)
             ->getQuery()->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * Case insensitive user LIKE %login% search
+     *
+     * @param string $login
+     *
+     * @return User[]
+     */
+    public function findUsersLikeLogin($login)
+    {
+        if (empty($login)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('u');
+
+        return $qb
+            ->where('u.login LIKE :login')
+            ->orderBy('u.login', 'ASC')
+            ->setMaxResults(10)
+            ->setParameter('login', '%'.strtolower($login).'%')
+            ->getQuery()
+            ->getResult()
         ;
     }
 

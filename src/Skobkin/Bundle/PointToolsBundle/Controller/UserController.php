@@ -51,19 +51,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
-     */
-    public function searchUserAction(Request $request)
-    {
-        $login = $request->request->get('login');
-
-        if (!$login) {
-            return $this->redirectToRoute('index');
-        }
-        return $this->redirectToRoute('user_show', ['login' => $login]);
-    }
-
-    /**
      * @param TopUserDTO[] $topUsers
      * @return Highchart
      */
