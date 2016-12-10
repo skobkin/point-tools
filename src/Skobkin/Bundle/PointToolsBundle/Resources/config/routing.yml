@@ -2,10 +2,12 @@ index:
     path:     /
     defaults: { _controller: SkobkinPointToolsBundle:Main:index }
 
-user_search:
-    path:     /user/search
-    defaults: { _controller: SkobkinPointToolsBundle:User:searchUser }
-    methods: [POST]
+user_search_ajax:
+    path:     /ajax/users/search/{login}
+    defaults: { _controller: SkobkinPointToolsBundle:Main:searchUserAjax, _format: json }
+    requirements:
+        login: "[\w-]*"
+        _format: json
 
 user_show:
     path:     /user/{login}
