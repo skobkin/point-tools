@@ -4,6 +4,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
@@ -27,16 +28,14 @@ class SubscriptionEventRepository extends EntityRepository
     }
 
     /**
+     * Creates QueryBuilder object for pagination of user subscribers events
+     *
      * @param User $user
-     * @param integer $limit
-     * @return SubscriptionEvent[]
+     *
+     * @return QueryBuilder
      */
-    public function getUserLastSubscribersEventsById(User $user, $limit)
+    public function createUserLastSubscribersEventsQuery(User $user)
     {
-        if (!is_int($limit)) {
-            throw new \InvalidArgumentException('$limit must be an integer');
-        }
-
         $qb = $this->createQueryBuilder('se');
 
         return $qb
@@ -44,34 +43,24 @@ class SubscriptionEventRepository extends EntityRepository
             ->join('se.subscriber', 's')
             ->where('se.author = :author')
             ->orderBy('se.date', 'desc')
-            ->setMaxResults($limit)
-            ->setParameter('author', $user)
-            ->getQuery()->getResult()
+            ->setParameter('author', $user->getId())
         ;
     }
 
     /**
-     * Get last $limit subscriptions
+     * Get last subscriptions QueryBuilder for pagination
      *
-     * @param integer $limit
-     * @return SubscriptionEvent[]
+     * @return QueryBuilder
      */
-    public function getLastSubscriptionEvents($limit)
+    public function createLastSubscriptionEventsQuery()
     {
-        if (!is_int($limit)) {
-            throw new \InvalidArgumentException('$limit must be an integer');
-        }
-
         $qb = $this->createQueryBuilder('se');
 
         return $qb
-            ->select()
+            ->select(['se', 'a', 's'])
+            ->innerJoin('se.author', 'a')
+            ->innerJoin('se.subscriber', 's')
             ->orderBy('se.date', 'desc')
-            ->setMaxResults($limit)
-            ->getQuery()
-                ->setFetchMode('SkobkinPointToolsBundle:SubscriptionEvent', 'author', ClassMetadata::FETCH_EAGER)
-                ->setFetchMode('SkobkinPointToolsBundle:SubscriptionEvent', 'subscriber', ClassMetadata::FETCH_EAGER)
-            ->getResult()
         ;
     }
 }
