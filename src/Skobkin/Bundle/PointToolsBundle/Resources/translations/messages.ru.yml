@@ -1,16 +1,20 @@
 # Russian language for Point tools
 
-# Шапка
+# Header
 Toggle navigation: Переключить навигацию
 Main: Главная
 Top: Топ
 Report a bug: Сообщить об ошибке
 Last: Последнее
 
-# Подвал
+# Footer
 Source code: Исходный код
 
-# Главная
+# Pagination
+Previous: Предыдущая
+Next: Следующая
+
+# Index page
 All users: Всего пользователей
 Subscribed users: Подписчиков сервиса
 24 hours events: Событий за сутки
@@ -21,7 +25,7 @@ Last events: Последние события
 Username: Имя пользователя
 Search: Поиск
 
-# Страница пользователя
+# User page
 Subscribers: Подписчики
 Subscriptions log: Лог подписок
 User: Пользователь
@@ -35,10 +39,10 @@ No subscribers data found: Информация о подписчиках отс
 No rename log data found: Лог переименований отсутствует
 No subscribers log data found: Лог подписчиков отсутствует
 
-# Страница поста
+# Post page
 in response to: в ответ на
 
-# Топ пользователей
+# Top page
 Top users: Популярные пользователи
 Subscribers count: Подписчиков
 amount: Количество

@@ -15,7 +15,7 @@ class UserController extends Controller
     /**
      * @param string $login
      */
-    public function showAction($login)
+    public function showAction(Request $request, $login)
     {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -27,12 +27,20 @@ class UserController extends Controller
             throw $this->createNotFoundException('User ' . $login . ' not found.');
         }
 
+        $paginator = $this->get('knp_paginator');
+
+        $subscriberEventsPagination = $paginator->paginate(
+            $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createUserLastSubscribersEventsQuery($user),
+            $request->query->getInt('page', 1),
+            10
+        );
+
         $userApi = $this->container->get('skobkin_point_tools.api_user');
 
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
             'subscribers' => $em->getRepository('SkobkinPointToolsBundle:User')->findUserSubscribersById($user->getId()),
-            'subscriptions_log' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getUserLastSubscribersEventsById($user, 10),
+            'subscriptions_log' => $subscriberEventsPagination,
             'rename_log' => $em->getRepository('SkobkinPointToolsBundle:UserRenameEvent')->findBy(['user' => $user], ['date' => 'DESC'], 10),
             'avatar_url' => $userApi->getAvatarUrl($user, UserApi::AVATAR_SIZE_LARGE),
         ]);

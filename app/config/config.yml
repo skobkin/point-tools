@@ -86,3 +86,7 @@ swiftmailer:
 knp_markdown:
     parser:
         service: markdown.parser.point
+
+knp_paginator:
+    template:
+        pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
