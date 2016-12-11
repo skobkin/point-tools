@@ -52,5 +52,6 @@ crontab -e
 ```crontab
 # point.skobk.in
 */10 * * * * /usr/bin/php /path/to/point-tools/app/console point:update:subscriptions --env=prod
+0 0 * * * /usr/bin/php /path/to/point-tools/app/console point:update:subscriptions --all-users --env=prod
 ```
 
