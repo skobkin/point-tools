@@ -54,28 +54,20 @@ class SubscriptionsManager
 
         /** @var User $subscribedUser */
         foreach ($subscribedList as $subscribedUser) {
-            $subscription = new Subscription();
-            $subscription
-                ->setAuthor($user)
-                ->setSubscriber($subscribedUser)
-            ;
+            $subscription = new Subscription($user, $subscribedUser);
 
             $user->addSubscriber($subscription);
+            $this->em->persist($subscription);
 
             // If it's not first processing
             if (!$isFirstTime) {
-                $logEvent = new SubscriptionEvent();
-                $logEvent
-                    ->setSubscriber($subscribedUser)
-                    ->setAuthor($user)
-                    ->setAction(SubscriptionEvent::ACTION_SUBSCRIBE);
+                $logEvent = new SubscriptionEvent($user, $subscribedUser, SubscriptionEvent::ACTION_SUBSCRIBE);
+                $this->em->persist($logEvent);
 
                 $user->addNewSubscriberEvent($logEvent);
-
-                $this->em->persist($logEvent);
             }
 
-            $this->em->persist($subscription);
+
         }
 
         unset($subscribedList);
@@ -90,16 +82,10 @@ class SubscriptionsManager
 
         /** @var User $unsubscribedUser */
         foreach ($unsubscribedList as $unsubscribedUser) {
-            $logEvent = new SubscriptionEvent();
-            $logEvent
-                ->setSubscriber($unsubscribedUser)
-                ->setAuthor($user)
-                ->setAction(SubscriptionEvent::ACTION_UNSUBSCRIBE)
-            ;
+            $logEvent = new SubscriptionEvent($user, $unsubscribedUser, SubscriptionEvent::ACTION_UNSUBSCRIBE);
+            $this->em->persist($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
-
-            $this->em->persist($logEvent);
         }
 
         $unsubscribedQuery

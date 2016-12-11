@@ -34,16 +34,15 @@ class Subscription
 
 
     /**
-     * Set author
+     * Subscription constructor.
      *
      * @param User $author
-     * @return Subscription
+     * @param User $subscriber
      */
-    public function setAuthor(User $author = null)
+    public function __construct(User $author = null, User $subscriber = null)
     {
         $this->author = $author;
-
-        return $this;
+        $this->subscriber = $subscriber;
     }
 
     /**
@@ -54,19 +53,6 @@ class Subscription
     public function getAuthor()
     {
         return $this->author;
-    }
-
-    /**
-     * Set subscriber
-     *
-     * @param User $subscriber
-     * @return Subscription
-     */
-    public function setSubscriber(User $subscriber = null)
-    {
-        $this->subscriber = $subscriber;
-
-        return $this;
     }
 
     /**

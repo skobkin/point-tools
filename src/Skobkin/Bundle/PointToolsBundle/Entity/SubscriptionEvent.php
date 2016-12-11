@@ -61,6 +61,18 @@ class SubscriptionEvent
 
 
     /**
+     * @param User $author
+     * @param User $subscriber
+     * @param string $action
+     */
+    public function __construct(User $author = null, User $subscriber = null, $action = self::ACTION_SUBSCRIBE)
+    {
+        $this->author = $author;
+        $this->subscriber = $subscriber;
+        $this->action = $action;
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function onCreate()
@@ -81,19 +93,6 @@ class SubscriptionEvent
     }
 
     /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return SubscriptionEvent
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
      * Get date
      *
      * @return \DateTime 
@@ -101,19 +100,6 @@ class SubscriptionEvent
     public function getDate()
     {
         return $this->date;
-    }
-
-    /**
-     * Set subscriber
-     *
-     * @param User $subscriber
-     * @return SubscriptionEvent
-     */
-    public function setSubscriber(User $subscriber)
-    {
-        $this->subscriber = $subscriber;
-
-        return $this;
     }
 
     /**
@@ -127,19 +113,6 @@ class SubscriptionEvent
     }
 
     /**
-     * Set author
-     *
-     * @param User $author
-     * @return SubscriptionEvent
-     */
-    public function setAuthor(User $author)
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    /**
      * Get author
      *
      * @return User 
@@ -147,19 +120,6 @@ class SubscriptionEvent
     public function getAuthor()
     {
         return $this->author;
-    }
-
-    /**
-     * Set action
-     *
-     * @param string $action
-     * @return SubscriptionEvent
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
