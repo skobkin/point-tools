@@ -10,7 +10,12 @@
         {{ form_start(form, {'attr': {'class': 'form-inline'} }) }}
             <div class="form-group">
                 {{ form_errors(form.login) }}
-                {{ form_widget(form.login, {'attr': {'autocomplete': 'off'}}) }}
+                {{ form_widget(form.login, {
+                    'attr': {
+                        'autocomplete': 'off',
+                        'placeholder': 'login'
+                    }
+                }) }}
 
                 <script type="text/javascript">
                     $(function() {
