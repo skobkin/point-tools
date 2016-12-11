@@ -1,6 +1,6 @@
 [ ![Codeship Status for skobkin/point-tools](https://app.codeship.com/projects/bb9fe730-a175-0134-5572-12490b0b4938/status?branch=master)](https://app.codeship.com/projects/189850)
 [![codecov](https://codecov.io/bb/skobkin/point-tools/branch/master/graph/badge.svg)](https://codecov.io/bb/skobkin/point-tools)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/9727b3a5-8327-4622-92f1-cded14679b6b/mini.png)](https://insight.sensiolabs.com/projects/9727b3a5-8327-4622-92f1-cded14679b6b)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/a54ef130-5aed-44f5-9ea9-c404a3d8db6b/mini.png)](https://insight.sensiolabs.com/projects/a54ef130-5aed-44f5-9ea9-c404a3d8db6b)
 
 # Point Tools
 
