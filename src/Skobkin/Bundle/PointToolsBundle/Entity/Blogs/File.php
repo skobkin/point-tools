@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * File
  *
- * @ORM\Table(name="posts.files", schema="posts")
+ * @ORM\Table(name="files", schema="posts")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository")
  */
 class File

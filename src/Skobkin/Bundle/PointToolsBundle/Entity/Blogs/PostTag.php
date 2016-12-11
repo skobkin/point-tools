@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PostTag
  *
- * @ORM\Table(name="posts.posts_tags", schema="posts")
+ * @ORM\Table(name="posts_tags", schema="posts")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostTagRepository")
  */
 class PostTag

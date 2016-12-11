@@ -9,7 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 /**
  * Post
  *
- * @ORM\Table(name="posts.posts", schema="posts", indexes={
+ * @ORM\Table(name="posts", schema="posts", indexes={
  *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
  *      @ORM\Index(name="idx_post_private", columns={"private"}),
  * })
@@ -83,7 +83,7 @@ class Post
      * @var File[]|ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
-     * @ORM\JoinTable(name="posts.posts_files", schema="posts",
+     * @ORM\JoinTable(name="posts_files", schema="posts",
      *     joinColumns={@ORM\JoinColumn(name="post_id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
      * )

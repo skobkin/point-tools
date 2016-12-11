@@ -9,7 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 /**
  * Comment
  *
- * @ORM\Table(name="posts.comments", schema="posts", indexes={
+ * @ORM\Table(name="comments", schema="posts", indexes={
  *      @ORM\Index(name="idx_comment_created_at", columns={"created_at"})
  * })
  * @ORM\Entity
@@ -80,7 +80,7 @@ class Comment
      * @var File[]|ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
-     * @ORM\JoinTable(name="posts.comments_files", schema="posts",
+     * @ORM\JoinTable(name="comments_files", schema="posts",
      *     joinColumns={@ORM\JoinColumn(name="comment_id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
      * )
