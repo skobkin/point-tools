@@ -32,10 +32,11 @@ class UserRepository extends EntityRepository
      * Case insensitive user LIKE %login% search
      *
      * @param string $login
+     * @param int $limit
      *
      * @return User[]
      */
-    public function findUsersLikeLogin($login)
+    public function findUsersLikeLogin($login, $limit = 10)
     {
         if (empty($login)) {
             return [];
@@ -44,10 +45,10 @@ class UserRepository extends EntityRepository
         $qb = $this->createQueryBuilder('u');
 
         return $qb
-            ->where('u.login LIKE :login')
+            ->where('LOWER(u.login) LIKE LOWER(:login)')
             ->orderBy('u.login', 'ASC')
-            ->setMaxResults(10)
-            ->setParameter('login', '%'.strtolower($login).'%')
+            ->setMaxResults($limit)
+            ->setParameter('login', '%'.$login.'%')
             ->getQuery()
             ->getResult()
         ;
