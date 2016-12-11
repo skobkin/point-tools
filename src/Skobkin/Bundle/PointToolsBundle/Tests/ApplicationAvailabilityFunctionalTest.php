@@ -21,10 +21,10 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
     public function urlProvider()
     {
         return [
-            ['/'],
-            ['/users/top'],
-            ['/events/last'],
-            ['/user/testuser']
+            'index_page' => ['/'],
+            'top_page' => ['/users/top'],
+            'last_events_page' => ['/events/last'],
+            'test_user_page' => ['/user/testuser']
         ];
     }
 }
