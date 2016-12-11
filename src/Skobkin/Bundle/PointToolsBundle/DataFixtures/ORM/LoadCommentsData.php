@@ -32,7 +32,7 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
                 ->setNumber($num)
                 ->setDeleted(mt_rand(0, 15) ? false : true)
                 ->setCreatedAt(new \DateTime())
-                ->setAuthor(array_rand($users))
+                ->setAuthor($users[array_rand($users)])
                 ->setRec(false)
                 ->setText(
                     'Some text with [link to @skobkin-ru site](https://skobk.in/) and `code block`'.PHP_EOL.
