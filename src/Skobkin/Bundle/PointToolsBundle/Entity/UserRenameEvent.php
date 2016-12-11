@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserRenameEvent
  *
- * @ORM\Table(name="users.rename_log", schema="users", indexes={
+ * @ORM\Table(name="rename_log", schema="users", indexes={
  *     @ORM\Index(name="idx_rename_log_date", columns={"date"}),
  *     @ORM\Index(name="idx_rename_log_old_login", columns={"old_login"})
  * })

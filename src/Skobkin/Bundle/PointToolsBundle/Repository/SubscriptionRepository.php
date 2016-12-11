@@ -18,9 +18,9 @@ class SubscriptionRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('s');
         return $qb
-            ->select('COUNT(s)')
-            ->innerJoin('s.author', 'a')
-            ->where('a.id = :id')
+            ->select('COUNT(s.subscriber)')
+            ->innerJoin('s.author', 'sa')
+            ->where('sa.id = :id')
             ->setParameter('id', $id)
             ->getQuery()->getSingleScalarResult()
         ;

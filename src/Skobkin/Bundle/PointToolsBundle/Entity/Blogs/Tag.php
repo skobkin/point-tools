@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Tag
  *
- * @ORM\Table(name="posts.tags", schema="posts", indexes={
+ * @ORM\Table(name="tags", schema="posts", indexes={
  *      @ORM\Index(name="idx_tag_text", columns={"text"})
  * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository")

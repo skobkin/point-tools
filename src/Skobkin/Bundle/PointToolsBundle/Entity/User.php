@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * User
  *
- * @ORM\Table(name="users.users", schema="users")
+ * @ORM\Table(name="users", schema="users")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */

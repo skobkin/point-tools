@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Subscription
  *
- * @ORM\Table(name="subscriptions.subscriptions", schema="subscriptions", uniqueConstraints={
+ * @ORM\Table(name="subscriptions", schema="subscriptions", uniqueConstraints={
  *      @ORM\UniqueConstraint(name="subscription_unique", columns={"author_id", "subscriber_id"})}
  * )
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository")
