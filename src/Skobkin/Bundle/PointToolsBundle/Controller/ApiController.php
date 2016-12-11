@@ -14,8 +14,8 @@ class ApiController extends Controller
     /**
      * Returns last user subscribers log
      *
-     * @param $login
      * @ParamConverter("user", class="SkobkinPointToolsBundle:User")
+     *
      * @return Response
      */
     public function lastUserSubscribersByIdAction(User $user)
