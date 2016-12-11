@@ -1,3 +1,5 @@
+![CodeShip badge](https://codeship.com/projects/bb9fe730-a175-0134-5572-12490b0b4938/status?branch=master)
+
 # Point Tools
 
 Point Tools - это сервис предоставляющий дополнительные функции для блогов [Point.im](https://point.im/).

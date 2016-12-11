@@ -1,6 +1,14 @@
 imports:
     - { resource: config_dev.yml }
 
+
+doctrine:
+    dbal:
+        dbname:   "%test_database_name%"
+        port:     "%test_database_port%"
+        user:     "%test_database_user%"
+        password: "%test_database_password%"
+
 framework:
     test: ~
     session:
