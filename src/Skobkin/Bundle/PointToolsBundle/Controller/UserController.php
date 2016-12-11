@@ -85,7 +85,7 @@ class UserController extends Controller
 
         // Initializing chart
         $ob = new Highchart();
-        $ob->chart->renderTo('top-chart');
+        $ob->chart->renderTo('topchart');
         $ob->chart->type('bar');
         $ob->title->text($translator->trans('Top users'));
         $ob->xAxis->title(['text' => null]);
