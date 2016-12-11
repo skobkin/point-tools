@@ -87,6 +87,10 @@ class UserRepository extends EntityRepository
     }
 
     /**
+     * Returns top users by subscribers count
+     *
+     * @param int $limit
+     *
      * @return TopUserDTO[]
      */
     public function getTopUsers($limit = 30)
@@ -95,16 +99,29 @@ class UserRepository extends EntityRepository
             throw new \InvalidArgumentException('$limit must be an integer');
         }
 
-        // TODO: refactor query
         $qb = $this->getEntityManager()->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
 
-        return $qb
-            ->select(['COUNT(s.subscriber) as cnt', 'NEW Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO(a.login, COUNT(s.subscriber))'])
+        $rows = $qb
+            ->select([
+                'NEW Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO(a.login, COUNT(s.subscriber))',
+                'COUNT(s.subscriber) as subscribers_count'
+            ])
             ->innerJoin('s.author', 'a')
-            ->orderBy('cnt', 'desc')
+            ->orderBy('subscribers_count', 'desc')
             ->groupBy('a.id')
             ->setMaxResults($limit)
             ->getQuery()->getResult()
         ;
+
+        $result = [];
+
+        // Removing subscribers_count element, saving TopUserDTO
+        // @todo remove crutches, refactor query
+        foreach ($rows as $row) {
+            unset($row['subscribers_count']);
+            $result[] = reset($row);
+        }
+
+        return $result;
     }
 }

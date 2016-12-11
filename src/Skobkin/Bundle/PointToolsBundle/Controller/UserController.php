@@ -73,8 +73,8 @@ class UserController extends Controller
 
         // Preparing chart data
         foreach ($topUsers as $user) {
-            $chartData['titles'][] = $user->login;
-            $chartData['subscribers'][] = $user->subscribersCount;
+            $chartData['titles'][] = $user->getLogin();
+            $chartData['subscribers'][] = $user->getSubscribersCount();
         }
 
         // Chart
