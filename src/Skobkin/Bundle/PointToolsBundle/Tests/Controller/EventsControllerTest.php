@@ -6,18 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class EventsControllerTest extends WebTestCase
 {
-    public function testHasHeading()
-    {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/events/last');
-
-        $this->assertEquals(
-            1,
-            $crawler->filter('.last-subscriptions-log h3')->count()
-        );
-    }
-
     public function testHasEvents()
     {
         $client = static::createClient();
