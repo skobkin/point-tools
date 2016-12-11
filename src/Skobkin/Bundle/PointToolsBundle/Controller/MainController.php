@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MainController extends Controller
 {
+    const AJAX_AUTOCOMPLETE_SIZE = 10;
+
     public function indexAction(Request $request)
     {
         /** @var EntityManager $em */
@@ -39,6 +41,7 @@ class MainController extends Controller
 
         return $this->render('SkobkinPointToolsBundle:Main:index.html.twig', [
             'form' => $form->createView(),
+            'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
             'users_count' => $em->getRepository('SkobkinPointToolsBundle:User')->getUsersCount(),
             'subscribers_count' => $em->getRepository('SkobkinPointToolsBundle:Subscription')->getUserSubscribersCountById($this->container->getParameter('point_id')),
             'events_count' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getLastDayEventsCount(),
@@ -52,7 +55,7 @@ class MainController extends Controller
 
         $result = [];
 
-        foreach ($em->getRepository('SkobkinPointToolsBundle:User')->findUsersLikeLogin($login) as $user) {
+        foreach ($em->getRepository('SkobkinPointToolsBundle:User')->findUsersLikeLogin($login, self::AJAX_AUTOCOMPLETE_SIZE) as $user) {
             $result[] = [
                 'login' => $user->getLogin(),
                 'name' => $user->getName(),

@@ -23,6 +23,7 @@
 
                         $field.typeahead({
                             minLength: 2,
+                            items: {{ autocomplete_size|e('js') }},
                             delay: 500,
                             autoSelect: true,
                             source: function (query, processCallback) {
