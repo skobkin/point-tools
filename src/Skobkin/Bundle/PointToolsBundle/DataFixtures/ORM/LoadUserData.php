@@ -9,16 +9,34 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
 {
+    private $users = [
+        // 99999
+        ['login' => 'testuser', 'name' => 'Test User 1'],
+        // 99998
+        ['login' => 'testuser2', 'name' => 'Test User 2'],
+        // 99997
+        ['login' => 'testuser3', 'name' => 'Test User 3'],
+        // 99996
+        ['login' => 'testuser4', 'name' => 'Test User 4'],
+        //99995
+        ['login' => 'testuser5', 'name' => 'Test User 5'],
+    ];
+
     public function load(ObjectManager $om)
     {
-        $user = (new User(99999, 'testuser', 'Test User'))
-            ->setCreatedAt(new \DateTime())
-        ;
+        $userId = 99999;
 
-        $om->persist($user);
+        foreach ($this->users as $userData) {
+            $user = (new User($userId--, $userData['login'], $userData['name']))
+                ->setCreatedAt(new \DateTime())
+            ;
+
+            $om->persist($user);
+
+            $this->addReference('test_user_'.$user->getId(), $user);
+        }
+
         $om->flush();
-
-        $this->addReference('test_user', $user);
     }
 
     public function getOrder()

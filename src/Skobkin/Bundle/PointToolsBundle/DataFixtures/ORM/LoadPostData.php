@@ -12,11 +12,11 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $om)
     {
-        /** @var User $user */
-        $user = $this->getReference('test_user');
+        /** @var User $testUser */
+        $testUser = $this->getReference('test_user_99999');
 
-        $post = (new Post('testpost'))
-            ->setAuthor($user)
+        $post = (new Post('longpost'))
+            ->setAuthor($testUser)
             ->setCreatedAt(new \DateTime())
             ->setText('Test post with many comments')
             ->setPrivate(false)
@@ -27,7 +27,7 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
         $om->persist($post);
         $om->flush();
 
-        $this->addReference('test_post', $post);
+        $this->addReference('test_post_longpost', $post);
     }
 
     public function getOrder()

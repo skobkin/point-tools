@@ -14,28 +14,36 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
     public function load(ObjectManager $om)
     {
         /** @var Post $post */
-        $post = $this->getReference('test_post');
+        $post = $this->getReference('test_post_longpost');
 
-        /** @var User $user */
-        $user = $this->getReference('test_user');
+        /** @var User[] $users */
+        $users = [
+            $this->getReference('test_user_99999'),
+            $this->getReference('test_user_99998'),
+            $this->getReference('test_user_99997'),
+            $this->getReference('test_user_99996'),
+            $this->getReference('test_user_99995'),
+        ];
 
         $comments = [];
 
         foreach (range(1, 10000) as $num) {
             $comment = (new Comment())
                 ->setNumber($num)
-                ->setDeleted(rand(0, 15) ? false : true)
+                ->setDeleted(mt_rand(0, 15) ? false : true)
                 ->setCreatedAt(new \DateTime())
-                ->setAuthor($user)
+                ->setAuthor(array_rand($users))
                 ->setRec(false)
-                ->setText('Some text with [link to @skobkin-ru site](https://skobk.in/) and `code block`
-and some quotation:
-> test test quote
-and some text after')
+                ->setText(
+                    'Some text with [link to @skobkin-ru site](https://skobk.in/) and `code block`'.PHP_EOL.
+                    'and some quotation:'.PHP_EOL.
+                    '> test test quote'.PHP_EOL.
+                    'and some text after'
+                )
             ;
 
-            if (count($comments) > 0 && rand(0, 1)) {
-                $comment->setParent($comments[rand(0, count($comments) - 1)]);
+            if (count($comments) > 0 && mt_rand(0, 1)) {
+                $comment->setParent($comments[mt_rand(0, count($comments) - 1)]);
             }
 
             $post->addComment($comment);
