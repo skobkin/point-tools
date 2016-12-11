@@ -1,4 +1,4 @@
-[ ![Codeship Status for skobkin/point-tools](https://app.codeship.com/projects/bb9fe730-a175-0134-5572-12490b0b4938/status?branch=master)](https://app.codeship.com/projects/189850)
+[ ![Codeship Status for skobkin/point-tools](https://app.codeship.com/projects/bb9fe730-a175-0134-5572-12490b0b4938/status?branch=master)](https://app.codeship.com/projects/189850) [![Coverage Status](https://coveralls.io/repos/bitbucket/skobkin/point-tools/badge.svg)](https://coveralls.io/bitbucket/skobkin/point-tools)
 
 # Point Tools
 
