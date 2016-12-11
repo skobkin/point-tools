@@ -31,8 +31,6 @@ class MainControllerTest extends WebTestCase
 
         // Assuming we have stats block
         $this->assertEquals(1, $userStatsBlock->count(), 'Stats block not found');
-        // Assuming we have 3 rows in the stats block
-        $this->assertEquals(3, $userStatsBlock->children()->count());
         // @todo rewrite to named classes
         // Assuming we have at least one user shown
         $this->assertGreaterThan(
@@ -43,7 +41,8 @@ class MainControllerTest extends WebTestCase
         // Assuming we have at least one subscriber
         $this->assertGreaterThan(
             0,
-            $userStatsBlock->children()->eq(1)->children()->last()->text()
+            $userStatsBlock->children()->eq(1)->children()->last()->text(),
+            'Zero service subscribers shows on the main page'
         );
     }
 }
