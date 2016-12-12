@@ -103,5 +103,7 @@ class ImportUsersCommand extends ContainerAwareCommand
         }
 
         $output->writeln($count . ' users imported.');
+
+        return 0;
     }
 }
