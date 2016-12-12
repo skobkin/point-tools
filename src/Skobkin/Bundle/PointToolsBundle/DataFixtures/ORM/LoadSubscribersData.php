@@ -33,14 +33,12 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
                 $minimum = mt_rand(0, count($users));
             }
 
-            if ($minimum) {
-                foreach ($this->getRandomSubscribers($users, $minimum) as $subscriber) {
-                    $subscription = new Subscription($user, $subscriber);
-                    $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
-                    $om->persist($subscription);
-                    $om->persist($subscriptionEvent);
-                    $user->addSubscriber($subscription);
-                }
+            foreach ($this->getRandomSubscribers($users, $minimum) as $subscriber) {
+                $subscription = new Subscription($user, $subscriber);
+                $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
+                $om->persist($subscription);
+                $om->persist($subscriptionEvent);
+                $user->addSubscriber($subscription);
             }
         }
 
@@ -67,6 +65,11 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
         }
 
         $keys = array_rand($users, $number);
+
+        // If array_rand was called with $number = 1
+        if (!is_array($keys)) {
+            $keys = [$keys];
+        }
 
         $result = [];
 
