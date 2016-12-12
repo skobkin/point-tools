@@ -22,7 +22,7 @@ class Post
     const TYPE_FEED = 'feed';
 
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Column(name="id", type="text")
      * @ORM\Id
@@ -129,7 +129,7 @@ class Post
     /**
      * Get id
      *
-     * @return integer 
+     * @return string
      */
     public function getId()
     {
