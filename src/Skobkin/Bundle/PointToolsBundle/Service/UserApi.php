@@ -3,7 +3,6 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Service\Client;
@@ -38,7 +37,7 @@ class UserApi extends AbstractApi
     protected $userRepository;
 
 
-    public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManagerInterface $entityManager)
+    public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManager $entityManager)
     {
         parent::__construct($httpClient, $https, $baseUrl);
 
