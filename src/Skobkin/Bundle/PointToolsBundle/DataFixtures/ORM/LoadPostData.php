@@ -15,7 +15,7 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
         /** @var User $testUser */
         $testUser = $this->getReference('test_user_99999');
 
-        $post = (new Post('longpost'))
+        $longPost = (new Post('longpost'))
             ->setAuthor($testUser)
             ->setCreatedAt(new \DateTime())
             ->setText('Test post with many comments')
@@ -24,10 +24,20 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
             ->setDeleted(false)
         ;
 
-        $om->persist($post);
+        $shortPost = (new Post('shortpost'))
+            ->setAuthor($testUser)
+            ->setCreatedAt(new \DateTime())
+            ->setText('Test short post')
+            ->setPrivate(false)
+            ->setType(Post::TYPE_POST)
+            ->setDeleted(false)
+        ;
+
+        $om->persist($longPost);
+        $om->persist($shortPost);
         $om->flush();
 
-        $this->addReference('test_post_longpost', $post);
+        $this->addReference('test_post_longpost', $longPost);
     }
 
     public function getOrder()
