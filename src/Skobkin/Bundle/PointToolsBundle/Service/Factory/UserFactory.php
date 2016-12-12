@@ -27,7 +27,7 @@ class UserFactory
     /**
      * @param EntityManager $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManager $em)
     {
         $this->em = $em;
         $this->userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
