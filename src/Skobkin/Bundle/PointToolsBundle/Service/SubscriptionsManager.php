@@ -4,7 +4,6 @@ namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
@@ -19,7 +18,7 @@ class SubscriptionsManager
 
 
     // @todo Add logger
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
     }
