@@ -30,7 +30,7 @@ class TagFactory
     /**
      * @param EntityManager $em
      */
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
+    public function __construct(LoggerInterface $log, EntityManager $em)
     {
         $this->log = $log;
         $this->em = $em;
