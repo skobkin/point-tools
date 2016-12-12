@@ -81,7 +81,7 @@ class MainControllerTest extends WebTestCase
     public function testAjaxUserAutoComplete()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/ajax/users/search/testuser');
+        $client->request('GET', '/ajax/users/search/testuser');
 
         $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
 
@@ -120,7 +120,7 @@ class MainControllerTest extends WebTestCase
     public function testAjaxUserAutoCompleteForNonExistingUser()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/ajax/users/search/aksdjhaskdjhqwhdgqkjwhdgkjah');
+        $client->request('GET', '/ajax/users/search/aksdjhaskdjhqwhdgqkjwhdgkjah');
 
         $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
 
