@@ -3,14 +3,12 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\MetaPost;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\Blogs\InvalidPostDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;

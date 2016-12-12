@@ -3,7 +3,6 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
