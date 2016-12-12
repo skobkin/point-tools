@@ -14,7 +14,7 @@ class MainControllerTest extends WebTestCase
         $userSearchForm = $crawler->filter('form.form-inline')->form();
         $userSearchForm['skobkin_bundle_pointtoolsbundle_user_search[login]'] = 'testuser';
 
-        $crawler = $client->submit($userSearchForm);
+        $client->submit($userSearchForm);
 
         $this->assertTrue($client->getResponse()->isRedirect('/user/testuser'), 'Redirect to testuser\'s page didn\'t happen');
     }
