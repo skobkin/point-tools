@@ -57,7 +57,7 @@ class PostFactory
     /**
      * @param EntityManager $em
      */
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
+    public function __construct(LoggerInterface $log, EntityManager $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
     {
         $this->log = $log;
         $this->userFactory = $userFactory;
@@ -71,7 +71,7 @@ class PostFactory
     /**
      * Creates posts and return status of new insertions
      *
-     * @param PostsPage $data
+     * @param PostsPage $page
      *
      * @return bool
      * @throws ApiException
@@ -182,7 +182,7 @@ class PostFactory
 
     /**
      * @param Post $post
-     * @param Tag[] $tags
+     * @param string[] $tagsStrings
      */
     private function updatePostTags(Post $post, array $tagsStrings)
     {
