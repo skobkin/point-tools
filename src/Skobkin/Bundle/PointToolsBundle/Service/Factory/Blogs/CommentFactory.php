@@ -35,10 +35,10 @@ class CommentFactory
     private $userFactory;
 
     /**
-     * @param EntityManagerInterface $em
+     * @param EntityManager $em
      * @param UserFactory $userFactory
      */
-    public function __construct(EntityManagerInterface $em, UserFactory $userFactory)
+    public function __construct(EntityManager $em, UserFactory $userFactory)
     {
         $this->em = $em;
         $this->userFactory = $userFactory;
