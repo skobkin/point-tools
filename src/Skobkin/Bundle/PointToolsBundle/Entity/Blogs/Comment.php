@@ -96,7 +96,7 @@ class Comment
     private $parent;
 
     /**
-     * @var Comment[]
+     * @var Comment[]|ArrayCollection
      * 
      * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", fetch="EXTRA_LAZY", mappedBy="parent")
      */
@@ -370,7 +370,7 @@ class Comment
     /**
      * Get children
      *
-     * @return ArrayCollection
+     * @return Comment[]|ArrayCollection
      */
     public function getChildren()
     {
