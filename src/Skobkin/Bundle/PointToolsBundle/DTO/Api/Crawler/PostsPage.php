@@ -2,7 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as JMSS;
 
 /**
@@ -21,7 +20,7 @@ class PostsPage
     private $posts;
 
     /**
-     * @return MetaPost[]|ArrayCollection
+     * @return MetaPost[]
      */
     public function getPosts()
     {
@@ -29,7 +28,9 @@ class PostsPage
     }
 
     /**
-     * @param MetaPost[]|ArrayCollection $posts
+     * @todo move to constructor
+     *
+     * @param MetaPost[] $posts
      * @return PostsPage
      */
     public function setPosts($posts)
