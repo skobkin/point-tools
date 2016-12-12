@@ -7,7 +7,7 @@ use Guzzle\Http\Message\Request as GuzzleRequest;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
 /**
- * @todo Implement commands
+ * @todo Refactor to Guzzle and DTO
  * @see https://github.com/misd-service-development/guzzle-bundle/blob/master/Resources/doc/serialization.md
  * @see https://github.com/misd-service-development/guzzle-bundle/blob/master/Resources/doc/clients.md
  * @see https://github.com/misd-service-development/guzzle-bundle/blob/master/Resources/doc/param_converter.md
@@ -44,7 +44,7 @@ class AbstractApi
         $this->client = $httpClient;
         $this->useHttps = ($https) ? true : false;
 
-        if ($baseUrl) {
+        if (null !== $baseUrl) {
             $this->setBaseUrl($baseUrl);
         }
     }
