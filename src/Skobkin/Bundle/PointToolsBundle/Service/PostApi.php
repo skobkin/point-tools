@@ -28,24 +28,4 @@ class PostApi extends AbstractApi
     {
         return 'skobkin_point_tools_api_post';
     }
-
-    /**
-     * Get post with tags and comments by id
-     *
-     * @param $id
-     *
-     * @return Post[]
-     */
-    public function getPostById($id)
-    {
-        if (!is_string($id)) {
-            throw new \InvalidArgumentException('$id must be an string');
-        }
-
-        $postData = $this->getGetRequestData('/api/post/'.$id, [], true);
-
-        $post = $this->postFactory->createFromArray($postData);
-
-        return $post;
-    }
 }
