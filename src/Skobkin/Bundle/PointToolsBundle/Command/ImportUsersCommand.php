@@ -12,7 +12,12 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Import users from CSV file exported from database by query:
- * COPY (SELECT u.id, u.login, ui.name, to_char(ui.created, 'YYYY-MM-DD_HH24:MI:SS') AS created_at FROM users.logins u LEFT JOIN users.info ui ON (ui.id = u.id) WHERE u.id <> (-1)) TO '/tmp/point_users.csv' WITH HEADER DELIMITER '|' CSV;
+ * COPY (
+ *      SELECT u.id, u.login, ui.name, to_char(ui.created, 'YYYY-MM-DD_HH24:MI:SS') AS created_at
+ *      FROM users.logins u
+ *      LEFT JOIN users.info ui ON (ui.id = u.id)
+ *      WHERE u.id <> (-1)
+ * ) TO '/tmp/point_users.csv' WITH HEADER DELIMITER '|' CSV;
  */
 class ImportUsersCommand extends ContainerAwareCommand
 {
@@ -50,17 +55,17 @@ class ImportUsersCommand extends ContainerAwareCommand
 
         if (!($fs->exists($fileName) && is_readable($fileName))) {
             $output->writeln('File does not exists or not readable.');
-            return false;
+            return 1;
         }
 
         if (false === ($file = fopen($fileName, 'r'))) {
             $output->writeln('fopen() error');
-            return false;
+            return 1;
         }
 
         if (!$input->getOption('no-skip-first')) {
             // Reading headers line
-            $test = fgets($file);
+            fgets($file);
         }
 
         $count = 0;
@@ -90,7 +95,7 @@ class ImportUsersCommand extends ContainerAwareCommand
                 $em->detach($user);
             }
 
-            if ($output->isVerbose()) {
+            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('@' . $row[1] . ' added');
             }
 
