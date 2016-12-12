@@ -33,14 +33,14 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
                 $minimum = mt_rand(0, count($users));
             }
 
-            $subscribers = $this->getRandomSubscribers($users, $minimum);
-
-            foreach ($subscribers as $subscriber) {
-                $subscription = new Subscription($user,$subscriber);
-                $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
-                $om->persist($subscription);
-                $om->persist($subscriptionEvent);
-                $user->addSubscriber($subscription);
+            if ($minimum) {
+                foreach ($this->getRandomSubscribers($users, $minimum) as $subscriber) {
+                    $subscription = new Subscription($user,$subscriber);
+                    $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
+                    $om->persist($subscription);
+                    $om->persist($subscriptionEvent);
+                    $user->addSubscriber($subscription);
+                }
             }
         }
 
