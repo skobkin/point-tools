@@ -35,8 +35,9 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param Input $input
-     * @param Output $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
      * @return bool
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -56,7 +57,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             $serviceUserId = $this->getContainer()->getParameter('point_id');
         } catch (\InvalidArgumentException $e) {
             $log->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
-            return false;
+            return 1;
         }
 
         if ($input->getOption('all-users')) {
@@ -68,10 +69,10 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 $log->info('Service user not found');
                 // @todo Retrieving user
 
-                return false;
+                return 1;
             }
 
-            if ($output->isVerbose()) {
+            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('Getting service subscribers');
             }
 
@@ -92,11 +93,11 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
 
                 if (!count($usersForUpdate)) {
                     $log->info('No local subscribers. Finishing.');
-                    return false;
+                    return 0;
                 }
             }
 
-            if ($output->isVerbose()) {
+            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('Updating service subscribers');
             }
 
@@ -106,11 +107,11 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             } catch (\Exception $e) {
                 $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
 
-                return false;
+                return 1;
             }
         }
 
-        if ($output->isVerbose()) {
+        if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
             $output->writeln('Processing users subscribers');
         }
 
@@ -128,7 +129,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 continue;
             }
 
-            if ($output->isVerbose()) {
+            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('    Updating user subscribers');
             }
 
@@ -142,5 +143,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             // @todo move to the config
             usleep(500000);
         }
+
+        return 0;
     }
 }
