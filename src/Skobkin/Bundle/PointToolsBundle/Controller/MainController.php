@@ -49,6 +49,13 @@ class MainController extends Controller
         ]);
     }
 
+    /**
+     * Returns user search autocomplete data in JSON
+     *
+     * @param $login
+     *
+     * @return JsonResponse
+     */
     public function searchUserAjaxAction($login)
     {
         $em = $this->getDoctrine()->getManager();

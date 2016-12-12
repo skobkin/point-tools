@@ -52,7 +52,6 @@ class MainControllerTest extends WebTestCase
     public function testUserStats()
     {
         $client = static::createClient();
-
         $crawler = $client->request('GET', '/');
 
         $userStatsBlock = $crawler->filter('.container.service-stats');
@@ -72,5 +71,63 @@ class MainControllerTest extends WebTestCase
             $userStatsBlock->children()->eq(1)->children()->last()->text(),
             'Zero service subscribers shows on the main page'
         );
+    }
+
+    /**
+     * Tests AJAX user search autocomplete and returns JSON response string
+     *
+     * @return string
+     */
+    public function testAjaxUserAutoComplete()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/ajax/users/search/testuser');
+
+        $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
+
+        return $client->getResponse()->getContent();
+    }
+
+    /**
+     * @depends testAjaxUserAutoComplete
+     *
+     * @param $json
+     */
+    public function testAjaxUserAutoCompleteHasOptions($json)
+    {
+        $data = json_decode($json);
+
+        $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
+        $this->assertTrue(is_array($data), 'JSON data is array');
+        $this->assertGreaterThan(0, count($data), 'Array has at least one element');
+
+        return $data;
+    }
+
+    /**
+     * @depends testAjaxUserAutoCompleteHasOptions
+     *
+     * @param array $users
+     */
+    public function testAjaxUserAutoCompleteHasValidUserObjects(array $users)
+    {
+        foreach ($users as $key => $user) {
+            $this->assertTrue(array_key_exists('login', $user), sprintf('%d row of result has \'login\' field', $key));
+            $this->assertTrue(array_key_exists('name', $user), sprintf('%d row of result has \'name\' field', $key));
+        }
+    }
+
+    public function testAjaxUserAutoCompleteForNonExistingUser()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/ajax/users/search/aksdjhaskdjhqwhdgqkjwhdgkjah');
+
+        $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
+
+        $data = json_decode($client->getResponse()->getContent());
+
+        $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
+        $this->assertTrue(is_array($data), 'JSON data is array');
+        $this->assertEquals(0, count($data), 'Array has no elements');
     }
 }
