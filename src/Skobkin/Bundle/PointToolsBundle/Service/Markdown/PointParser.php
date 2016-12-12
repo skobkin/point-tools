@@ -178,7 +178,6 @@ class PointParser extends MarkdownParser
 
     protected function doAnchorsPointUsernameCallback($matches)
     {
-        //$wholeMatch = $matches[1];
         $username = $matches[2];
         $href = $this->router->generate('user_show', ['login' => $username]);
         $tail = htmlspecialchars($matches[3]);
@@ -188,15 +187,10 @@ class PointParser extends MarkdownParser
 
     protected function doAnchorsPointPostCallback($matches)
     {
-        //$wholeMatch = $matches[1];
         $postId = $matches[2];
         $href = $this->router->generate('post_show', ['id' => $postId]);
         $tail = htmlspecialchars($matches[3]);
 
-        return $this->hashPart(
-            '<a href="'.$href.'" class="post">#'.$postId.'</a>'
-            //.'<a href="https://point.im/'.$postId.'"><span class="glyphicon glyphicon-link"></span></a>'
-            .$tail
-        );
+        return $this->hashPart('<a href="'.$href.'" class="post">#'.$postId.'</a>'.$tail);
     }
 }
