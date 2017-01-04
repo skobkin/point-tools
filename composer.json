@@ -24,7 +24,9 @@
         "doctrine/doctrine-migrations-bundle": "^1.0",
         "jms/serializer-bundle": "^1.1",
         "knplabs/knp-markdown-bundle": "^1.4",
-        "knplabs/knp-paginator-bundle": "^2.5"
+        "knplabs/knp-paginator-bundle": "^2.5",
+        "unreal4u/telegram-api": "^2.2",
+        "csa/guzzle-bundle": "^2.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

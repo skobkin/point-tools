@@ -59,6 +59,18 @@ You can use following jobs as an example:
 0 0 * * * /usr/bin/php /path/to/point-tools/app/console point:update:subscriptions --all-users --env=prod
 ```
 
+## Setting Telegram webhook (to enable bot)
+
+```shell
+php app/console telegram:webhook set your-domain.tld
+```
+
+## Removing Telegram webhook
+
+```shell
+php app/console telegram:webhook delete
+```
+
 # Running tests
 
 ## Configure environment variables

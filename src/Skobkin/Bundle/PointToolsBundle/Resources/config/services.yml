@@ -1,4 +1,13 @@
 services:
+    # Guzzle 6 client for Telegram
+    point_tools.http.telegram_client:
+        class: GuzzleHttp\Client
+        arguments: [{ timeout: 3.0 }]
+        tags:
+            - { name: csa_guzzle.client }
+
+    # Guzzle 5 client for Point API
+    # TODO upgrade and remove misd bundle
     skobkin_point_tools.http_client:
         class: %guzzle.client.class%
         arguments: [ "%point_base_url%" ]
@@ -68,8 +77,23 @@ services:
 
     # Twig extensions
     point_tools.twig.point_avatar_extension:
-        class: Skobkin\Bundle\PointToolsBundle\Twig\PointAvatarExtension
+        class: Skobkin\Bundle\PointToolsBundle\Twig\PointUserExtension
         public: false
         arguments: ['@skobkin_point_tools.api_user']
         tags:
             - { name: twig.extension }
+
+    # Telegram API client
+    point_tools.telegram.api_client:
+        class: unreal4u\TelegramAPI\TgLog
+        arguments: [%telegram_token%, @logger, @point_tools.http.telegram_client]
+
+    # Telegram simple message sender
+    point_tools.telegram.simple_sender:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\SimpleSender
+        arguments: [@point_tools.telegram.api_client]
+
+    # Telegram command processor
+    point_tools.telegram.update_processor:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateProcessor
+        arguments: [%point_id%, @point_tools.telegram.api_client, @doctrine.orm.entity_manager, @twig]
