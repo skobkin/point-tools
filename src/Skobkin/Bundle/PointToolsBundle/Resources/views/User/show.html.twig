@@ -5,7 +5,7 @@
 {% block content %}
     <h1 class="user-login">
         <img src="{{ avatar_url }}">
-        <a href="//{{ user.login }}.point.im/blog/" target="_blank">{{ user.login }}</a>
+        <a href="{{ user.login|point_user_blog_url }}" target="_blank">{{ user.login }}</a>
     </h1>
 
     <div class="user-subscribers">

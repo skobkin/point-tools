@@ -48,7 +48,7 @@ class SubscriptionEventRepository extends EntityRepository
     }
 
     /**
-     * Get last subscriptions QueryBuilder for pagination
+     * Get last global subscriptions QueryBuilder for pagination
      *
      * @return QueryBuilder
      */
@@ -62,5 +62,20 @@ class SubscriptionEventRepository extends EntityRepository
             ->innerJoin('se.subscriber', 's')
             ->orderBy('se.date', 'desc')
         ;
+    }
+
+    /**
+     * Get last global subscription events
+     *
+     * @param int $limit
+     *
+     * @return SubscriptionEvent[]
+     */
+    public function getLastSubscriptionEvents($limit = 20)
+    {
+        $qb = $this->createLastSubscriptionEventsQuery();
+        $qb->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
     }
 }

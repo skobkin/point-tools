@@ -24,3 +24,7 @@ parameters:
 
     # Token for Go crawler https://bitbucket.org/skobkin/point-tools-crawler
     crawler_token:     test_token
+
+    # Telegram bot
+    telegram_token:    "123456:some-token"
+    telegram_max_connections: 2
