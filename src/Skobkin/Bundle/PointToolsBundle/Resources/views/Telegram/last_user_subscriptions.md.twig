@@ -1,0 +1,12 @@
+{# @var user \Skobkin\Bundle\PointToolsBundle\Entity\User #}
+*Last [@{{ user.login }}]({{ user.login|point_user_url(true) }}):*
+
+{% set subscription = constant('\\Skobkin\\Bundle\\PointToolsBundle\\Entity\\SubscriptionEvent::ACTION_SUBSCRIBE') %}
+{# @var event \Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent #}
+{% for event in events %}
+{% set sub_login = event.subscriber.login %}
+{{ event.date|date('d M y H:i') }} {% if subscription == event.action %} + {% else %} - {% endif %} [@{{ sub_login }}]({{ sub_login|point_user_url(true) }})
+{% endfor %}
+
+{# @todo remove hardcoded URL #}
+See more events on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.

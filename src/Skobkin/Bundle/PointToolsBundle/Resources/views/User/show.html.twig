@@ -23,7 +23,7 @@
                         <div class="panel-body">
                             <ul class="users mosaic">
                                 {% for user in subscribers %}
-                                    <li><a href="{{ url('user_show', {login: user.login}) }}">@{{ user.login }}</a></li>
+                                    <li><a href="{{ path('user_show', {login: user.login}) }}">@{{ user.login }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -94,7 +94,7 @@
                 {% for event in subscriptions_log %}
                     <tr>
                         <td>
-                            <a href="{{ url('user_show', {login: event.subscriber.login}) }}">@{{ event.subscriber.login }}</a>
+                            <a href="{{ path('user_show', {login: event.subscriber.login}) }}">@{{ event.subscriber.login }}</a>
                         </td>
                         <td>
                             <span class="glyphicon {% if event.action == 'subscribe' %}glyphicon-plus{% elseif event.action == 'unsubscribe' %}glyphicon-minus{% endif %}"></span>

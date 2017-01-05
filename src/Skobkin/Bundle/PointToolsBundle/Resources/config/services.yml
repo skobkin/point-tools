@@ -14,6 +14,7 @@ services:
         tags:
             - { name: guzzle.client }
 
+
     skobkin_point_tools.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
         arguments:
@@ -21,6 +22,7 @@ services:
             - "%point_use_https%"
             - "%point_api_base_url%"
             - @doctrine.orm.entity_manager
+            - @serializer
 
     skobkin_point_tools.api_post:
         class: Skobkin\Bundle\PointToolsBundle\Service\PostApi
@@ -30,26 +32,34 @@ services:
             - "%point_api_base_url%"
             - @skobkin__point_tools.service_factory.post_factory
 
+
     skobkin_point_tools.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
         arguments: [ @doctrine.orm.entity_manager ]
 
+
+    # Factories
+    # User factory
     skobkin__point_tools.service_factory.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
         arguments: [ @doctrine.orm.entity_manager ]
 
+    # Comment factory
     skobkin__point_tools.service_factory.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
         arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory ]
 
+    # Tag factory
     skobkin__point_tools.service_factory.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
         arguments: [ @logger, @doctrine.orm.entity_manager ]
 
+    # File factory
     skobkin__point_tools.service_factory.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
         arguments: [ @logger, @doctrine.orm.entity_manager ]
 
+    # Post factory
     skobkin__point_tools.service_factory.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
         arguments:
@@ -60,20 +70,26 @@ services:
             - @skobkin__point_tools.service_factory.comment_factory
             - @skobkin__point_tools.service_factory.tag_factory
 
+    # Telegram accounts factory
+    point_tools.factory.telegram_account:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
+        arguments: [@doctrine.orm.entity_manager]
+
+
     # Custom Markdown parser
     markdown.parser.point:
         class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
-        arguments:
-            - []
-            - @router
+        arguments: [[], @router]
         tags:
             - { name: markdown.parser }
+
 
     # Event listener
     point_tools.event_listener.user_rename_subscriber:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserRenameSubscriber
         tags:
             - { name: doctrine.event_subscriber, connection: default }
+
 
     # Twig extensions
     point_tools.twig.point_avatar_extension:
@@ -83,17 +99,40 @@ services:
         tags:
             - { name: twig.extension }
 
-    # Telegram API client
+
+    # Telegram services
+    # API client
     point_tools.telegram.api_client:
         class: unreal4u\TelegramAPI\TgLog
         arguments: [%telegram_token%, @logger, @point_tools.http.telegram_client]
 
-    # Telegram simple message sender
+    # Simple message sender
     point_tools.telegram.simple_sender:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\SimpleSender
         arguments: [@point_tools.telegram.api_client]
 
-    # Telegram command processor
-    point_tools.telegram.update_processor:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateProcessor
-        arguments: [%point_id%, @point_tools.telegram.api_client, @doctrine.orm.entity_manager, @twig]
+    # Common incoming message processor
+    point_tools.telegram.update_dispatcher:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher
+        arguments:
+            - @point_tools.telegram.private_message_processor
+            - @point_tools.telegram.inline_query_processor
+
+    # InlineQuery processor
+    point_tools.telegram.inline_query_processor:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
+        lazy: true
+        arguments: [@doctrine.orm.entity_manager, @point_tools.telegram.api_client]
+
+    # Private message processor
+    point_tools.telegram.private_message_processor:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
+        lazy: true
+        arguments:
+            - @point_tools.telegram.api_client
+            - @skobkin_point_tools.api_user
+            - @point_tools.factory.telegram_account
+            - @doctrine.orm.entity_manager
+            - @twig
+            - %point_id%
+            - %point_login%
