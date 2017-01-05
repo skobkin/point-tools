@@ -79,6 +79,11 @@ class AbstractApi
      */
     public function sendPostRequest($path, array $parameters = [])
     {
+        // Cleaning POST parameters from potential @file injections
+        array_walk($parameters, function (string &$value, string $key) {
+            str_replace('@', '', $value);
+        });
+
         /** @var GuzzleRequest $request */
         $request = $this->client->post($path, null, $parameters);
 
