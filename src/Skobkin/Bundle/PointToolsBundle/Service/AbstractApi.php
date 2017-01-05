@@ -81,7 +81,7 @@ class AbstractApi
     {
         // Cleaning POST parameters from potential @file injections
         array_walk($parameters, function (string &$value, string $key) {
-            str_replace('@', '', $value);
+            $value = str_replace('@', '', $value);
         });
 
         /** @var GuzzleRequest $request */
