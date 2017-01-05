@@ -207,12 +207,12 @@ class PrivateMessageProcessor
 
     private function linkAccount(Account $account, string $login, string $password): bool
     {
-        if ($this->userApi->isAuthDataValid($login, $password)) {
-            /** @var User $user */
-            if (null === $user = $this->userRepo->findUserByLogin($login)) {
-                throw new CommandProcessingException('User not found in Point Tools database. Please try again later.');
-            }
+        /** @var User $user */
+        if (null === $user = $this->userRepo->findUserByLogin($login)) {
+            throw new CommandProcessingException('User not found in Point Tools database. Please try again later.');
+        }
 
+        if ($this->userApi->isAuthDataValid($login, $password)) {
             $account->setUser($user);
 
             return true;

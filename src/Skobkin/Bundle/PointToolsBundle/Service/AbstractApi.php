@@ -80,6 +80,7 @@ class AbstractApi
     public function sendPostRequest($path, array $parameters = [])
     {
         // Cleaning POST parameters from potential @file injections
+        // @todo move to new Guzzle
         array_walk($parameters, function (string &$value, string $key) {
             $value = str_replace('@', '', $value);
         });
