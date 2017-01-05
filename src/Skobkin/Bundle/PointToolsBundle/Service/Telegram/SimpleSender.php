@@ -35,7 +35,7 @@ class SimpleSender
     public function sendMessage(int $chatId, string $text): bool
     {
         $sendMessage = new SendMessage();
-        $sendMessage->chat_id = $chatId;
+        $sendMessage->chat_id = (string) $chatId;
         $sendMessage->text = $text;
 
         try {
