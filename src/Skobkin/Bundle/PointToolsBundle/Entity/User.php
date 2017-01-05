@@ -53,14 +53,14 @@ class User
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $subscribers;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber")
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber", fetch="EXTRA_LAZY")
      */
     private $subscriptions;
 
