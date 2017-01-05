@@ -75,11 +75,6 @@ class PrivateMessageProcessor
      */
     private $pointUserId;
 
-    /**
-     * @var string
-     */
-    private $pointUserLogin;
-
 
     public function __construct(
         TgLog $client,
@@ -87,8 +82,7 @@ class PrivateMessageProcessor
         AccountFactory $accountFactory,
         EntityManagerInterface $em,
         \Twig_Environment $twig,
-        int $pointUserId,
-        string $pointUserLogin
+        int $pointUserId
     )
     {
         $this->client = $client;
@@ -97,7 +91,6 @@ class PrivateMessageProcessor
         $this->em = $em;
         $this->twig = $twig;
         $this->pointUserId = $pointUserId;
-        $this->pointUserLogin = $pointUserLogin;
 
         $this->userRepo = $em->getRepository('SkobkinPointToolsBundle:User');
         $this->subscriptionRepo = $em->getRepository('SkobkinPointToolsBundle:Subscription');
@@ -167,7 +160,6 @@ class PrivateMessageProcessor
 
                 case '/sub':
                 case 'sub':
-                case 'subscribers':
                     if (array_key_exists(1, $words)) {
                         if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
                             $this->sendUserSubscribers($sendMessage, $user);
@@ -175,8 +167,11 @@ class PrivateMessageProcessor
                             $this->sendError($sendMessage, 'User not found');
                         }
                     } else {
-                        $user = $this->userRepo->findUserByLogin($this->pointUserLogin);
-                        $this->sendUserSubscribers($sendMessage, $user);
+                        if ($user = $account->getUser()) {
+                            $this->sendUserSubscribers($sendMessage, $user);
+                        } else {
+                            $this->sendError($sendMessage, 'Account not linked', 'You must /link your account first to be able to use this command.');
+                        }
                     }
 
                     break;
@@ -298,7 +293,7 @@ class PrivateMessageProcessor
     private function createResponseMessage(Message $message, string $parseMode = self::PARSE_MODE_MARKDOWN, bool $disableWebPreview = false): SendMessage
     {
         $sendMessage = new SendMessage();
-        $sendMessage->chat_id = $message->chat->id;
+        $sendMessage->chat_id = (string) $message->chat->id;
         $sendMessage->parse_mode = $parseMode;
         $sendMessage->disable_web_page_preview = $disableWebPreview;
 
