@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Service\Client;
+use JMS\Serializer\Serializer;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\Auth;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
@@ -36,18 +38,75 @@ class UserApi extends AbstractApi
      */
     protected $userRepository;
 
+    /**
+     * @var Serializer
+     */
+    private $serializer;
 
-    public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManager $entityManager)
+
+    public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManager $entityManager, Serializer $serializer)
     {
         parent::__construct($httpClient, $https, $baseUrl);
 
         $this->em = $entityManager;
+        $this->serializer = $serializer;
         $this->userRepository = $this->em->getRepository('SkobkinPointToolsBundle:User');
     }
 
     public function getName()
     {
         return 'skobkin_point_tools_api_user';
+    }
+
+    public function isAuthDataValid(string $login, string $password): bool
+    {
+        $auth = $this->authenticate($login, $password);
+
+        if (!$auth->getError() && $auth->getToken()) {
+            $this->logout($auth);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function authenticate(string $login, string $password): Auth
+    {
+        try {
+            $authData = $this->getPostRequestData(
+                '/api/login',
+                [
+                    'login' => $login,
+                    'password' => $password,
+                ]
+            );
+
+            return $this->serializer->deserialize($authData, Auth::class, 'json');
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new InvalidResponseException('API method not found', 0, $e);
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    public function logout(Auth $auth): bool
+    {
+        try {
+            $this->getPostRequestData('/api/logout', ['csrf_token' => $auth->getCsRfToken()]);
+
+            return true;
+        } catch (ClientErrorResponseException $e) {
+            if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
+                throw new InvalidResponseException('API method not found', 0, $e);
+            } elseif (Response::HTTP_FORBIDDEN === $e->getResponse()->getStatusCode()) {
+                return true;
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**

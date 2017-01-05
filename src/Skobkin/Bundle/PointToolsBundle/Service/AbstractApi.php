@@ -80,9 +80,7 @@ class AbstractApi
     public function sendPostRequest($path, array $parameters = [])
     {
         /** @var GuzzleRequest $request */
-        $request = $this->client->post($path, null, null, [
-            'form_params' => $parameters,
-        ]);
+        $request = $this->client->post($path, null, $parameters);
 
         return $request->send();
     }

@@ -1,0 +1,11 @@
+{# @var user \Skobkin\Bundle\PointToolsBundle\Entity\User #}
+*@{{ user.login }} subscribers:*
+
+{% if subscribers|length > 0 %}
+{{ subscribers|join(', ') }}
+{% else %}
+No subscribers
+{% endif %}
+
+{# @todo remove hardcoded URL #}
+See more events on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.

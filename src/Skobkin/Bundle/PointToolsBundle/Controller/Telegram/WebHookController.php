@@ -18,14 +18,31 @@ class WebHookController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $logger = $this->get('logger');
+
         $content = json_decode($request->getContent(), true);
 
         $update = new Update(
             $content,
-            $this->get('logger')
+            $logger
         );
 
-        $this->get('point_tools.telegram.update_processor')->process($update);
+        try {
+            $this->get('point_tools.telegram.update_dispatcher')->process($update);
+        } catch (\Exception $e) {
+            if ($this->getParameter('kernel.debug')) {
+                throw $e;
+            }
+
+            $logger->addError('Telegram bot error', [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
 
         return new JsonResponse('received');
     }
