@@ -1,5 +1,5 @@
 {# @var user \Skobkin\Bundle\PointToolsBundle\Entity\User #}
-*Last [@{{ user.login }}]({{ user.login|point_user_url(true) }}):*
+*Last for @{{ user.login }}:*
 
 {% set subscription = constant('\\Skobkin\\Bundle\\PointToolsBundle\\Entity\\SubscriptionEvent::ACTION_SUBSCRIBE') %}
 {# @var event \Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent #}
