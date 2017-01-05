@@ -62,7 +62,7 @@ class UserApi extends AbstractApi
     {
         $auth = $this->authenticate($login, $password);
 
-        if (!$auth->getError() && $auth->getToken()) {
+        if (null === $auth->getError() && null !== $auth->getToken()) {
             $this->logout($auth);
 
             return true;
