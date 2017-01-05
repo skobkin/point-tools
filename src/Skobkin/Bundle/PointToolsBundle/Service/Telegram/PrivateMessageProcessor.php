@@ -209,7 +209,7 @@ class PrivateMessageProcessor
     {
         if ($this->userApi->isAuthDataValid($login, $password)) {
             /** @var User $user */
-            if (null === $user = $this->userRepo->findOneBy(['login' => $login])) {
+            if (null === $user = $this->userRepo->findUserByLogin($login)) {
                 throw new CommandProcessingException('User not found in Point Tools database. Please try again later.');
             }
 

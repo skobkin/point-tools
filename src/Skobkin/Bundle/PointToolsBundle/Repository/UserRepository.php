@@ -15,7 +15,7 @@ class UserRepository extends EntityRepository
      * @return User|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findUserByLogin($login)
+    public function findUserByLogin(string $login)
     {
         $qb = $this->createQueryBuilder('u');
 
@@ -36,7 +36,7 @@ class UserRepository extends EntityRepository
      *
      * @return User[]
      */
-    public function findUsersLikeLogin($login, $limit = 10)
+    public function findUsersLikeLogin(string $login, int $limit = 10)
     {
         if (empty($login)) {
             return [];
@@ -68,7 +68,7 @@ class UserRepository extends EntityRepository
      * @param integer $id
      * @return User[]
      */
-    public function findUserSubscribersById($id)
+    public function findUserSubscribersById(int $id)
     {
         if (!is_int($id)) {
             throw new \InvalidArgumentException('$id must be an integer');
@@ -93,7 +93,7 @@ class UserRepository extends EntityRepository
      *
      * @return TopUserDTO[]
      */
-    public function getTopUsers($limit = 30)
+    public function getTopUsers(int $limit = 30)
     {
         if (!is_int($limit)) {
             throw new \InvalidArgumentException('$limit must be an integer');
