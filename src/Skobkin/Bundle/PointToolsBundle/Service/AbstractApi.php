@@ -144,9 +144,9 @@ class AbstractApi
      *
      * @return string Base URL of client
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
-        return $this->client->getBaseUrl();
+        return (string) $this->client->getBaseUrl();
     }
 
     /**
@@ -156,7 +156,7 @@ class AbstractApi
      * @param bool $useProtocol Do not change URL scheme (http/https) defined in $baseUrl
      * @return $this
      */
-    public function setBaseUrl($baseUrl, $useProtocol = false)
+    public function setBaseUrl(string $baseUrl, bool $useProtocol = false): self
     {
         // Overriding protocol
         if (!$useProtocol) {
@@ -177,7 +177,7 @@ class AbstractApi
      *
      * @return bool
      */
-    public function isHttps()
+    public function isHttps(): bool
     {
         return $this->useHttps;
     }
@@ -187,7 +187,7 @@ class AbstractApi
      *
      * @return $this
      */
-    public function enableHttps()
+    public function enableHttps(): self
     {
         $this->useHttps = true;
         $this->setBaseUrl($this->getBaseUrl());
@@ -200,7 +200,7 @@ class AbstractApi
      *
      * @return $this
      */
-    public function disableHttps()
+    public function disableHttps(): self
     {
         $this->useHttps = false;
         $this->setBaseUrl($this->getBaseUrl());
