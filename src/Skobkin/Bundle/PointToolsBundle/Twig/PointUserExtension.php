@@ -70,7 +70,7 @@ class PointUserExtension extends \Twig_Extension
      */
     public function pointUserUrl(string $login, bool $forceHttps = false): string
     {
-        return sprintf('%s//%s.%s/', $forceHttps ? 'https' : '', $login, self::POINT_HOST);
+        return sprintf('%s//%s.%s/', $forceHttps ? 'https:' : '', $login, self::POINT_HOST);
     }
 
     /**
@@ -81,6 +81,6 @@ class PointUserExtension extends \Twig_Extension
      */
     public function pointUserBlogUrl(string $login, bool $forceHttps = false): string
     {
-        return sprintf('%s//%s.%s/blog/', $forceHttps ? 'https' : '', $login, self::POINT_HOST);
+        return sprintf('%s//%s.%s/blog/', $forceHttps ? 'https:' : '', $login, self::POINT_HOST);
     }
 }
