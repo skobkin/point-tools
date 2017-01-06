@@ -106,9 +106,9 @@ services:
         class: unreal4u\TelegramAPI\TgLog
         arguments: [%telegram_token%, @logger, @point_tools.http.telegram_client]
 
-    # Simple message sender
-    point_tools.telegram.simple_sender:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\SimpleSender
+    # Message sender
+    point_tools.telegram.message_sender:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
         arguments: [@point_tools.telegram.api_client]
 
     # Common incoming message processor
@@ -129,7 +129,7 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
         lazy: true
         arguments:
-            - @point_tools.telegram.api_client
+            - @point_tools.telegram.message_sender
             - @skobkin_point_tools.api_user
             - @point_tools.factory.telegram_account
             - @doctrine.orm.entity_manager

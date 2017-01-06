@@ -11,29 +11,18 @@ use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
-use unreal4u\TelegramAPI\Telegram\Methods\SendMessage;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
-use unreal4u\TelegramAPI\TgLog;
+use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
 
 /**
  * Processes all private messages
  */
 class PrivateMessageProcessor
 {
-    const TEMPLATE_ERROR = '@SkobkinPointTools/Telegram/error.md.twig';
-    const TEMPLATE_STATS = '@SkobkinPointTools/Telegram/stats.md.twig';
-    const TEMPLATE_HELP = '@SkobkinPointTools/Telegram/help.md.twig';
-    const TEMPLATE_LAST_EVENTS = '@SkobkinPointTools/Telegram/last_global_subscriptions.md.twig';
-    const TEMPLATE_LAST_USER_SUB_EVENTS = '@SkobkinPointTools/Telegram/last_user_subscriptions.md.twig';
-    const TEMPLATE_USER_SUBSCRIBERS = '@SkobkinPointTools/Telegram/user_subscribers.md.twig';
-
-    const PARSE_MODE_MARKDOWN = 'Markdown';
-    const PARSE_MODE_HTML5 = 'HTML';
-
     /**
-     * @var TgLog
+     * @var MessageSender
      */
-    private $client;
+    private $messenger;
 
     /**
      * @var UserApi
@@ -77,7 +66,7 @@ class PrivateMessageProcessor
 
 
     public function __construct(
-        TgLog $client,
+        MessageSender $messageSender,
         UserApi $userApi,
         AccountFactory $accountFactory,
         EntityManagerInterface $em,
@@ -85,7 +74,7 @@ class PrivateMessageProcessor
         int $pointUserId
     )
     {
-        $this->client = $client;
+        $this->messenger = $messageSender;
         $this->userApi = $userApi;
         $this->accountFactory = $accountFactory;
         $this->em = $em;
@@ -100,24 +89,26 @@ class PrivateMessageProcessor
     public function process(Message $message)
     {
         if (!IncomingUpdateDispatcher::CHAT_TYPE_PRIVATE === $message->chat->type) {
-            throw new \InvalidArgumentException('This service can process only private chat messages');
-        }
-
-        // Registering Telegram user
-        /** @var Account $account */
-        $account = $this->accountFactory->findOrCreateFromMessage($message);
-        $this->em->flush();
-
-        // Creating blank response for later use
-        $sendMessage = $this->createResponseMessage($message, self::PARSE_MODE_MARKDOWN, true);
-
-        $words = explode(' ', $message->text, 4);
-
-        if (0 === count($words)) {
-            return;
+            throw new \LogicException('This service can process only private chat messages');
         }
 
         try {
+            // Registering Telegram user
+            /** @var Account $account */
+            $account = $this->accountFactory->findOrCreateFromMessage($message);
+            $this->em->flush();
+        } catch (\Exception $e) {
+            // Low-level message in case of incorrect $account
+            $this->messenger->sendMessageToChat($message->chat->id, 'There was an error during your Telegram account registration. Try again or report the bug.');
+        }
+
+        try {
+            $words = explode(' ', $message->text, 10);
+
+            if (0 === count($words)) {
+                return;
+            }
+
             switch ($words[0]) {
                 case '/link':
                 case 'link':
@@ -125,35 +116,34 @@ class PrivateMessageProcessor
                         if ($this->linkAccount($account, $words[1], $words[2])) {
                             // Saving linking status
                             $this->em->flush();
-                            $this->sendAccountLinked($sendMessage);
+                            $this->sendAccountLinked($account);
                         } else {
-                            $this->sendError($sendMessage, 'Account linking error', 'Check login and password or try again later.');
+                            $this->sendError($account, 'Account linking error', 'Check login and password or try again later.');
                         }
                     } else {
-                        $this->sendError($sendMessage, 'Login/Password error', 'You need to specify login and password separated by space after /link (example: `/link mylogin MypASSw0rd`)');
+                        $this->sendError($account, 'Login/Password error', 'You need to specify login and password separated by space after /link (example: `/link mylogin MypASSw0rd`)');
                     }
                     break;
 
                 case '/me':
                 case 'me':
                     if ($user = $account->getUser()) {
-                        $this->sendUserEvents($sendMessage, $user);
+                        $this->sendUserEvents($account, $user);
                     } else {
-                        $this->sendError($sendMessage, 'Account not linked', 'You must /link your account first to be able to use this command.');
+                        $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
                     }
                     break;
 
                 case '/last':
-                case 'l':
                 case 'last':
                     if (array_key_exists(1, $words)) {
                         if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
-                            $this->sendUserEvents($sendMessage, $user);
+                            $this->sendUserEvents($account, $user);
                         } else {
-                            $this->sendError($sendMessage, 'User not found');
+                            $this->sendError($account, 'User not found');
                         }
                     } else {
-                        $this->sendGlobalEvents($sendMessage);
+                        $this->sendGlobalEvents($account);
                     }
 
                     break;
@@ -162,15 +152,15 @@ class PrivateMessageProcessor
                 case 'sub':
                     if (array_key_exists(1, $words)) {
                         if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
-                            $this->sendUserSubscribers($sendMessage, $user);
+                            $this->sendUserSubscribers($account, $user);
                         } else {
-                            $this->sendError($sendMessage, 'User not found');
+                            $this->sendError($account, 'User not found');
                         }
                     } else {
                         if ($user = $account->getUser()) {
-                            $this->sendUserSubscribers($sendMessage, $user);
+                            $this->sendUserSubscribers($account, $user);
                         } else {
-                            $this->sendError($sendMessage, 'Account not linked', 'You must /link your account first to be able to use this command.');
+                            $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
                         }
                     }
 
@@ -178,23 +168,23 @@ class PrivateMessageProcessor
 
                 case '/stats':
                 case 'stats':
-                    $this->sendStats($sendMessage);
+                    $this->sendStats($account);
 
                     break;
 
                 case '/help':
                 default:
-                    $this->sendHelp($sendMessage);
+                    $this->sendHelp($account);
                     break;
             }
         } catch (CommandProcessingException $e) {
-            $this->sendError($sendMessage, 'Processing error', $e->getMessage());
+            $this->sendError($account, 'Processing error', $e->getMessage());
 
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }
         } catch (\Exception $e) {
-            $this->sendError($sendMessage, 'Unknown error');
+            $this->sendError($account, 'Unknown error');
 
             throw $e;
         }
@@ -216,87 +206,95 @@ class PrivateMessageProcessor
         return false;
     }
 
-    private function sendAccountLinked(SendMessage $sendMessage)
+    private function sendAccountLinked(Account $account)
     {
-        $sendMessage->text = 'Account linked. Try using /me now.';
-
-        $this->client->performApiRequest($sendMessage);
+        $this->messenger->sendMessageToUser($account, 'Account linked. Try using /me now.');
     }
 
-    private function sendUserSubscribers(SendMessage $sendMessage, User $user)
+    private function sendUserSubscribers(Account $account, User $user)
     {
         $subscribers = [];
-
         foreach ($user->getSubscribers() as $subscription) {
             $subscribers[] = '@'.$subscription->getSubscriber()->getLogin();
         }
 
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_USER_SUBSCRIBERS, [
-            'user' => $user,
-            'subscribers' => $subscribers,
-        ]);
-
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage(
+            $account,
+            '@SkobkinPointTools/Telegram/user_subscribers.md.twig',
+            [
+                'user' => $user,
+                'subscribers' => $subscribers,
+            ]
+        );
     }
 
-    /**
-     * @param SendMessage $sendMessage
-     * @param User $user
-     */
-    private function sendUserEvents(SendMessage $sendMessage, User $user)
+    private function sendUserEvents(Account $account, User $user)
     {
         $events = $this->subscriptionEventRepo->getUserLastSubscribersEvents($user, 10);
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_LAST_USER_SUB_EVENTS, [
-            'user' => $user,
-            'events' => $events,
-        ]);
 
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage(
+            $account,
+            '@SkobkinPointTools/Telegram/last_user_subscriptions.md.twig',
+            [
+                'user' => $user,
+                'events' => $events,
+            ]
+        );
     }
 
-    private function sendGlobalEvents(SendMessage $sendMessage)
+    private function sendGlobalEvents(Account $account)
     {
         $events = $this->subscriptionEventRepo->getLastSubscriptionEvents(10);
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_LAST_EVENTS, ['events' => $events]);
 
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/last_global_subscriptions.md.twig', ['events' => $events]);
     }
 
-    private function sendStats(SendMessage $sendMessage)
+    private function sendStats(Account $account)
     {
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_STATS, [
-            'total_users' => $this->userRepo->getUsersCount(),
-            'active_users' => $this->subscriptionRepo->getUserSubscribersCountById($this->pointUserId),
-            'today_events' => $this->subscriptionEventRepo->getLastDayEventsCount(),
-        ]);
-
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage(
+            $account,
+            '@SkobkinPointTools/Telegram/stats.md.twig',
+            [
+                'total_users' => $this->userRepo->getUsersCount(),
+                'active_users' => $this->subscriptionRepo->getUserSubscribersCountById($this->pointUserId),
+                'today_events' => $this->subscriptionEventRepo->getLastDayEventsCount(),
+            ]
+        );
     }
 
-    private function sendHelp(SendMessage $sendMessage)
+    private function sendHelp(Account $account)
     {
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_HELP);
-
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/help.md.twig');
     }
 
-    private function sendError(SendMessage $sendMessage, string $title, string $text = '')
+    private function sendError(Account $account, string $title, string $text = '')
     {
-        $sendMessage->text = $this->twig->render(self::TEMPLATE_ERROR, [
-            'title' => $title,
-            'text' => $text,
-        ]);
-
-        $this->client->performApiRequest($sendMessage);
+        $this->sendTemplatedMessage(
+            $account,
+            '@SkobkinPointTools/Telegram/error.md.twig',
+            [
+                'title' => $title,
+                'text' => $text,
+            ]
+        );
     }
 
-    private function createResponseMessage(Message $message, string $parseMode = self::PARSE_MODE_MARKDOWN, bool $disableWebPreview = false): SendMessage
+    private function sendTemplatedMessage(
+        Account $account,
+        string $template,
+        array $templateData = [],
+        ReplyKeyboardMarkup $keyboardMarkup = null,
+        bool $disableWebPreview = true,
+        string $format = MessageSender::PARSE_MODE_MARKDOWN
+    ): bool
     {
-        $sendMessage = new SendMessage();
-        $sendMessage->chat_id = (string) $message->chat->id;
-        $sendMessage->parse_mode = $parseMode;
-        $sendMessage->disable_web_page_preview = $disableWebPreview;
+        $text = $this->twig->render($template, $templateData);
 
-        return $sendMessage;
+        return $this->messenger->sendMessageToUser($account, $text, $format, $keyboardMarkup, $disableWebPreview, false);
+    }
+
+    private function sendPlainTextMessage(Account $account, string $text, ReplyKeyboardMarkup $keyboardMarkup = null, bool $disableWebPreview = true): bool
+    {
+        return $this->messenger->sendMessageToUser($account, $text, MessageSender::PARSE_MODE_NOPARSE, $keyboardMarkup, $disableWebPreview);
     }
 }
