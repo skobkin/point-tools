@@ -10,6 +10,8 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class UserRenameSubscriber implements EventSubscriber
 {
@@ -17,6 +19,22 @@ class UserRenameSubscriber implements EventSubscriber
      * @var UserRenameEvent[]
      */
     private $items = [];
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+
+    /**
+     * UserRenameSubscriber constructor.
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     public function getSubscribedEvents()
     {
@@ -43,6 +61,9 @@ class UserRenameSubscriber implements EventSubscriber
     public function postFlush(PostFlushEventArgs $event)
     {
         if (0 !== count($this->items)) {
+            // Creating event for dispatch
+            $usersRenamedEvent = new GenericEvent(null, $this->items);
+
             $em = $event->getEntityManager();
 
             foreach ($this->items as $item) {
@@ -52,6 +73,8 @@ class UserRenameSubscriber implements EventSubscriber
             $this->items = [];
 
             $em->flush();
+
+            $this->eventDispatcher->dispatch('app.users.renamed', $usersRenamedEvent);
         }
     }
 }

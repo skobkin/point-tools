@@ -53,11 +53,6 @@ class UserApi extends AbstractApi
         $this->userRepository = $this->em->getRepository('SkobkinPointToolsBundle:User');
     }
 
-    public function getName()
-    {
-        return 'skobkin_point_tools_api_user';
-    }
-
     public function isAuthDataValid(string $login, string $password): bool
     {
         $auth = $this->authenticate($login, $password);
@@ -292,12 +287,6 @@ class UserApi extends AbstractApi
                 ->setName($userInfo['name'])
             ;
 
-            try {
-                $this->em->flush($user);
-            } catch (\Exception $e) {
-                throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
-            }
-
             return $user;
         }
 
@@ -335,12 +324,6 @@ class UserApi extends AbstractApi
                     ->setLogin($userInfo['login'])
                     ->setName($userInfo['name'])
                 ;
-
-                try {
-                    $this->em->flush($user);
-                } catch (\Exception $e) {
-                    throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
-                }
 
                 $resultUsers[] = $user;
             } else {

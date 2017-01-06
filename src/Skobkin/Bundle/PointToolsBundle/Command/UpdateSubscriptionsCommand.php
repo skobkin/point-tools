@@ -60,6 +60,9 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             return 1;
         }
 
+        // Beginning transaction for all changes
+        $em->beginTransaction();
+
         if ($input->getOption('all-users')) {
             $usersForUpdate = $userRepository->findAll();
         } else {
@@ -143,6 +146,10 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             // @todo move to the config
             usleep(500000);
         }
+
+        // Flushing all changes at once to database
+        $em->flush();
+        $em->commit();
 
         return 0;
     }

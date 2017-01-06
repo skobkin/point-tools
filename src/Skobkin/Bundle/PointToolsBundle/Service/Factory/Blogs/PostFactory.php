@@ -72,6 +72,7 @@ class PostFactory
      * @param PostsPage $page
      *
      * @return bool
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      */
@@ -105,8 +106,6 @@ class PostFactory
                 $hasNew = true;
             }
         }
-
-        $this->em->flush();
 
         return $hasNew;
     }
@@ -165,13 +164,6 @@ class PostFactory
             $this->updatePostFiles($post, $postData->getPost()->getFiles() ?: []);
         } catch (\Exception $e) {
             $this->log->error('Error while updating post files');
-            throw $e;
-        }
-
-        try {
-            $this->em->flush($post);
-        } catch (\Exception $e) {
-            $this->log->error('Error while flushing post entity');
             throw $e;
         }
 

@@ -11,7 +11,6 @@ use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
-use unreal4u\TelegramAPI\Abstracts\KeyboardMethods;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
 use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardRemove;
@@ -42,11 +41,6 @@ class PrivateMessageProcessor
     private $em;
 
     /**
-     * @var \Twig_Environment
-     */
-    private $twig;
-
-    /**
      * @var UserRepository
      */
     private $userRepo;
@@ -67,20 +61,12 @@ class PrivateMessageProcessor
     private $pointUserId;
 
 
-    public function __construct(
-        MessageSender $messageSender,
-        UserApi $userApi,
-        AccountFactory $accountFactory,
-        EntityManagerInterface $em,
-        \Twig_Environment $twig,
-        int $pointUserId
-    )
+    public function __construct(MessageSender $messageSender, UserApi $userApi, AccountFactory $accountFactory, EntityManagerInterface $em, int $pointUserId)
     {
         $this->messenger = $messageSender;
         $this->userApi = $userApi;
         $this->accountFactory = $accountFactory;
         $this->em = $em;
-        $this->twig = $twig;
         $this->pointUserId = $pointUserId;
 
         $this->userRepo = $em->getRepository('SkobkinPointToolsBundle:User');
@@ -251,12 +237,12 @@ class PrivateMessageProcessor
                     $account->toggleRenameNotification();
                     $this->em->flush();
 
-                    $this->sendPlainTextMessage($account, 'Renaming notifications are turned '.($account->isRenameNotification() ? 'on' : 'off'));
+                    $this->messenger->sendMessage($account, 'Renaming notifications are turned '.($account->isRenameNotification() ? 'on' : 'off'));
                 } elseif ('subscribers' === $words[2]) {
                     $account->toggleSubscriberNotification();
                     $this->em->flush();
 
-                    $this->sendPlainTextMessage($account, 'Subscribers notifications are turned '.($account->isSubscriberNotification() ? 'on' : 'off'));
+                    $this->messenger->sendMessage($account, 'Subscribers notifications are turned '.($account->isSubscriberNotification() ? 'on' : 'off'));
                 } else {
                     $this->sendError($account, 'Notification type does not exist.');
                 }
@@ -267,7 +253,7 @@ class PrivateMessageProcessor
                     ['exit'],
                 ];
 
-                $this->sendPlainTextMessage($account, 'Choose which notification type to toggle', $keyboard);
+                $this->messenger->sendMessage($account, 'Choose which notification type to toggle', MessageSender::PARSE_PLAIN, $keyboard);
             }
 
         } else {
@@ -276,7 +262,7 @@ class PrivateMessageProcessor
                 ['exit'],
             ];
 
-            $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/settings.md.twig', ['account' => $account], $keyboard);
+            $this->messenger->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/settings.md.twig', ['account' => $account], $keyboard);
         }
     }
 
@@ -287,7 +273,7 @@ class PrivateMessageProcessor
     {
         $keyboardRemove = new ReplyKeyboardRemove();
 
-        $this->sendPlainTextMessage($account, 'Done', $keyboardRemove);
+        $this->messenger->sendMessage($account, 'Done', MessageSender::PARSE_PLAIN, $keyboardRemove);
     }
 
     private function processHelp(Account $account)
@@ -297,7 +283,7 @@ class PrivateMessageProcessor
 
     private function sendAccountLinked(Account $account)
     {
-        $this->messenger->sendMessageToUser($account, 'Account linked. Try using /me now.');
+        $this->messenger->sendMessage($account, 'Account linked. Try using /me now.');
     }
 
     private function sendUserSubscribers(Account $account, User $user)
@@ -307,7 +293,7 @@ class PrivateMessageProcessor
             $subscribers[] = '@'.$subscription->getSubscriber()->getLogin();
         }
 
-        $this->sendTemplatedMessage(
+        $this->messenger->sendTemplatedMessage(
             $account,
             '@SkobkinPointTools/Telegram/user_subscribers.md.twig',
             [
@@ -321,7 +307,7 @@ class PrivateMessageProcessor
     {
         $events = $this->subscriptionEventRepo->getUserLastSubscribersEvents($user, 10);
 
-        $this->sendTemplatedMessage(
+        $this->messenger->sendTemplatedMessage(
             $account,
             '@SkobkinPointTools/Telegram/last_user_subscriptions.md.twig',
             [
@@ -335,12 +321,12 @@ class PrivateMessageProcessor
     {
         $events = $this->subscriptionEventRepo->getLastSubscriptionEvents(10);
 
-        $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/last_global_subscriptions.md.twig', ['events' => $events]);
+        $this->messenger->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/last_global_subscriptions.md.twig', ['events' => $events]);
     }
 
     private function sendStats(Account $account)
     {
-        $this->sendTemplatedMessage(
+        $this->messenger->sendTemplatedMessage(
             $account,
             '@SkobkinPointTools/Telegram/stats.md.twig',
             [
@@ -353,12 +339,12 @@ class PrivateMessageProcessor
 
     private function sendHelp(Account $account)
     {
-        $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/help.md.twig');
+        $this->messenger->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/help.md.twig');
     }
 
     private function sendError(Account $account, string $title, string $text = '')
     {
-        $this->sendTemplatedMessage(
+        $this->messenger->sendTemplatedMessage(
             $account,
             '@SkobkinPointTools/Telegram/error.md.twig',
             [
@@ -368,22 +354,5 @@ class PrivateMessageProcessor
         );
     }
 
-    private function sendTemplatedMessage(
-        Account $account,
-        string $template,
-        array $templateData = [],
-        KeyboardMethods $keyboardMarkup = null,
-        bool $disableWebPreview = true,
-        string $format = MessageSender::PARSE_MODE_MARKDOWN
-    ): bool
-    {
-        $text = $this->twig->render($template, $templateData);
 
-        return $this->messenger->sendMessageToUser($account, $text, $format, $keyboardMarkup, $disableWebPreview, false);
-    }
-
-    private function sendPlainTextMessage(Account $account, string $text, KeyboardMethods $keyboardMarkup = null, bool $disableWebPreview = true): bool
-    {
-        return $this->messenger->sendMessageToUser($account, $text, MessageSender::PARSE_MODE_NOPARSE, $keyboardMarkup, $disableWebPreview);
-    }
 }

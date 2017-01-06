@@ -77,8 +77,6 @@ class FileFactory
             $this->em->persist($file);
         }
 
-        $this->em->flush($file);
-
         return $file;
     }
 

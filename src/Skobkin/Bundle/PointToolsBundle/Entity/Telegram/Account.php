@@ -12,7 +12,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
  *      @ORM\Index(name="subscriber_notification_idx", columns={"subscriber_notification"}, options={"where": "subscriber_notification = TRUE"}),
  *      @ORM\Index(name="rename_notification_idx", columns={"rename_notification"}, options={"where": "rename_notification = TRUE"}),
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class Account

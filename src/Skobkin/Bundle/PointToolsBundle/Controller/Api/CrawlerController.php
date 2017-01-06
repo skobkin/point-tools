@@ -28,6 +28,8 @@ class CrawlerController extends AbstractApiController
         
         $continue = $factory->createFromPageDTO($page);
 
+        $this->getDoctrine()->getManager()->flush();
+
         return $this->createSuccessResponse([
             'continue' => $continue,
         ]);

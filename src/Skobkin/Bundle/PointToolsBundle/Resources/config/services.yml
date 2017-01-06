@@ -87,8 +87,15 @@ services:
     # Event listener
     point_tools.event_listener.user_rename_subscriber:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserRenameSubscriber
+        arguments: [@event_dispatcher]
         tags:
             - { name: doctrine.event_subscriber, connection: default }
+
+    point_tools.event_listener.users_renamed_notifier_listener:
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenameNotifierListener
+        arguments: [@point_tools.telegram.notifier]
+        tags:
+            - { name: kernel.event_listener, event: app.users.renamed }
 
 
     # Twig extensions
@@ -109,7 +116,12 @@ services:
     # Message sender
     point_tools.telegram.message_sender:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
-        arguments: [@point_tools.telegram.api_client]
+        arguments: [@point_tools.telegram.api_client, @twig]
+
+    # User notifier
+    point_tools.telegram.notifier:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier
+        arguments: [@doctrine.orm.entity_manager, @point_tools.telegram.message_sender]
 
     # Common incoming message processor
     point_tools.telegram.update_dispatcher:
@@ -133,5 +145,4 @@ services:
             - @skobkin_point_tools.api_user
             - @point_tools.factory.telegram_account
             - @doctrine.orm.entity_manager
-            - @twig
             - %point_id%

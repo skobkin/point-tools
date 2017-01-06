@@ -74,8 +74,6 @@ class TagFactory
             $this->em->persist($tag);
         }
 
-        $this->em->flush($tag);
-
         return $tag;
     }
 

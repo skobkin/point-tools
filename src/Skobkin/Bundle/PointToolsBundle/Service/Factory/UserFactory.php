@@ -57,12 +57,6 @@ class UserFactory
             ->setName($data['name'])
         ;
 
-        try {
-            $this->em->flush($user);
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
-        }
-
         return $user;
     }
 
@@ -89,12 +83,6 @@ class UserFactory
             ->setLogin($userData->getLogin())
             ->setName($userData->getName())
         ;
-
-        try {
-            $this->em->flush($user);
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Error while flushing changes for [%d] %s: %s', $user->getId(), $user->getLogin(), $e->getMessage()), 0, $e);
-        }
 
         return $user;
     }

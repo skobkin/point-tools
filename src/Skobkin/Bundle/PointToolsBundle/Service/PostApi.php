@@ -22,9 +22,4 @@ class PostApi extends AbstractApi
 
         $this->postFactory = $postFactory;
     }
-
-    public function getName()
-    {
-        return 'skobkin_point_tools_api_post';
-    }
 }

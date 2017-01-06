@@ -71,12 +71,6 @@ class CommentFactory
             $this->em->persist($comment);
         }
 
-        try {
-            $this->em->flush($comment);
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Error while flushing changes for #%s/%d: %s', $data['post_id'], $data['id'], $e->getMessage()), 0, $e);
-        }
-
         return $comment;
     }
 

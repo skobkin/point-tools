@@ -2,7 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
@@ -65,8 +64,6 @@ class SubscriptionsManager
 
                 $user->addNewSubscriberEvent($logEvent);
             }
-
-
         }
 
         unset($subscribedList);
@@ -94,8 +91,6 @@ class SubscriptionsManager
         ;
 
         unset($unsubscribedList);
-
-        $this->em->flush();
     }
 
     /**
@@ -103,6 +98,7 @@ class SubscriptionsManager
      *
      * @param User[] $list1
      * @param User[] $list2
+     *
      * @return User[] Diff
      */
     public function getUsersListsDiff(array $list1 = [], array $list2 = [])
