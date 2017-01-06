@@ -36,7 +36,7 @@ class MessageSender
         string $parseMode = self::PARSE_MODE_NOPARSE,
         ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = false,
-        $disableNotifications = false
+        bool $disableNotifications = false
     ): bool
     {
         return $this->sendMessageToChat($account->getChatId(), $text, $parseMode, $keyboardMarkup, $disableWebPreview, $disableNotifications);
@@ -48,12 +48,16 @@ class MessageSender
         string $parseMode = self::PARSE_MODE_NOPARSE,
         ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = false,
-        $disableNotifications = false
+        bool $disableNotifications = false
     ): bool
     {
         $sendMessage = new SendMessage();
         $sendMessage->chat_id = (string) $chatId;
         $sendMessage->text = $text;
+        $sendMessage->parse_mode = $parseMode;
+        $sendMessage->disable_web_page_preview = $disableWebPreview;
+        $sendMessage->disable_notification = $disableNotifications;
+        $sendMessage->reply_markup = $keyboardMarkup;
 
         try {
             $this->client->performApiRequest($sendMessage);
