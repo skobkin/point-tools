@@ -4,8 +4,8 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
 use GuzzleHttp\Exception\ClientException;
 use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
+use unreal4u\TelegramAPI\Abstracts\KeyboardMethods;
 use unreal4u\TelegramAPI\Telegram\Methods\SendMessage;
-use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
 use unreal4u\TelegramAPI\TgLog;
 
 /**
@@ -34,7 +34,7 @@ class MessageSender
         Account $account,
         string $text,
         string $parseMode = self::PARSE_MODE_NOPARSE,
-        ReplyKeyboardMarkup $keyboardMarkup = null,
+        KeyboardMethods $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
     ): bool
@@ -46,7 +46,7 @@ class MessageSender
         int $chatId,
         string $text,
         string $parseMode = self::PARSE_MODE_NOPARSE,
-        ReplyKeyboardMarkup $keyboardMarkup = null,
+        KeyboardMethods $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
     ): bool

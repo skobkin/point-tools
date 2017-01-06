@@ -11,8 +11,10 @@ use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
+use unreal4u\TelegramAPI\Abstracts\KeyboardMethods;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
+use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardRemove;
 
 /**
  * Processes all private messages
@@ -112,69 +114,43 @@ class PrivateMessageProcessor
             switch ($words[0]) {
                 case '/link':
                 case 'link':
-                    if (array_key_exists(2, $words)) {
-                        if ($this->linkAccount($account, $words[1], $words[2])) {
-                            // Saving linking status
-                            $this->em->flush();
-                            $this->sendAccountLinked($account);
-                        } else {
-                            $this->sendError($account, 'Account linking error', 'Check login and password or try again later.');
-                        }
-                    } else {
-                        $this->sendError($account, 'Login/Password error', 'You need to specify login and password separated by space after /link (example: `/link mylogin MypASSw0rd`)');
-                    }
+                    $this->processLink($account, $words);
                     break;
 
                 case '/me':
                 case 'me':
-                    if ($user = $account->getUser()) {
-                        $this->sendUserEvents($account, $user);
-                    } else {
-                        $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
-                    }
+                    $this->processMe($account);
                     break;
 
                 case '/last':
                 case 'last':
-                    if (array_key_exists(1, $words)) {
-                        if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
-                            $this->sendUserEvents($account, $user);
-                        } else {
-                            $this->sendError($account, 'User not found');
-                        }
-                    } else {
-                        $this->sendGlobalEvents($account);
-                    }
-
+                    $this->processLast($account, $words);
                     break;
 
                 case '/sub':
                 case 'sub':
-                    if (array_key_exists(1, $words)) {
-                        if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
-                            $this->sendUserSubscribers($account, $user);
-                        } else {
-                            $this->sendError($account, 'User not found');
-                        }
-                    } else {
-                        if ($user = $account->getUser()) {
-                            $this->sendUserSubscribers($account, $user);
-                        } else {
-                            $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
-                        }
-                    }
-
+                    $this->processSub($account, $words);
                     break;
 
                 case '/stats':
                 case 'stats':
-                    $this->sendStats($account);
+                    $this->processStats($account);
+                    break;
 
+                // Settings menu
+                case '/set':
+                    $this->processSet($account, $words);
+                    break;
+
+                // Exit from any menu and remove keyboard
+                case '/exit':
+                case 'exit':
+                    $this->processExit($account);
                     break;
 
                 case '/help':
                 default:
-                    $this->sendHelp($account);
+                    $this->processHelp($account);
                     break;
             }
         } catch (CommandProcessingException $e) {
@@ -204,6 +180,119 @@ class PrivateMessageProcessor
         }
 
         return false;
+    }
+
+    private function processLink(Account $account, array $words)
+    {
+        if (array_key_exists(2, $words)) {
+            if ($this->linkAccount($account, $words[1], $words[2])) {
+                // Saving linking status
+                $this->em->flush();
+                $this->sendAccountLinked($account);
+            } else {
+                $this->sendError($account, 'Account linking error', 'Check login and password or try again later.');
+            }
+        } else {
+            $this->sendError($account, 'Login/Password error', 'You need to specify login and password separated by space after /link (example: `/link mylogin MypASSw0rd`)');
+        }
+    }
+
+    private function processMe(Account $account)
+    {
+        if ($user = $account->getUser()) {
+            $this->sendUserEvents($account, $user);
+        } else {
+            $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
+        }
+    }
+
+    private function processLast(Account $account, array $words)
+    {
+        if (array_key_exists(1, $words)) {
+            if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
+                $this->sendUserEvents($account, $user);
+            } else {
+                $this->sendError($account, 'User not found');
+            }
+        } else {
+            $this->sendGlobalEvents($account);
+        }
+    }
+
+    private function processSub(Account $account, array $words)
+    {
+        if (array_key_exists(1, $words)) {
+            if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
+                $this->sendUserSubscribers($account, $user);
+            } else {
+                $this->sendError($account, 'User not found');
+            }
+        } else {
+            if ($user = $account->getUser()) {
+                $this->sendUserSubscribers($account, $user);
+            } else {
+                $this->sendError($account, 'Account not linked', 'You must /link your account first to be able to use this command.');
+            }
+        }
+    }
+
+    private function processStats(Account $account)
+    {
+        $this->sendStats($account);
+    }
+
+    private function processSet(Account $account, array $words)
+    {
+        $keyboard = new ReplyKeyboardMarkup();
+
+        if (array_key_exists(1, $words)) {
+            if (array_key_exists(2, $words)) {
+                if ('renames' === $words[2]) {
+                    $account->toggleRenameNotification();
+                    $this->em->flush();
+
+                    $this->sendPlainTextMessage($account, 'Renaming notifications are turned '.($account->isRenameNotification() ? 'on' : 'off'));
+                } elseif ('subscribers' === $words[2]) {
+                    $account->toggleSubscriberNotification();
+                    $this->em->flush();
+
+                    $this->sendPlainTextMessage($account, 'Subscribers notifications are turned '.($account->isSubscriberNotification() ? 'on' : 'off'));
+                } else {
+                    $this->sendError($account, 'Notification type does not exist.');
+                }
+            } else {
+                $keyboard->keyboard = [
+                    ['/set notifications renames'],
+                    ['/set notifications subscribers'],
+                    ['exit'],
+                ];
+
+                $this->sendPlainTextMessage($account, 'Choose which notification type to toggle', $keyboard);
+            }
+
+        } else {
+            $keyboard->keyboard = [
+                ['/set notifications'],
+                ['exit'],
+            ];
+
+            $this->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/settings.md.twig', ['account' => $account], $keyboard);
+        }
+    }
+
+    /**
+     * Processes exit from keyboard menus and removes the keyboard
+     */
+    private function processExit(Account $account)
+    {
+        $keyboardRemove = new ReplyKeyboardRemove();
+
+        $this->sendPlainTextMessage($account, 'Done', $keyboardRemove);
+    }
+
+    private function processHelp(Account $account)
+    {
+        $this->sendHelp($account);
     }
 
     private function sendAccountLinked(Account $account)
@@ -283,7 +372,7 @@ class PrivateMessageProcessor
         Account $account,
         string $template,
         array $templateData = [],
-        ReplyKeyboardMarkup $keyboardMarkup = null,
+        KeyboardMethods $keyboardMarkup = null,
         bool $disableWebPreview = true,
         string $format = MessageSender::PARSE_MODE_MARKDOWN
     ): bool
@@ -293,7 +382,7 @@ class PrivateMessageProcessor
         return $this->messenger->sendMessageToUser($account, $text, $format, $keyboardMarkup, $disableWebPreview, false);
     }
 
-    private function sendPlainTextMessage(Account $account, string $text, ReplyKeyboardMarkup $keyboardMarkup = null, bool $disableWebPreview = true): bool
+    private function sendPlainTextMessage(Account $account, string $text, KeyboardMethods $keyboardMarkup = null, bool $disableWebPreview = true): bool
     {
         return $this->messenger->sendMessageToUser($account, $text, MessageSender::PARSE_MODE_NOPARSE, $keyboardMarkup, $disableWebPreview);
     }

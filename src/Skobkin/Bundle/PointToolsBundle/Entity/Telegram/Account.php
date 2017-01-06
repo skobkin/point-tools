@@ -245,6 +245,13 @@ class Account
         return $this;
     }
 
+    public function toggleSubscriberNotification(): self
+    {
+        $this->subscriberNotification = !$this->subscriberNotification;
+
+        return $this;
+    }
+
     public function isSubscriberNotification(): bool
     {
         return $this->subscriberNotification;
@@ -253,6 +260,13 @@ class Account
     public function setRenameNotification(bool $renameNotification): self
     {
         $this->renameNotification = $renameNotification;
+
+        return $this;
+    }
+
+    public function toggleRenameNotification(): self
+    {
+        $this->renameNotification = !$this->renameNotification;
 
         return $this;
     }
