@@ -8,6 +8,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Exception\Telegram\CommandProcessingException;
 use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
@@ -46,6 +47,11 @@ class PrivateMessageProcessor
     private $userRepo;
 
     /**
+     * @var AccountRepository
+     */
+    private $accountRepo;
+
+    /**
      * @var SubscriptionRepository
      */
     private $subscriptionRepo;
@@ -70,6 +76,7 @@ class PrivateMessageProcessor
         $this->pointUserId = $pointUserId;
 
         $this->userRepo = $em->getRepository('SkobkinPointToolsBundle:User');
+        $this->accountRepo = $em->getRepository('SkobkinPointToolsBundle:Telegram\Account');
         $this->subscriptionRepo = $em->getRepository('SkobkinPointToolsBundle:Subscription');
         $this->subscriptionEventRepo = $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent');
     }
@@ -336,6 +343,8 @@ class PrivateMessageProcessor
             [
                 'total_users' => $this->userRepo->getUsersCount(),
                 'active_users' => $this->subscriptionRepo->getUserSubscribersCountById($this->pointUserId),
+                'telegram_accounts' => $this->accountRepo->getAccountsCount(),
+                'telegram_linked_accounts' => $this->accountRepo->getLinkedAccountsCount(),
                 'today_events' => $this->subscriptionEventRepo->getLastDayEventsCount(),
             ]
         );
