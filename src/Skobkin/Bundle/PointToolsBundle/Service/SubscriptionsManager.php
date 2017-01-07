@@ -84,9 +84,11 @@ class SubscriptionsManager
         // Removing users from database
         $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $unsubscribedList);
 
-        // Dispatching event
-        $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
-        $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
+        if (0 !== count($subscribedList) || 0 !== count($unsubscribedList)) {
+            // Dispatching event
+            $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
+            $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
+        }
     }
 
     /**
