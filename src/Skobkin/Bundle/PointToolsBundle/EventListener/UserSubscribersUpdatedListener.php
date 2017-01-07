@@ -2,10 +2,10 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\EventListener;
 
-use Skobkin\Bundle\PointToolsBundle\Event\UsersRenamedEvent;
+use Skobkin\Bundle\PointToolsBundle\Event\UserSubscribersUpdatedEvent;
 use Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier;
 
-class UsersRenamedNotifierListener
+class UserSubscribersUpdatedListener
 {
     /**
      * @var Notifier
@@ -23,8 +23,8 @@ class UsersRenamedNotifierListener
         $this->notifier = $notifier;
     }
 
-    public function onAppUsersRenamed(UsersRenamedEvent $event)
+    public function onAppUserSubscribersUpdated(UserSubscribersUpdatedEvent $event)
     {
-        $this->notifier->sendUsersRenamedNotification($event->getRenames());
+        $this->notifier->sendUserSubscribersUpdatedNotification($event->getUser(), $event->getSubscribedUsers(), $event->getUnsubscribedUsers());
     }
 }

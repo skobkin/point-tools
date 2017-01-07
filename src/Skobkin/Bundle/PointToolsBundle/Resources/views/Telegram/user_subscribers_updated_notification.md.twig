@@ -1,0 +1,20 @@
+{# @var subscribed \Skobkin\Bundle\PointToolsBundle\Entity\User[] #}
+{# @var unsubscribed \Skobkin\Bundle\PointToolsBundle\Entity\User[] #}
+*Subscribers list changed:*
+
+{% if subscribed|length > 0 %}
+New subscribers:
+{% for subscriber in subscribed %}
+[@{{ subscriber.login }}]({{ subscriber.login|point_user_url(true) }})
+{% endfor %}
+{% endif %}
+{% if unsubscribed|length > 0 %}
+
+Lost subscribers:
+{% for subscriber in unsubscribed %}
+[@{{ subscriber.login }}]({{ subscriber.login|point_user_url(true) }})
+{% endfor %}
+{% endif %}
+
+{# @todo remove hardcoded URL #}
+See full subscribers history on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.

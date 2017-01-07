@@ -35,7 +35,7 @@ services:
 
     skobkin_point_tools.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
-        arguments: [ @doctrine.orm.entity_manager ]
+        arguments: [ @doctrine.orm.entity_manager, @event_dispatcher ]
 
 
     # Factories
@@ -92,10 +92,16 @@ services:
             - { name: doctrine.event_subscriber, connection: default }
 
     point_tools.event_listener.users_renamed_notifier:
-        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedNotifierListener
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedListener
         arguments: [@point_tools.telegram.notifier]
         tags:
             - { name: kernel.event_listener, event: app.users.renamed }
+
+    point_tools.event_listener.user_subscribers_updated:
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UserSubscribersUpdatedListener
+        arguments: [@point_tools.telegram.notifier]
+        tags:
+            - { name: kernel.event_listener, event: app.user.subscribers_updated }
 
 
     # Twig extensions

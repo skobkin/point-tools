@@ -3,28 +3,34 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Event\UserSubscribersUpdatedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SubscriptionsManager
 {
     /**
      * @var EntityManager
      */
-    protected $em;
+    private $em;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
 
-    // @todo Add logger
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->em = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * @param User $user
-     * @param User[]|array $newSubscribersList
+     * @param User[] $newSubscribersList
      */
     public function updateUserSubscribers(User $user, $newSubscribersList = [])
     {
@@ -37,6 +43,7 @@ class SubscriptionsManager
             $oldSubscribersList[] = $subscription->getSubscriber();
         }
 
+        // @todo remove
         $isFirstTime = false;
 
         // Preventing to add garbage subscriptions for first processing
@@ -66,16 +73,6 @@ class SubscriptionsManager
             }
         }
 
-        unset($subscribedList);
-
-        /** @var QueryBuilder $unsubscribedQuery */
-        $unsubscribedQuery = $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
-        $unsubscribedQuery
-            ->delete()
-            ->where('s.author = :author')
-            ->andWhere('s.subscriber IN (:subscribers)')
-        ;
-
         /** @var User $unsubscribedUser */
         foreach ($unsubscribedList as $unsubscribedUser) {
             $logEvent = new SubscriptionEvent($user, $unsubscribedUser, SubscriptionEvent::ACTION_UNSUBSCRIBE);
@@ -84,13 +81,12 @@ class SubscriptionsManager
             $user->addNewSubscriberEvent($logEvent);
         }
 
-        $unsubscribedQuery
-            ->setParameter('author', $user->getId())
-            ->setParameter('subscribers', $unsubscribedList)
-            ->getQuery()->execute();
-        ;
+        // Removing users from database
+        $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $unsubscribedList);
 
-        unset($unsubscribedList);
+        // Dispatching event
+        $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
+        $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
     }
 
     /**

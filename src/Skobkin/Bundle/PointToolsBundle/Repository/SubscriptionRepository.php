@@ -3,14 +3,16 @@
 namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class SubscriptionRepository extends EntityRepository
 {
     /**
-     * @param integer $id
-     * @return integer
+     * @param int $id
+     *
+     * @return int
      */
-    public function getUserSubscribersCountById($id)
+    public function getUserSubscribersCountById($id): int
     {
         if (!is_int($id)) {
             throw new \InvalidArgumentException('$id must be an integer');
@@ -23,6 +25,23 @@ class SubscriptionRepository extends EntityRepository
             ->where('sa.id = :id')
             ->setParameter('id', $id)
             ->getQuery()->getSingleScalarResult()
+        ;
+    }
+
+    /**
+     * @param User $user
+     * @param User[] $subscribers
+     */
+    public function removeSubscribers(User $user, array $subscribers)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb
+            ->delete()
+            ->where('s.author = :author')
+            ->andWhere('s.subscriber IN (:subscribers)')
+            ->setParameter('author', $user->getId())
+            ->setParameter('subscribers', $subscribers)
+            ->getQuery()->execute();
         ;
     }
 }
