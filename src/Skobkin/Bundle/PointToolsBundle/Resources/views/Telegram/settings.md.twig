@@ -1,9 +1,12 @@
 {# @var account \Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account #}
 *Your current settings:*
 
+Account /link status: {% if account.user %}Linked to {{ account.user.login }}{% else %}Not linked{% endif %}
+
 User renaming notifications: {% if account.renameNotification %}enabled{% else %}disabled{% endif %}
 
 Subscribers notifications: {% if account.subscriberNotification %}enabled{% else %}disabled{% endif %}
+{% if not account.user %}(Not active because account is not linked){% endif %}
 
 
 Choose what to change.

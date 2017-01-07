@@ -243,6 +243,10 @@ class PrivateMessageProcessor
                     $this->em->flush();
 
                     $this->messenger->sendMessage($account, 'Subscribers notifications are turned '.($account->isSubscriberNotification() ? 'on' : 'off'));
+
+                    if ($account->isSubscriberNotification() && null === $account->getUser()) {
+                        $this->messenger->sendMessage($account, 'You need to /link you account to receive these notifications.');
+                    }
                 } else {
                     $this->sendError($account, 'Notification type does not exist.');
                 }
