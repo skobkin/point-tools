@@ -85,14 +85,14 @@ services:
 
 
     # Event listener
-    point_tools.event_listener.user_rename_subscriber:
-        class: Skobkin\Bundle\PointToolsBundle\EventListener\UserRenameSubscriber
+    point_tools.event_listener.users_updated:
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersUpdatedSubscriber
         arguments: [@event_dispatcher]
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
-    point_tools.event_listener.users_renamed_notifier_listener:
-        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenameNotifierListener
+    point_tools.event_listener.users_renamed_notifier:
+        class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedNotifierListener
         arguments: [@point_tools.telegram.notifier]
         tags:
             - { name: kernel.event_listener, event: app.users.renamed }

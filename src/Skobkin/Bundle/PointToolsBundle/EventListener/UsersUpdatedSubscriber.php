@@ -10,15 +10,15 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
+use Skobkin\Bundle\PointToolsBundle\Event\UsersRenamedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
-class UserRenameSubscriber implements EventSubscriber
+class UsersUpdatedSubscriber implements EventSubscriber
 {
     /**
      * @var UserRenameEvent[]
      */
-    private $items = [];
+    private $renames = [];
 
     /**
      * @var EventDispatcherInterface
@@ -54,27 +54,27 @@ class UserRenameSubscriber implements EventSubscriber
         }
 
         if ($event->hasChangedField('login')) {
-            $this->items[] = new UserRenameEvent($entity, $event->getOldValue('login'));
+            $this->renames[] = new UserRenameEvent($entity, $event->getOldValue('login'));
         }
     }
 
     public function postFlush(PostFlushEventArgs $event)
     {
-        if (0 !== count($this->items)) {
+        if (0 !== count($this->renames)) {
             // Creating event for dispatch
-            $usersRenamedEvent = new GenericEvent(null, $this->items);
+            $usersRenamedEvent = new UsersRenamedEvent($this->renames);
 
             $em = $event->getEntityManager();
 
-            foreach ($this->items as $item) {
+            foreach ($this->renames as $item) {
                 $em->persist($item);
             }
 
-            $this->items = [];
+            $this->renames = [];
 
             $em->flush();
 
-            $this->eventDispatcher->dispatch('app.users.renamed', $usersRenamedEvent);
+            $this->eventDispatcher->dispatch(UsersRenamedEvent::NAME, $usersRenamedEvent);
         }
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\EventListener;
 
-
+use Skobkin\Bundle\PointToolsBundle\Event\UsersRenamedEvent;
 use Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
-class UsersRenameNotifierListener
+class UsersRenamedNotifierListener
 {
     /**
      * @var Notifier
@@ -24,8 +23,8 @@ class UsersRenameNotifierListener
         $this->notifier = $notifier;
     }
 
-    public function onAppUsersRenamed(GenericEvent $event)
+    public function onAppUsersRenamed(UsersRenamedEvent $event)
     {
-        $this->notifier->sendUsersRenamedNotification((array) $event->getIterator());
+        $this->notifier->sendUsersRenamedNotification($event->getRenames());
     }
 }
