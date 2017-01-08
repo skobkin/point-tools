@@ -9,7 +9,6 @@ use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
-
 class CommentFactory
 {
     /**
@@ -48,10 +47,11 @@ class CommentFactory
      * @param array $data
      *
      * @return Comment
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    public function createFromArray(array $data)
+    public function createFromArray(array $data): Comment
     {
         $this->validateData($data);
 
@@ -78,9 +78,10 @@ class CommentFactory
      * @param array $data
      *
      * @return Comment[]
+     *
      * @throws ApiException
      */
-    public function createFromListArray(array $data)
+    public function createFromListArray(array $data): array
     {
         $comments = [];
 

@@ -49,9 +49,9 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         $log->info('UpdateSubscriptionsCommand started.');
 
         /** @var UserApi $api */
-        $api = $this->getContainer()->get('skobkin_point_tools.api_user');
+        $api = $this->getContainer()->get('app.point.api_user');
         /** @var SubscriptionsManager $subscriptionsManager */
-        $subscriptionsManager = $this->getContainer()->get('skobkin_point_tools.subscriptions_manager');
+        $subscriptionsManager = $this->getContainer()->get('app.point.subscriptions_manager');
 
         try {
             $serviceUserId = $this->getContainer()->getParameter('point_id');

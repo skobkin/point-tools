@@ -24,7 +24,7 @@ class CrawlerController extends AbstractApiController
         $page = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage', 'json');
 
         /** @var PostFactory $factory */
-        $factory = $this->get('skobkin__point_tools.service_factory.post_factory');
+        $factory = $this->get('app.point.post_factory');
         
         $continue = $factory->createFromPageDTO($page);
 

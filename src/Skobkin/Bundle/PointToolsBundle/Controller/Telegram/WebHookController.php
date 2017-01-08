@@ -28,7 +28,7 @@ class WebHookController extends Controller
         );
 
         try {
-            $this->get('point_tools.telegram.update_dispatcher')->process($update);
+            $this->get('app.telegram.update_dispatcher')->process($update);
         } catch (\Exception $e) {
             if ($this->getParameter('kernel.debug')) {
                 throw $e;

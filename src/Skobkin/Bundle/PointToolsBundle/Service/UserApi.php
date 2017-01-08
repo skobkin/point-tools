@@ -4,8 +4,8 @@ namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Service\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use JMS\Serializer\Serializer;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Auth;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
@@ -44,9 +44,9 @@ class UserApi extends AbstractApi
     private $serializer;
 
 
-    public function __construct(Client $httpClient, $https = true, $baseUrl = null, EntityManager $entityManager, Serializer $serializer)
+    public function __construct(ClientInterface $httpClient, EntityManager $entityManager, Serializer $serializer)
     {
-        parent::__construct($httpClient, $https, $baseUrl);
+        parent::__construct($httpClient);
 
         $this->em = $entityManager;
         $this->serializer = $serializer;
@@ -78,7 +78,7 @@ class UserApi extends AbstractApi
             );
 
             return $this->serializer->deserialize($authData, Auth::class, 'json');
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new InvalidResponseException('API method not found', 0, $e);
             } else {
@@ -93,7 +93,7 @@ class UserApi extends AbstractApi
             $this->getPostRequestData('/api/logout', ['csrf_token' => $auth->getCsRfToken()]);
 
             return true;
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new InvalidResponseException('API method not found', 0, $e);
             } elseif (Response::HTTP_FORBIDDEN === $e->getResponse()->getStatusCode()) {
@@ -108,16 +108,18 @@ class UserApi extends AbstractApi
      * Get user subscribers by user login
      *
      * @param string $login
+     *
      * @return User[]
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      * @throws UserNotFoundException
      */
-    public function getUserSubscribersByLogin($login)
+    public function getUserSubscribersByLogin(string $login): array
     {
         try {
             $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscribers', [], true);
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
             } else {
@@ -131,21 +133,19 @@ class UserApi extends AbstractApi
     /**
      * Get user subscribers by user id
      *
-     * @param $id
+     * @param int $id
+     *
      * @return User[]
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      * @throws UserNotFoundException
      */
-    public function getUserSubscribersById($id)
+    public function getUserSubscribersById(int $id): array
     {
-        if (!is_numeric($id)) {
-            throw new \InvalidArgumentException('$id must be an integer');
-        }
-
         try {
             $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscribers', [], true);
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, $id);
             } else {
@@ -160,16 +160,18 @@ class UserApi extends AbstractApi
      * Get user subscriptions by user login
      *
      * @param string $login
+     *
      * @return User[]
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      * @throws UserNotFoundException
      */
-    public function getUserSubscriptionsByLogin($login)
+    public function getUserSubscriptionsByLogin(string $login): array
     {
         try {
             $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscriptions', [], true);
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
             } else {
@@ -183,21 +185,19 @@ class UserApi extends AbstractApi
     /**
      * Get user subscriptions by user id
      *
-     * @param $id
+     * @param int $id
+     *
      * @return User[]
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      * @throws UserNotFoundException
      */
-    public function getUserSubscriptionsById($id)
+    public function getUserSubscriptionsById(int $id): array
     {
-        if (!is_numeric($id)) {
-            throw new \InvalidArgumentException('$id must be an integer');
-        }
-
         try {
             $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscriptions', [], true);
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, $id);
             } else {
@@ -212,15 +212,17 @@ class UserApi extends AbstractApi
      * Get single user by login
      *
      * @param string $login
+     *
      * @return User
+     *
      * @throws UserNotFoundException
-     * @throws ClientErrorResponseException
+     * @throws RequestException
      */
-    public function getUserByLogin($login)
+    public function getUserByLogin(string $login): User
     {
         try {
             $userInfo = $this->getGetRequestData('/api/user/login/'.urlencode($login), [], true);
-        } catch (ClientErrorResponseException $e) {
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, null, $login);
             } else {
@@ -234,20 +236,18 @@ class UserApi extends AbstractApi
     /**
      * Get single user by id
      *
-     * @param $id
+     * @param int $id
+     *
      * @return User
+     *
      * @throws UserNotFoundException
-     * @throws ClientErrorResponseException
+     * @throws RequestException
      */
-    public function getUserById($id)
+    public function getUserById(int $id): User
     {
-        if (!is_numeric($id)) {
-            throw new \InvalidArgumentException('$id must be an integer');
-        }
-
         try {
-            $userInfo = $this->getGetRequestData('/api/user/id/'.(int) $id, [], true);
-        } catch (ClientErrorResponseException $e) {
+            $userInfo = $this->getGetRequestData('/api/user/id/'.$id, [], true);
+        } catch (RequestException $e) {
             if (Response::HTTP_NOT_FOUND === $e->getResponse()->getStatusCode()) {
                 throw new UserNotFoundException('User not found', 0, $e, $id);
             } else {
@@ -262,16 +262,14 @@ class UserApi extends AbstractApi
      * Finds and updates or create new user from API response data
      *
      * @param array $userInfo
+     *
      * @return User
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    public function getUserFromUserInfo(array $userInfo)
+    public function getUserFromUserInfo(array $userInfo): User
     {
-        if (!is_array($userInfo)) {
-            throw new \InvalidArgumentException('$userInfo must be an array');
-        }
-
         // @todo Refactor to UserFactory->createFromArray()
         if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
             /** @var User $user */
@@ -297,16 +295,14 @@ class UserApi extends AbstractApi
      * Get array of User objects from API response containing user list
      *
      * @param array $users
+     *
      * @return User[]
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    private function getUsersFromList(array $users = [])
+    private function getUsersFromList(array $users = []): array
     {
-        if (!is_array($users)) {
-            throw new \InvalidArgumentException('$users must be an array');
-        }
-
         /** @var User[] $resultUsers */
         $resultUsers = [];
 
@@ -338,10 +334,11 @@ class UserApi extends AbstractApi
      * Creates URL of avatar with specified size by User object
      *
      * @param User $user
-     * @param int $size
+     * @param string $size
+     *
      * @return string
      */
-    public function getAvatarUrl(User $user, $size)
+    public function getAvatarUrl(User $user, string $size): string
     {
         return $this->getAvatarUrlByLogin($user->getLogin(), $size);
     }
@@ -349,12 +346,12 @@ class UserApi extends AbstractApi
     /**
      * Creates URL of avatar with specified size by login string
      *
-     * @param $login
-     * @param $size
+     * @param string $login
+     * @param string $size
      *
      * @return string
      */
-    public function getAvatarUrlByLogin($login, $size)
+    public function getAvatarUrlByLogin(string $login, string $size): string
     {
         if (!in_array($size, [self::AVATAR_SIZE_SMALL, self::AVATAR_SIZE_MEDIUM, self::AVATAR_SIZE_LARGE], true)) {
             throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See UserApi class AVATAR_SIZE_* constants.');

@@ -35,7 +35,7 @@ class UserController extends Controller
             10
         );
 
-        $userApi = $this->container->get('skobkin_point_tools.api_user');
+        $userApi = $this->container->get('app.point.api_user');
 
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,

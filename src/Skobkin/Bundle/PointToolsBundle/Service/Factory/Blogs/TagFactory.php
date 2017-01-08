@@ -2,17 +2,16 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
-
 class TagFactory
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -26,10 +25,8 @@ class TagFactory
      */
     private $tagRepository;
 
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(LoggerInterface $log, EntityManager $em)
+
+    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
     {
         $this->log = $log;
         $this->em = $em;
@@ -41,7 +38,7 @@ class TagFactory
      *
      * @return Tag[]
      */
-    public function createFromStringsArray(array $tagStrings)
+    public function createFromStringsArray(array $tagStrings): array
     {
         $tags = [];
 
@@ -58,16 +55,8 @@ class TagFactory
         return $tags;
     }
 
-    /**
-     * @param $text
-     *
-     * @return Tag
-     * @throws InvalidResponseException
-     */
-    public function createFromString($text)
+    public function createFromString(string $text): Tag
     {
-        $this->validateData($text);
-
         if (null === ($tag = $this->tagRepository->findOneByLowerText($text))) {
             // Creating new tag
             $tag = new Tag($text);
@@ -75,18 +64,5 @@ class TagFactory
         }
 
         return $tag;
-    }
-
-    /**
-     * @param $data
-     *
-     * @throws InvalidResponseException
-     */
-    private function validateData($data)
-    {
-        if (!is_string($data)) {
-            // @todo Change exception
-            throw new InvalidResponseException('Tag data must be a string');
-        }
     }
 }

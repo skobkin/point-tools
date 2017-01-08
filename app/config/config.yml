@@ -75,7 +75,7 @@ swiftmailer:
 
 knp_markdown:
     parser:
-        service: markdown.parser.point
+        service: app.point.markdown_parser
 
 knp_paginator:
     template:

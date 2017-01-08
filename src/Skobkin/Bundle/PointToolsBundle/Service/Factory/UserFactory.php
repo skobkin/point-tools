@@ -2,7 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User as UserDTO;
@@ -15,7 +14,7 @@ use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 class UserFactory
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -25,9 +24,9 @@ class UserFactory
     private $userRepository;
 
     /**
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
@@ -37,10 +36,11 @@ class UserFactory
      * @param array $data
      *
      * @return User
+     *
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    public function createFromArray(array $data)
+    public function createFromArray(array $data): User
     {
         $this->validateArrayData($data);
 
@@ -64,10 +64,11 @@ class UserFactory
      * @param UserDTO $userData
      *
      * @return User
+     *
      * @throws ApiException
      * @throws InvalidUserDataException
      */
-    public function createFromDTO(UserDTO $userData)
+    public function createFromDTO(UserDTO $userData): User
     {
         $this->validateDTOData($userData);
 
@@ -100,7 +101,7 @@ class UserFactory
     }
 
     /**
-     * @param array $data
+     * @param UserDTO $data
      *
      * @throws InvalidResponseException
      */

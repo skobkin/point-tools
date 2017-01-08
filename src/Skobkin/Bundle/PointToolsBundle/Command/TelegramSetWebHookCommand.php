@@ -37,7 +37,7 @@ class TelegramSetWebHookCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $telegramClient = $container->get('point_tools.telegram.api_client');
+        $telegramClient = $container->get('app.telegram.api_client');
 
         if (self::MODE_SET === strtolower($input->getArgument('mode'))) {
             if (!$input->hasArgument('host')) {

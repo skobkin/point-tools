@@ -1,83 +1,85 @@
 services:
-    # Guzzle 6 client for Telegram
-    point_tools.http.telegram_client:
+    # HTTP client for Telegram
+    app.http.telegram_client:
         class: GuzzleHttp\Client
         arguments: [{ timeout: 3.0 }]
         tags:
             - { name: csa_guzzle.client }
 
-    # Guzzle 5 client for Point API
-    # TODO upgrade and remove misd bundle
-    skobkin_point_tools.http_client:
-        class: %guzzle.client.class%
-        arguments: [ "%point_base_url%" ]
+    # HTTP client for Point API
+    app.http.point_client:
+        class: GuzzleHttp\Client
+        arguments: [ { base_uri: "%point_base_url%", timeout: 5.0 } ]
         tags:
-            - { name: guzzle.client }
+            - { name: csa_guzzle.client }
 
 
-    skobkin_point_tools.api_user:
+    # Point API clients
+    # Abstract API client with common dependency
+    app.point.abstract_api:
+        abstract: true
+        arguments: [@app.http.point_client]
+
+    app.point.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
+        parent: app.point.abstract_api
         arguments:
-            - @skobkin_point_tools.http_client
-            - "%point_use_https%"
-            - "%point_api_base_url%"
             - @doctrine.orm.entity_manager
             - @serializer
 
-    skobkin_point_tools.api_post:
+    app.point.api_post:
         class: Skobkin\Bundle\PointToolsBundle\Service\PostApi
+        parent: app.point.abstract_api
         arguments:
-            - @skobkin_point_tools.http_client
-            - "%point_use_https%"
-            - "%point_api_base_url%"
-            - @skobkin__point_tools.service_factory.post_factory
+            - @app.point.post_factory
 
 
-    skobkin_point_tools.subscriptions_manager:
+    # Point subscription manager
+    app.point.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
         arguments: [ @doctrine.orm.entity_manager, @event_dispatcher ]
 
 
     # Factories
     # User factory
-    skobkin__point_tools.service_factory.user_factory:
+    app.point.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
         arguments: [ @doctrine.orm.entity_manager ]
 
     # Comment factory
-    skobkin__point_tools.service_factory.comment_factory:
+    app.point.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
-        arguments: [ @doctrine.orm.entity_manager, @skobkin__point_tools.service_factory.user_factory ]
+        arguments: [ @doctrine.orm.entity_manager, @app.point.user_factory ]
 
     # Tag factory
-    skobkin__point_tools.service_factory.tag_factory:
+    app.point.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
         arguments: [ @logger, @doctrine.orm.entity_manager ]
 
     # File factory
-    skobkin__point_tools.service_factory.file_factory:
+    app.point.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
         arguments: [ @logger, @doctrine.orm.entity_manager ]
 
     # Post factory
-    skobkin__point_tools.service_factory.post_factory:
+    app.point.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
         arguments:
             - @logger
             - @doctrine.orm.entity_manager
-            - @skobkin__point_tools.service_factory.user_factory
-            - @skobkin__point_tools.service_factory.file_factory
-            - @skobkin__point_tools.service_factory.comment_factory
-            - @skobkin__point_tools.service_factory.tag_factory
+            - @app.point.user_factory
+            - @app.point.file_factory
+            - @app.point.comment_factory
+            - @app.point.tag_factory
 
     # Telegram accounts factory
-    point_tools.factory.telegram_account:
+    app.telegram.telegram_account_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
         arguments: [@doctrine.orm.entity_manager]
 
 
     # Custom Markdown parser
-    markdown.parser.point:
+    app.point.markdown_parser:
         class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
         arguments: [[], @router]
         tags:
@@ -85,70 +87,70 @@ services:
 
 
     # Event listener
-    point_tools.event_listener.users_updated:
+    app.event_listener.users_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersUpdatedSubscriber
         arguments: [@event_dispatcher]
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
-    point_tools.event_listener.users_renamed_notifier:
+    app.event_listener.users_renamed_notifier:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedListener
-        arguments: [@point_tools.telegram.notifier]
+        arguments: [@app.telegram.notifier]
         tags:
             - { name: kernel.event_listener, event: app.users.renamed }
 
-    point_tools.event_listener.user_subscribers_updated:
+    app.event_listener.user_subscribers_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserSubscribersUpdatedListener
-        arguments: [@point_tools.telegram.notifier]
+        arguments: [@app.telegram.notifier]
         tags:
             - { name: kernel.event_listener, event: app.user.subscribers_updated }
 
 
     # Twig extensions
-    point_tools.twig.point_avatar_extension:
+    app.twig.point_users_extension:
         class: Skobkin\Bundle\PointToolsBundle\Twig\PointUserExtension
         public: false
-        arguments: ['@skobkin_point_tools.api_user']
+        arguments: ['@app.point.api_user']
         tags:
             - { name: twig.extension }
 
 
     # Telegram services
     # API client
-    point_tools.telegram.api_client:
+    app.telegram.api_client:
         class: unreal4u\TelegramAPI\TgLog
-        arguments: [%telegram_token%, @logger, @point_tools.http.telegram_client]
+        arguments: [%telegram_token%, @logger, @app.http.telegram_client]
 
     # Message sender
-    point_tools.telegram.message_sender:
+    app.telegram.message_sender:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
-        arguments: [@point_tools.telegram.api_client, @twig]
+        arguments: [@app.telegram.api_client, @twig]
 
     # User notifier
-    point_tools.telegram.notifier:
+    app.telegram.notifier:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier
-        arguments: [@doctrine.orm.entity_manager, @point_tools.telegram.message_sender]
+        arguments: [@doctrine.orm.entity_manager, @app.telegram.message_sender]
 
     # Common incoming message processor
-    point_tools.telegram.update_dispatcher:
+    app.telegram.update_dispatcher:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher
         arguments:
-            - @point_tools.telegram.private_message_processor
-            - @point_tools.telegram.inline_query_processor
+            - @app.telegram.private_message_processor
+            - @app.telegram.inline_query_processor
 
     # InlineQuery processor
-    point_tools.telegram.inline_query_processor:
+    app.telegram.inline_query_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
         lazy: true
-        arguments: [@doctrine.orm.entity_manager, @point_tools.telegram.api_client]
+        arguments: [@doctrine.orm.entity_manager, @app.telegram.api_client]
 
     # Private message processor
-    point_tools.telegram.private_message_processor:
+    app.telegram.private_message_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
         lazy: true
         arguments:
-            - @point_tools.telegram.message_sender
-            - @skobkin_point_tools.api_user
-            - @point_tools.factory.telegram_account
+            - @app.telegram.message_sender
+            - @app.point.api_user
+            - @app.telegram.telegram_account_factory
             - @doctrine.orm.entity_manager
             - %point_id%

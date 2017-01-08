@@ -2,7 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\MetaPost;
@@ -14,7 +14,6 @@ use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\Blogs\InvalidPost
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
-
 class PostFactory
 {
     /**
@@ -23,7 +22,7 @@ class PostFactory
     private $log;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -52,10 +51,8 @@ class PostFactory
      */
     private $tagFactory;
 
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(LoggerInterface $log, EntityManager $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
+
+    public function __construct(LoggerInterface $log, EntityManagerInterface $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
     {
         $this->log = $log;
         $this->userFactory = $userFactory;
@@ -76,7 +73,7 @@ class PostFactory
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    public function createFromPageDTO(PostsPage $page)
+    public function createFromPageDTO(PostsPage $page): bool
     {
         $posts = [];
 
@@ -116,18 +113,20 @@ class PostFactory
      * @param MetaPost $postData
      *
      * @return Post
+     *
      * @throws ApiException
      * @throws InvalidPostDataException
      */
-    private function createFromDTO(MetaPost $postData)
+    private function createFromDTO(MetaPost $postData): Post
     {
         if (!$this->validateMetaPost($postData)) {
+            // FIXME
             throw new InvalidPostDataException('Invalid post data', $postData);
         }
 
         if (!$postData->getPost()->getAuthor()->getId()) {
             $this->log->error('Post author does not contain id', ['post_id' => $postData->getPost()->getId()]);
-            throw new InvalidPostDataException('Post author does not contain id', $postData);
+            throw new InvalidPostDataException('Post author does not contain id', $postData->getPost());
         }
 
         try {

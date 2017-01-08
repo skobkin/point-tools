@@ -2,17 +2,16 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
-
 class FileFactory
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -26,10 +25,8 @@ class FileFactory
      */
     private $fileRepository;
 
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(LoggerInterface $log, EntityManager $em)
+
+    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
     {
         $this->log = $log;
         $this->em = $em;
@@ -41,7 +38,7 @@ class FileFactory
      *
      * @return File[]
      */
-    public function createFromUrlsArray(array $urlStrings)
+    public function createFromUrlsArray(array $urlStrings): array
     {
         $files = [];
 
@@ -59,12 +56,13 @@ class FileFactory
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
      * @return File
+     *
      * @throws InvalidResponseException
      */
-    public function createFromUrl($url)
+    public function createFromUrl(string $url): File
     {
         $this->validateData($url);
 
