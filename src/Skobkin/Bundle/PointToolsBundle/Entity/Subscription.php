@@ -5,12 +5,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Subscription
- *
  * @ORM\Table(name="subscriptions", schema="subscriptions", uniqueConstraints={
  *      @ORM\UniqueConstraint(name="subscription_unique", columns={"author_id", "subscriber_id"})}
  * )
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository", readOnly=true)
  */
 class Subscription
 {
@@ -34,33 +32,21 @@ class Subscription
 
 
     /**
-     * Subscription constructor.
-     *
      * @param User $author
      * @param User $subscriber
      */
-    public function __construct(User $author = null, User $subscriber = null)
+    public function __construct(User $author, User $subscriber)
     {
         $this->author = $author;
         $this->subscriber = $subscriber;
     }
 
-    /**
-     * Get author
-     *
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * Get subscriber
-     *
-     * @return User
-     */
-    public function getSubscriber()
+    public function getSubscriber(): User
     {
         return $this->subscriber;
     }

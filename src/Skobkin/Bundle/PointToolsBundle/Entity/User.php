@@ -6,8 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * User
- *
  * @ORM\Table(name="users", schema="users")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
@@ -15,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -51,29 +49,22 @@ class User
     private $updatedAt;
 
     /**
-     * @var ArrayCollection
+     * @var Subscription|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $subscribers;
 
     /**
-     * @var ArrayCollection
+     * @var Subscription|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber", fetch="EXTRA_LAZY")
      */
     private $subscriptions;
 
     /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="subscriber")
-     */
-    private $newSubscriptionEvents;
-
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author")
+     * @var SubscriptionEvent|ArrayCollection
+     * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $newSubscriberEvents;
 
@@ -83,7 +74,7 @@ class User
      * @param string $login
      * @param string $name
      */
-    public function __construct($id = null, $login = null, $name = null)
+    public function __construct(int $id, string $login = null, string $name = null)
     {
         $this->id = $id;
         $this->login = $login;
@@ -92,7 +83,6 @@ class User
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->newSubscriberEvents = new ArrayCollection();
-        $this->newSubscriptionEvents = new ArrayCollection();
     }
 
     /**
@@ -113,101 +103,52 @@ class User
         $this->updatedAt = new \DateTime();
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set id of user (for API services only)
-     *
-     * @param integer $id
-     * @return User
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Set login
-     *
      * @param string $login
      * @return User
      */
-    public function setLogin($login)
+    public function setLogin(string $login): self
     {
         $this->login = $login;
 
         return $this;
     }
 
-    /**
-     * Get login
-     *
-     * @return string
-     */
-    public function getLogin()
+    public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return User
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Add subscribers
-     *
-     * @param Subscription $subscribers
-     * @return User
-     */
-    public function addSubscriber(Subscription $subscribers)
+    public function addSubscriber(Subscription $subscribers): self
     {
         $this->subscribers[] = $subscribers;
 
         return $this;
     }
 
-    /**
-     * Remove subscribers
-     *
-     * @param Subscription $subscribers
-     */
     public function removeSubscriber(Subscription $subscribers)
     {
         $this->subscribers->removeElement($subscribers);
     }
 
     /**
-     * Get subscribers
-     *
      * @return Subscription[]|ArrayCollection
      */
     public function getSubscribers()
@@ -216,78 +157,14 @@ class User
     }
 
     /**
-     * Add subscriptions
-     *
-     * @param Subscription $subscriptions
-     * @return User
-     */
-    public function addSubscription(Subscription $subscriptions)
-    {
-        $this->subscriptions[] = $subscriptions;
-
-        return $this;
-    }
-
-    /**
-     * Remove subscriptions
-     *
-     * @param Subscription $subscriptions
-     */
-    public function removeSubscription(Subscription $subscriptions)
-    {
-        $this->subscriptions->removeElement($subscriptions);
-    }
-
-    /**
-     * Get subscriptions
-     *
-     * @return ArrayCollection
+     * @return Subscription[]|ArrayCollection
      */
     public function getSubscriptions()
     {
         return $this->subscriptions;
     }
 
-    /**
-     * Add newSubscriptionEvents
-     *
-     * @param SubscriptionEvent $newSubscriptionEvents
-     * @return User
-     */
-    public function addNewSubscriptionEvent(SubscriptionEvent $newSubscriptionEvents)
-    {
-        $this->newSubscriptionEvents[] = $newSubscriptionEvents;
-
-        return $this;
-    }
-
-    /**
-     * Remove newSubscriptionEvents
-     *
-     * @param SubscriptionEvent $newSubscriptionEvents
-     */
-    public function removeNewSubscriptionEvent(SubscriptionEvent $newSubscriptionEvents)
-    {
-        $this->newSubscriptionEvents->removeElement($newSubscriptionEvents);
-    }
-
-    /**
-     * Get newSubscriptionEvents
-     *
-     * @return ArrayCollection
-     */
-    public function getNewSubscriptionEvents()
-    {
-        return $this->newSubscriptionEvents;
-    }
-
-    /**
-     * Add newSubscriberEvents
-     *
-     * @param SubscriptionEvent $newSubscriberEvents
-     * @return User
-     */
-    public function addNewSubscriberEvent(SubscriptionEvent $newSubscriberEvents)
+    public function addNewSubscriberEvent(SubscriptionEvent $newSubscriberEvents): self
     {
         $this->newSubscriberEvents[] = $newSubscriberEvents;
 
@@ -295,47 +172,26 @@ class User
     }
 
     /**
-     * Remove newSubscriberEvents
-     *
-     * @param SubscriptionEvent $newSubscriberEvents
-     */
-    public function removeNewSubscriberEvent(SubscriptionEvent $newSubscriberEvents)
-    {
-        $this->newSubscriberEvents->removeElement($newSubscriberEvents);
-    }
-
-    /**
-     * Get newSubscriberEvents
-     *
-     * @return ArrayCollection
+     * @return SubscriptionEvent[]|ArrayCollection
      */
     public function getNewSubscriberEvents()
     {
         return $this->newSubscriberEvents;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param \DateTime $createdAt
-     * @return User
-     */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
     }

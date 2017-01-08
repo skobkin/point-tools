@@ -81,11 +81,7 @@ class ImportUsersCommand extends ContainerAwareCommand
                 $createdAt = new \DateTime();
             }
 
-            $user = new User();
-            $user
-                ->setId($row[0])
-                ->setLogin($row[1])
-                ->setName($row[2])
+            $user = (new User($row[0], $row[1], $row[2]))
                 ->setCreatedAt($createdAt)
             ;
 

@@ -5,8 +5,6 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * SubscriptionEvent
- *
  * @ORM\Table(name="log", schema="subscriptions", indexes={
  *      @ORM\Index(name="author_idx", columns={"author_id"}),
  *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
@@ -21,7 +19,7 @@ class SubscriptionEvent
     const ACTION_UNSUBSCRIBE = 'unsubscribe';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -40,7 +38,7 @@ class SubscriptionEvent
     /**
      * @var User Blog subscriber
      *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="newSubscriptionEvents")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="subscriber_id", nullable=false)
      */
     private $subscriber;
@@ -65,7 +63,7 @@ class SubscriptionEvent
      * @param User $subscriber
      * @param string $action
      */
-    public function __construct(User $author = null, User $subscriber = null, $action = self::ACTION_SUBSCRIBE)
+    public function __construct(User $author, User $subscriber, string $action = self::ACTION_SUBSCRIBE)
     {
         $this->author = $author;
         $this->subscriber = $subscriber;
@@ -82,52 +80,27 @@ class SubscriptionEvent
         }
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Get date
-     *
-     * @return \DateTime 
-     */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
 
-    /**
-     * Get subscriber
-     *
-     * @return User 
-     */
-    public function getSubscriber()
+    public function getSubscriber(): User
     {
         return $this->subscriber;
     }
 
-    /**
-     * Get author
-     *
-     * @return User 
-     */
-    public function getAuthor()
+    public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * Get action
-     *
-     * @return string 
-     */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
