@@ -2973,16 +2973,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.7.21",
+            "version": "v2.7.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "cdc25e2d47d2c2f1d968feda5a7895031915043c"
+                "reference": "4b0fd9881d3ab98578cd92739fa1d3a1a74ebe8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/cdc25e2d47d2c2f1d968feda5a7895031915043c",
-                "reference": "cdc25e2d47d2c2f1d968feda5a7895031915043c",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/4b0fd9881d3ab98578cd92739fa1d3a1a74ebe8d",
+                "reference": "4b0fd9881d3ab98578cd92739fa1d3a1a74ebe8d",
                 "shasum": ""
             },
             "require": {
@@ -3097,7 +3097,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-11-21T01:13:05+00:00"
+            "time": "2016-12-13T10:53:44+00:00"
         },
         {
             "name": "twig/extensions",
@@ -3153,29 +3153,30 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.28.2",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "b22ce0eb070e41f7cba65d78fe216de29726459c"
+                "reference": "2a86dde1288d7270169083d0e078dc7ebe0f48b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/b22ce0eb070e41f7cba65d78fe216de29726459c",
-                "reference": "b22ce0eb070e41f7cba65d78fe216de29726459c",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/2a86dde1288d7270169083d0e078dc7ebe0f48b6",
+                "reference": "2a86dde1288d7270169083d0e078dc7ebe0f48b6",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.7"
+                "php": "^7.0",
+                "symfony/polyfill-mbstring": "~1.0"
             },
             "require-dev": {
                 "symfony/debug": "~2.7",
-                "symfony/phpunit-bridge": "~3.2@dev"
+                "symfony/phpunit-bridge": "~3.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.28-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -3210,7 +3211,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-11-23T18:41:40+00:00"
+            "time": "2017-01-05T17:12:02+00:00"
         },
         {
             "name": "unreal4u/telegram-api",
