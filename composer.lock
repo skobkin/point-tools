@@ -3273,16 +3273,16 @@
         },
         {
             "name": "unreal4u/telegram-api",
-            "version": "v2.2.0",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/unreal4u/telegram-api.git",
-                "reference": "dd6f58387569d045bf2581dff909f7874bf7d27a"
+                "reference": "9bca72ee00052c1d4be9807bf9f59e4fb1c44ce6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/unreal4u/telegram-api/zipball/dd6f58387569d045bf2581dff909f7874bf7d27a",
-                "reference": "dd6f58387569d045bf2581dff909f7874bf7d27a",
+                "url": "https://api.github.com/repos/unreal4u/telegram-api/zipball/9bca72ee00052c1d4be9807bf9f59e4fb1c44ce6",
+                "reference": "9bca72ee00052c1d4be9807bf9f59e4fb1c44ce6",
                 "shasum": ""
             },
             "require": {
@@ -3319,7 +3319,7 @@
                 "telegram",
                 "telegram bot"
             ],
-            "time": "2016-12-04T10:20:14+00:00"
+            "time": "2017-01-04T23:01:20+00:00"
         },
         {
             "name": "zendframework/zend-code",
