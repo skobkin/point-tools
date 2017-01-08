@@ -17,8 +17,6 @@ parameters:
     point_login: point-tools
     point_id: 435
 
-    locale:            en
-
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
