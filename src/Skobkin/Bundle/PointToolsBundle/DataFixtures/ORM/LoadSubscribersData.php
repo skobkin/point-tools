@@ -30,7 +30,7 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
             if (0 === $key) {
                 $minimum = 2;
             } else {
-                $minimum = mt_rand(0, count($users));
+                $minimum = random_int(0, count($users));
             }
 
             foreach ($this->getRandomSubscribers($users, $minimum) as $subscriber) {
