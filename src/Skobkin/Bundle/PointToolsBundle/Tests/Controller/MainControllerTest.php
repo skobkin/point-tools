@@ -12,7 +12,7 @@ class MainControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $userSearchForm = $crawler->filter('form.form-inline')->form();
-        $userSearchForm['skobkin_bundle_pointtoolsbundle_user_search[login]'] = 'testuser';
+        $userSearchForm['user_search[login]'] = 'testuser';
 
         $client->submit($userSearchForm);
 
@@ -25,7 +25,7 @@ class MainControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $userSearchForm = $crawler->filter('form.form-inline')->form();
-        $userSearchForm['skobkin_bundle_pointtoolsbundle_user_search[login]'] = 'non-existing-user';
+        $userSearchForm['user_search[login]'] = 'non-existing-user';
 
         $crawler = $client->submit($userSearchForm);
 
@@ -35,7 +35,7 @@ class MainControllerTest extends WebTestCase
 
         $this->assertEquals(1, $formElement->count(), 'Form not found after searching non-existing user');
 
-        $loginInputElement = $formElement->filter('#skobkin_bundle_pointtoolsbundle_user_search_login')->first();
+        $loginInputElement = $formElement->filter('#user_search_login')->first();
 
         $this->assertEquals(1, $loginInputElement->count(), 'Login form input element not found after search of non existing user');
 
