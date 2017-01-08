@@ -10,8 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
  *      @ORM\Index(name="date_idx", columns={"date"})
  * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository")
- * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository", readOnly=true)
  */
 class SubscriptionEvent
 {
@@ -68,16 +67,7 @@ class SubscriptionEvent
         $this->author = $author;
         $this->subscriber = $subscriber;
         $this->action = $action;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function onCreate()
-    {
-        if (!$this->date) {
-            $this->date = new \DateTime();
-        }
+        $this->date = new \DateTime();
     }
 
     public function getId(): int
