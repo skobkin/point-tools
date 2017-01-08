@@ -4,7 +4,6 @@ namespace Skobkin\Bundle\PointToolsBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSearchType extends AbstractType
 {
@@ -17,16 +16,6 @@ class UserSearchType extends AbstractType
         $builder
             ->add('login')
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'Skobkin\Bundle\PointToolsBundle\Entity\User',
-        ]);
     }
 
     /**
