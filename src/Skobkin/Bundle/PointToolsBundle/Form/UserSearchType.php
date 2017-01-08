@@ -17,12 +17,4 @@ class UserSearchType extends AbstractType
             ->add('login')
         ;
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'skobkin_bundle_pointtoolsbundle_user_search';
-    }
 }

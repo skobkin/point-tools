@@ -19,7 +19,7 @@ class MainController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $form = $this->createForm(
-            new UserSearchType(),
+            UserSearchType::class,
             null,
             [
                 'action' => $this->generateUrl('index'),
