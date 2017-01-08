@@ -34,7 +34,6 @@ class SubscriptionsManager
      */
     public function updateUserSubscribers(User $user, $newSubscribersList = [])
     {
-        /** @var Subscription[] $tmpOldSubscribers */
         $tmpOldSubscribers = $user->getSubscribers();
 
         $oldSubscribersList = [];
@@ -43,52 +42,17 @@ class SubscriptionsManager
             $oldSubscribersList[] = $subscription->getSubscriber();
         }
 
-        // @todo remove
-        $isFirstTime = false;
-
-        // Preventing to add garbage subscriptions for first processing
-        // @todo improve algorithm
-        if ((count($oldSubscribersList) === 0) && (count($newSubscribersList) > 1)) {
-            $isFirstTime = true;
-        }
-
-        unset($tmpOldSubscribers);
-
         $subscribedList = $this->getUsersListsDiff($newSubscribersList, $oldSubscribersList);
         $unsubscribedList = $this->getUsersListsDiff($oldSubscribersList, $newSubscribersList);
 
-        /** @var User $subscribedUser */
-        foreach ($subscribedList as $subscribedUser) {
-            $subscription = new Subscription($user, $subscribedUser);
-
-            $user->addSubscriber($subscription);
-            $this->em->persist($subscription);
-
-            // If it's not first processing
-            if (!$isFirstTime) {
-                $logEvent = new SubscriptionEvent($user, $subscribedUser, SubscriptionEvent::ACTION_SUBSCRIBE);
-                $this->em->persist($logEvent);
-
-                $user->addNewSubscriberEvent($logEvent);
-            }
-        }
-
-        /** @var User $unsubscribedUser */
-        foreach ($unsubscribedList as $unsubscribedUser) {
-            $logEvent = new SubscriptionEvent($user, $unsubscribedUser, SubscriptionEvent::ACTION_UNSUBSCRIBE);
-            $this->em->persist($logEvent);
-
-            $user->addNewSubscriberEvent($logEvent);
-        }
+        $this->processSubscribedUsers($user, $subscribedList);
+        $this->processUnsubscribedUsers($user, $unsubscribedList);
 
         // Removing users from database
+        // @todo Maybe remove via ORM
         $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $unsubscribedList);
 
-        if (0 !== count($subscribedList) || 0 !== count($unsubscribedList)) {
-            // Dispatching event
-            $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
-            $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
-        }
+        $this->dispatchSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
     }
 
     /**
@@ -97,9 +61,9 @@ class SubscriptionsManager
      * @param User[] $list1
      * @param User[] $list2
      *
-     * @return User[] Diff
+     * @return User[]
      */
-    public function getUsersListsDiff(array $list1 = [], array $list2 = [])
+    public function getUsersListsDiff(array $list1 = [], array $list2 = []): array
     {
         $hash1 = [];
         $hash2 = [];
@@ -112,5 +76,52 @@ class SubscriptionsManager
         }
 
         return array_diff_key($hash1, $hash2);
+    }
+
+    /**
+     * @param User $user
+     * @param User[] $subscribers
+     */
+    private function processSubscribedUsers(User $user, array $subscribers)
+    {
+        foreach ($subscribers as $subscriber) {
+            $subscription = new Subscription($user, $subscriber);
+
+            $user->addSubscriber($subscription);
+            $this->em->persist($subscription);
+
+            $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
+            $this->em->persist($logEvent);
+
+            $user->addNewSubscriberEvent($logEvent);
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param User[] $subscribers
+     */
+    private function processUnsubscribedUsers(User $user, array $subscribers)
+    {
+        foreach ($subscribers as $subscriber) {
+            $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_UNSUBSCRIBE);
+            $this->em->persist($logEvent);
+
+            $user->addNewSubscriberEvent($logEvent);
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param User[] $subscribed
+     * @param User[] $unsubscribed
+     */
+    private function dispatchSubscribersUpdatedEvent(User $user, array $subscribed, array $unsubscribed)
+    {
+        if (0 !== count($subscribed) || 0 !== count($unsubscribed)) {
+            // Dispatching event
+            $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribed, $unsubscribed);
+            $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
+        }
     }
 }
