@@ -24,10 +24,6 @@ if ($debug) {
     Debug::enable();
 }
 
-// Hacking strange bug after update
-// @todo remove on update
-require_once __DIR__.'/AppKernel.php';
-
 $kernel = new AppKernel($env, $debug);
 $application = new Application($kernel);
 $application->run($input);

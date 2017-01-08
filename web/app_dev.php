@@ -24,10 +24,6 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 $loader = require __DIR__.'/../app/autoload.php';
 Debug::enable();
 
-// Hacking strange bug after update
-// @todo remove on update
-require_once __DIR__.'/../app/AppKernel.php';
-
 $kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
 $request = Request::createFromGlobals();
