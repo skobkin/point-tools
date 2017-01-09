@@ -61,7 +61,7 @@ class AbstractApi
     {
         $this->logger->debug('Sending POST request', ['path' => $path, 'parameters' => $parameters]);
 
-        return $request = $this->client->request('POST', $path, ['form_params' => $parameters]);
+        return $this->client->request('POST', $path, ['form_params' => $parameters]);
     }
 
     /**
