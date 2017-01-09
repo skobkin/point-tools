@@ -15,6 +15,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @todo https://symfony.com/doc/current/console/lockable_trait.html
+ */
 class UpdateSubscriptionsCommand extends ContainerAwareCommand
 {
     /**
