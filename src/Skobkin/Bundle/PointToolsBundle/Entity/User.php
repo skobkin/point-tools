@@ -49,21 +49,21 @@ class User
     private $updatedAt;
 
     /**
-     * @var Subscription|ArrayCollection
+     * @var ArrayCollection|Subscription[]
      *
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $subscribers;
 
     /**
-     * @var Subscription|ArrayCollection
+     * @var ArrayCollection|Subscription[]
      *
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="subscriber", fetch="EXTRA_LAZY")
      */
     private $subscriptions;
 
     /**
-     * @var SubscriptionEvent|ArrayCollection
+     * @var ArrayCollection|SubscriptionEvent[]
      * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $newSubscriberEvents;
