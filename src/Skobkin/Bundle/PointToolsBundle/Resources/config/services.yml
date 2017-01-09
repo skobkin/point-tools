@@ -45,6 +45,19 @@ services:
             - '@logger'
 
 
+    # Console commands
+    app.point.update_subscribers_command:
+        class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
+        calls:
+            - [setLogger, ['@logger']]
+            - [setEntityManager, ['@doctrine.orm.entity_manager']]
+            - [setApiClient, ['@app.point.api_user']]
+            - [setApiDelay, ['%point_api_delay%']]
+            - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
+        tags:
+            - { name: console.command }
+
+
     # Factories
     # User factory
     app.point.user_factory:

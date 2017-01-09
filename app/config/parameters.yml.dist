@@ -13,6 +13,8 @@ parameters:
 
     point_base_url:    https://point.im/
     point_api_base_url: https://point.im/api/
+    # Delay between calls when updating users subscribers (in microseconds)
+    point_api_delay: 500000
     point_use_https: true
     point_login: point-tools
     point_id: 435

@@ -2,17 +2,81 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
+use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateSubscriptionsCommand extends ContainerAwareCommand
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepo;
+
+    /**
+     * @var InputInterface
+     */
+    private $input;
+
+    /**
+     * @var UserApi
+     */
+    private $api;
+
+    /**
+     * @var int
+     */
+    private $apiDelay = 500000;
+
+    /**
+     * @var SubscriptionsManager
+     */
+    private $subscriptionManager;
+
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function setEntityManager(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
+    public function setApiClient(UserApi $userApi)
+    {
+        $this->api = $userApi;
+    }
+
+    public function setApiDelay(int $microSecs)
+    {
+        $this->apiDelay = $microSecs;
+    }
+
+    public function setSubscriptionManager(SubscriptionsManager $subscriptionsManager)
+    {
+        $this->subscriptionManager = $subscriptionsManager;
+    }
+
     protected function configure()
     {
         $this
@@ -42,139 +106,156 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $log = $this->getContainer()->get('logger');
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
+        $this->input = $input;
+        $this->userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
 
-        $log->debug('UpdateSubscriptionsCommand started.');
-
-        /** @var UserApi $api */
-        $api = $this->getContainer()->get('app.point.api_user');
-        /** @var SubscriptionsManager $subscriptionsManager */
-        $subscriptionsManager = $this->getContainer()->get('app.point.subscriptions_manager');
+        $this->logger->debug('UpdateSubscriptionsCommand started.');
 
         try {
-            $serviceUserId = $this->getContainer()->getParameter('point_id');
+            $appUserId = $this->getContainer()->getParameter('point_id');
         } catch (\InvalidArgumentException $e) {
-            $log->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
+            $this->logger->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
             return 1;
         }
 
         // Beginning transaction for all changes
-        $em->beginTransaction();
+        $this->em->beginTransaction();
 
-        if ($input->getOption('all-users')) {
-            $usersForUpdate = $userRepository->findAll();
-        } else {
-            $serviceUser = $userRepository->find($serviceUserId);
+        try {
+            $usersForUpdate = $this->getUsersForUpdate($appUserId);
+        } catch (\Exception $e) {
+            $this->logger->error('Error while getting service subscribers', ['exception' => get_class($e), 'message' => $e->getMessage()]);
 
-            if (!$serviceUser) {
-                $log->info('Service user not found');
-                // @todo Retrieving user
-
-                return 1;
-            }
-
-            $log->info('Getting service subscribers');
-
-            try {
-                $usersForUpdate = $api->getUserSubscribersById($serviceUserId);
-            } catch (\Exception $e) {
-                $log->warning(
-                    'Error while getting service subscribers. Fallback to local list.',
-                    [
-                        'user_login' => $serviceUser->getLogin(),
-                        'user_id' => $serviceUser->getId(),
-                        'message' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                );
-
-                $usersForUpdate = [];
-
-                foreach ($serviceUser->getSubscribers() as $subscription) {
-                    $usersForUpdate[] = $subscription->getSubscriber();
-                }
-
-                if (!count($usersForUpdate)) {
-                    $log->info('No local subscribers. Finishing.');
-                    return 0;
-                }
-            }
-
-            $log->debug('Updating service subscribers');
-
-            // Updating service subscribers
-            try {
-                $subscriptionsManager->updateUserSubscribers($serviceUser, $usersForUpdate);
-            } catch (\Exception $e) {
-                $log->error(
-                    'Error while updating service subscribers',
-                    [
-                        'user_login' => $serviceUser->getLogin(),
-                        'user_id' => $serviceUser->getId(),
-                        'message' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                );
-
-                return 1;
-            }
+            return 1;
         }
 
-        $log->info('Processing users subscribers');
+        if (0 === count($usersForUpdate)) {
+            $this->logger->info('No local subscribers. Finishing.');
 
+            return 0;
+        }
+
+        $this->logger->info('Processing users subscribers');
+
+        $this->updateUsersSubscribers($usersForUpdate);
+
+        // Flushing all changes at once to database
+        $this->em->flush();
+        $this->em->commit();
+
+        $this->logger->debug('Finished');
+
+        return 0;
+    }
+
+    /**
+     * @param User[] $users
+     */
+    private function updateUsersSubscribers(array $users)
+    {
         // Updating users subscribers
-        foreach ($usersForUpdate as $user) {
-            $log->info('Processing @'.$user->getLogin());
+        foreach ($users as $user) {
+            $this->logger->info('Processing @'.$user->getLogin());
 
             try {
-                $userCurrentSubscribers = $api->getUserSubscribersById($user->getId());
+                $userCurrentSubscribers = $this->api->getUserSubscribersById($user->getId());
             } catch (\Exception $e) {
-                $log->error(
+                $this->logger->error(
                     'Error while getting subscribers. Skipping.',
                     [
                         'user_login' => $user->getLogin(),
                         'user_id' => $user->getId(),
                         'message' => $e->getMessage(),
                         'file' => $e->getFile(),
-                        'line' => $e->getLine()
+                        'line' => $e->getLine(),
                     ]
                 );
 
                 continue;
             }
 
-            $log->debug('Updating user subscribers');
+            $this->logger->debug('Updating user subscribers');
 
             try {
                 // Updating user subscribers
-                $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
+                $this->subscriptionManager->updateUserSubscribers($user, $userCurrentSubscribers);
             } catch (\Exception $e) {
-                $log->error(
+                $this->logger->error(
                     'Error while updating user subscribers',
                     [
                         'user_login' => $user->getLogin(),
                         'user_id' => $user->getId(),
                         'message' => $e->getMessage(),
                         'file' => $e->getFile(),
-                        'line' => $e->getLine()
+                        'line' => $e->getLine(),
                     ]
                 );
             }
 
-            // @todo move to the config
-            usleep(500000);
+            usleep($this->apiDelay);
+        }
+    }
+
+    private function getUsersForUpdate(int $appUserId): array
+    {
+        if ($this->input->getOption('all-users')) {
+            $usersForUpdate = $this->userRepo->findAll();
+        } else {
+            /** @var User $serviceUser */
+            $serviceUser = $this->userRepo->find($appUserId);
+
+            if (!$serviceUser) {
+                $this->logger->info('Service user not found');
+                // @todo Retrieving user
+
+                throw new \RuntimeException('Service user not found in the database');
+            }
+
+            $this->logger->info('Getting service subscribers');
+
+            try {
+                $usersForUpdate = $this->api->getUserSubscribersById($appUserId);
+            } catch (\Exception $e) {
+                $this->logger->warning(
+                    'Error while getting service subscribers. Fallback to local list.',
+                    [
+                        'user_login' => $serviceUser->getLogin(),
+                        'user_id' => $serviceUser->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]
+                );
+
+                $usersForUpdate = [];
+
+                /** @var Subscription $subscription */
+                foreach ($serviceUser->getSubscribers() as $subscription) {
+                    $usersForUpdate[] = $subscription->getSubscriber();
+                }
+            }
+
+            $this->logger->debug('Updating service subscribers');
+
+            // Updating service subscribers
+            try {
+                $this->subscriptionManager->updateUserSubscribers($serviceUser, $usersForUpdate);
+            } catch (\Exception $e) {
+                $this->logger->error(
+                    'Error while updating service subscribers',
+                    [
+                        'user_login' => $serviceUser->getLogin(),
+                        'user_id' => $serviceUser->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]
+                );
+
+                throw $e;
+            }
         }
 
-        // Flushing all changes at once to database
-        $em->flush();
-        $em->commit();
-
-        $log->debug('Finished');
-
-        return 0;
+        return $usersForUpdate;
     }
 }
