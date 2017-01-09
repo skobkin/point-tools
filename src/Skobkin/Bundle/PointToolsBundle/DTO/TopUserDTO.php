@@ -17,24 +17,18 @@ class TopUserDTO
      */
     private $subscribersCount;
 
-    public function __construct($login, $subscribersCount)
+    public function __construct(string $login, int $subscribersCount)
     {
         $this->login = $login;
         $this->subscribersCount = $subscribersCount;
     }
 
-    /**
-     * @return string
-     */
-    public function getLogin()
+    public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @return int
-     */
-    public function getSubscribersCount()
+    public function getSubscribersCount(): int
     {
         return $this->subscribersCount;
     }
