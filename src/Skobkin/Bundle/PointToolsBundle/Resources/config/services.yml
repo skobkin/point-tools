@@ -37,7 +37,10 @@ services:
     # Point subscription manager
     app.point.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
-        arguments: [ '@doctrine.orm.entity_manager', '@event_dispatcher' ]
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@event_dispatcher'
+            - '@logger'
 
 
     # Factories

@@ -3,6 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
@@ -21,11 +22,17 @@ class SubscriptionsManager
      */
     private $eventDispatcher;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
+
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger)
     {
         $this->em = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,15 +49,15 @@ class SubscriptionsManager
             $oldSubscribersList[] = $subscription->getSubscriber();
         }
 
+        $this->logger->debug('Counting user subscribers diff', ['user_id' => $user->getId()]);
+
         $subscribedList = $this->getUsersListsDiff($newSubscribersList, $oldSubscribersList);
         $unsubscribedList = $this->getUsersListsDiff($oldSubscribersList, $newSubscribersList);
 
+        $this->logger->debug(sprintf('User has %d subscribed and %d unsubscribed users', count($subscribedList), count($unsubscribedList)));
+
         $this->processSubscribedUsers($user, $subscribedList);
         $this->processUnsubscribedUsers($user, $unsubscribedList);
-
-        // Removing users from database
-        // @todo Maybe remove via ORM
-        $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $unsubscribedList);
 
         $this->dispatchSubscribersUpdatedEvent($user, $subscribedList, $unsubscribedList);
     }
@@ -84,6 +91,8 @@ class SubscriptionsManager
      */
     private function processSubscribedUsers(User $user, array $subscribers)
     {
+        $this->logger->debug('Processing subscribed users');
+
         foreach ($subscribers as $subscriber) {
             $subscription = new Subscription($user, $subscriber);
 
@@ -103,12 +112,18 @@ class SubscriptionsManager
      */
     private function processUnsubscribedUsers(User $user, array $subscribers)
     {
+        $this->logger->debug('Processing unsubscribed users');
+
         foreach ($subscribers as $subscriber) {
             $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_UNSUBSCRIBE);
             $this->em->persist($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
         }
+
+        // Removing users from database
+        // @todo Maybe remove via ORM
+        $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $subscribers);
     }
 
     /**
