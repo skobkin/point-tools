@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiController extends Controller
@@ -41,6 +40,6 @@ class ApiController extends Controller
             ];
         }
 
-        return new JsonResponse($data);
+        return $this->json($data);
     }
 }

@@ -8,12 +8,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MainController extends Controller
 {
     const AJAX_AUTOCOMPLETE_SIZE = 10;
 
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -23,7 +24,6 @@ class MainController extends Controller
             null,
             [
                 'action' => $this->generateUrl('index'),
-                'method' => 'POST',
             ]
         );
 
@@ -43,20 +43,20 @@ class MainController extends Controller
             'form' => $form->createView(),
             'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
             'users_count' => $em->getRepository('SkobkinPointToolsBundle:User')->getUsersCount(),
-            'subscribers_count' => $em->getRepository('SkobkinPointToolsBundle:Subscription')->getUserSubscribersCountById($this->container->getParameter('point_id')),
+            'subscribers_count' => $em->getRepository('SkobkinPointToolsBundle:Subscription')->getUserSubscribersCountById($this->getParameter('point_id')),
             'events_count' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getLastDayEventsCount(),
-            'service_login' => $this->container->getParameter('point_login'),
+            'service_login' => $this->getParameter('point_login'),
         ]);
     }
 
     /**
      * Returns user search autocomplete data in JSON
      *
-     * @param $login
+     * @param string $login
      *
      * @return JsonResponse
      */
-    public function searchUserAjaxAction($login)
+    public function searchUserAjaxAction(string $login): Response
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -69,6 +69,6 @@ class MainController extends Controller
             ];
         }
 
-        return new JsonResponse($result);
+        return $this->json($result);
     }
 }

@@ -9,13 +9,14 @@ use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
     /**
      * @param string $login
      */
-    public function showAction(Request $request, $login)
+    public function showAction(Request $request, string $login): Response
     {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -35,7 +36,7 @@ class UserController extends Controller
             10
         );
 
-        $userApi = $this->container->get('app.point.api_user');
+        $userApi = $this->get('app.point.api_user');
 
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
@@ -46,7 +47,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function topAction()
+    public function topAction(): Response
     {
         $topUsers = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->getTopUsers();
 
@@ -59,12 +60,15 @@ class UserController extends Controller
     }
 
     /**
+     * @todo move to the service
+     *
      * @param TopUserDTO[] $topUsers
+     *
      * @return Highchart
      */
-    private function createTopUsersGraph(array $topUsers = [])
+    private function createTopUsersGraph(array $topUsers = []): Highchart
     {
-        $translator = $this->container->get('translator');
+        $translator = $this->get('translator');
 
         $chartData = [
             'titles' => [],

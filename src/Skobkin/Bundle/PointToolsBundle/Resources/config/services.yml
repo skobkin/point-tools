@@ -9,7 +9,7 @@ services:
     # HTTP client for Point API
     app.http.point_client:
         class: GuzzleHttp\Client
-        arguments: [ { base_uri: "%point_base_url%", timeout: 5.0 } ]
+        arguments: [ { base_uri: '%point_base_url%', timeout: 5.0 } ]
         tags:
             - { name: csa_guzzle.client }
 
@@ -18,70 +18,70 @@ services:
     # Abstract API client with common dependency
     app.point.abstract_api:
         abstract: true
-        arguments: [@app.http.point_client]
+        arguments: ['@app.http.point_client']
 
     app.point.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
         parent: app.point.abstract_api
         arguments:
-            - @doctrine.orm.entity_manager
-            - @serializer
+            - '@doctrine.orm.entity_manager'
+            - '@jms_serializer'
 
     app.point.api_post:
         class: Skobkin\Bundle\PointToolsBundle\Service\PostApi
         parent: app.point.abstract_api
         arguments:
-            - @app.point.post_factory
+            - '@app.point.post_factory'
 
 
     # Point subscription manager
     app.point.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
-        arguments: [ @doctrine.orm.entity_manager, @event_dispatcher ]
+        arguments: [ '@doctrine.orm.entity_manager', '@event_dispatcher' ]
 
 
     # Factories
     # User factory
     app.point.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
-        arguments: [ @doctrine.orm.entity_manager ]
+        arguments: [ '@doctrine.orm.entity_manager' ]
 
     # Comment factory
     app.point.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
-        arguments: [ @doctrine.orm.entity_manager, @app.point.user_factory ]
+        arguments: [ '@doctrine.orm.entity_manager', '@app.point.user_factory' ]
 
     # Tag factory
     app.point.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
-        arguments: [ @logger, @doctrine.orm.entity_manager ]
+        arguments: [ '@logger', '@doctrine.orm.entity_manager' ]
 
     # File factory
     app.point.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
-        arguments: [ @logger, @doctrine.orm.entity_manager ]
+        arguments: [ '@logger', '@doctrine.orm.entity_manager' ]
 
     # Post factory
     app.point.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
         arguments:
-            - @logger
-            - @doctrine.orm.entity_manager
-            - @app.point.user_factory
-            - @app.point.file_factory
-            - @app.point.comment_factory
-            - @app.point.tag_factory
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
+            - '@app.point.user_factory'
+            - '@app.point.file_factory'
+            - '@app.point.comment_factory'
+            - '@app.point.tag_factory'
 
     # Telegram accounts factory
     app.telegram.telegram_account_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: ['@doctrine.orm.entity_manager']
 
 
     # Custom Markdown parser
     app.point.markdown_parser:
         class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
-        arguments: [[], @router]
+        arguments: [[], '@router']
         tags:
             - { name: markdown.parser }
 
@@ -89,19 +89,19 @@ services:
     # Event listener
     app.event_listener.users_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersUpdatedSubscriber
-        arguments: [@event_dispatcher]
+        arguments: ['@event_dispatcher']
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
     app.event_listener.users_renamed_notifier:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedListener
-        arguments: [@app.telegram.notifier]
+        arguments: ['@app.telegram.notifier']
         tags:
             - { name: kernel.event_listener, event: app.users.renamed }
 
     app.event_listener.user_subscribers_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserSubscribersUpdatedListener
-        arguments: [@app.telegram.notifier]
+        arguments: ['@app.telegram.notifier']
         tags:
             - { name: kernel.event_listener, event: app.user.subscribers_updated }
 
@@ -119,38 +119,38 @@ services:
     # API client
     app.telegram.api_client:
         class: unreal4u\TelegramAPI\TgLog
-        arguments: [%telegram_token%, @logger, @app.http.telegram_client]
+        arguments: ['%telegram_token%', '@logger', '@app.http.telegram_client']
 
     # Message sender
     app.telegram.message_sender:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
-        arguments: [@app.telegram.api_client, @twig]
+        arguments: ['@app.telegram.api_client', '@twig']
 
     # User notifier
     app.telegram.notifier:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier
-        arguments: [@doctrine.orm.entity_manager, @app.telegram.message_sender]
+        arguments: ['@doctrine.orm.entity_manager', '@app.telegram.message_sender']
 
     # Common incoming message processor
     app.telegram.update_dispatcher:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher
         arguments:
-            - @app.telegram.private_message_processor
-            - @app.telegram.inline_query_processor
+            - '@app.telegram.private_message_processor'
+            - '@app.telegram.inline_query_processor'
 
     # InlineQuery processor
     app.telegram.inline_query_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
         lazy: true
-        arguments: [@doctrine.orm.entity_manager, @app.telegram.api_client]
+        arguments: ['@doctrine.orm.entity_manager', '@app.telegram.api_client']
 
     # Private message processor
     app.telegram.private_message_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
         lazy: true
         arguments:
-            - @app.telegram.message_sender
-            - @app.point.api_user
-            - @app.telegram.telegram_account_factory
-            - @doctrine.orm.entity_manager
-            - %point_id%
+            - '@app.telegram.message_sender'
+            - '@app.point.api_user'
+            - '@app.telegram.telegram_account_factory'
+            - '@doctrine.orm.entity_manager'
+            - '%point_id%'

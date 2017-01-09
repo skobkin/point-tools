@@ -37,9 +37,8 @@ sensio_framework_extra:
 
 # Twig Configuration
 twig:
-    form:
-        resources:
-            - bootstrap_3_layout.html.twig
+    form_themes:
+        - bootstrap_3_layout.html.twig
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
@@ -60,7 +59,7 @@ doctrine:
         auto_mapping: true
 
 doctrine_migrations:
-    dir_name: %kernel.root_dir%/DoctrineMigrations
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
     namespace: Application\Migrations
     table_name: migration_versions
     name: Application Migrations
@@ -72,6 +71,9 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+jms_serializer:
+    enable_short_alias: false
 
 knp_markdown:
     parser:

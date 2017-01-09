@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CrawlerController extends AbstractApiController
 {
-    public function receiveAllPageAction(Request $request)
+    public function receiveAllPageAction(Request $request): Response
     {
         $remoteToken = $request->request->get('token');
         $localToken = $this->getParameter('crawler_token');
