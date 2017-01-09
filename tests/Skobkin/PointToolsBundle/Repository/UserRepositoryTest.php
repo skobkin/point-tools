@@ -83,7 +83,7 @@ class UserRepositoryTest extends KernelTestCase
         $this->assertCount(5, $topUsers, 'Found not exactly 5 top users');
 
         foreach ($topUsers as $topUser) {
-            $this->assertInternalType(TopUserDTO::class, $topUser, 'Invalid type returned');
+            $this->assertEquals(TopUserDTO::class, get_class($topUser), 'Invalid type returned');
         }
     }
 }
