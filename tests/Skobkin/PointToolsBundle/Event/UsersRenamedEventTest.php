@@ -6,7 +6,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
 use Skobkin\Bundle\PointToolsBundle\Event\UsersRenamedEvent;
 
-class UserRenamedEventTest extends \PHPUnit_Framework_TestCase
+class UsersRenamedEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testNameConstant()
     {
