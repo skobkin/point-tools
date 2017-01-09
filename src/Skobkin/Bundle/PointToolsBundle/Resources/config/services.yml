@@ -18,7 +18,9 @@ services:
     # Abstract API client with common dependency
     app.point.abstract_api:
         abstract: true
-        arguments: ['@app.http.point_client']
+        arguments:
+            - '@app.http.point_client'
+            - '@logger'
 
     app.point.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi

@@ -4,6 +4,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use GuzzleHttp\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @todo Refactor DTO deserialization
@@ -16,6 +17,11 @@ class AbstractApi
     protected $client;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var string Authentication token for API
      */
     protected $authToken;
@@ -26,9 +32,10 @@ class AbstractApi
     protected $csRfToken;
 
 
-    public function __construct(ClientInterface $httpClient)
+    public function __construct(ClientInterface $httpClient, LoggerInterface $logger)
     {
         $this->client = $httpClient;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,6 +46,8 @@ class AbstractApi
      */
     public function sendGetRequest(string $path, array $parameters = []): ResponseInterface
     {
+        $this->logger->debug('Sending GET request', ['path' => $path, 'parameters' => $parameters]);
+
         return $this->client->request('GET', $path, ['query' => $parameters]);
     }
 
@@ -50,6 +59,8 @@ class AbstractApi
      */
     public function sendPostRequest(string $path, array $parameters = []): ResponseInterface
     {
+        $this->logger->debug('Sending POST request', ['path' => $path, 'parameters' => $parameters]);
+
         return $request = $this->client->request('POST', $path, ['form_params' => $parameters]);
     }
 

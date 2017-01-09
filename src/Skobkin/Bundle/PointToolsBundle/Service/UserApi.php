@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use JMS\Serializer\Serializer;
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Auth;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
@@ -43,10 +44,9 @@ class UserApi extends AbstractApi
      */
     private $serializer;
 
-
-    public function __construct(ClientInterface $httpClient, EntityManager $entityManager, Serializer $serializer)
+    public function __construct(ClientInterface $httpClient, LoggerInterface $logger, EntityManager $entityManager, Serializer $serializer)
     {
-        parent::__construct($httpClient);
+        parent::__construct($httpClient, $logger);
 
         $this->em = $entityManager;
         $this->serializer = $serializer;
@@ -55,9 +55,13 @@ class UserApi extends AbstractApi
 
     public function isAuthDataValid(string $login, string $password): bool
     {
+        $this->logger->info('Checking user auth data via point.im API');
+
         $auth = $this->authenticate($login, $password);
 
         if (null === $auth->getError() && null !== $auth->getToken()) {
+            $this->logger->debug('Authentication successfull. Logging out.');
+
             $this->logout($auth);
 
             return true;
@@ -68,6 +72,8 @@ class UserApi extends AbstractApi
 
     public function authenticate(string $login, string $password): Auth
     {
+        $this->logger->debug('Trying to authenticate user via Point.im API', ['login' => $login]);
+
         try {
             $authData = $this->getPostRequestData(
                 '/api/login',
@@ -89,6 +95,8 @@ class UserApi extends AbstractApi
 
     public function logout(Auth $auth): bool
     {
+        $this->logger->debug('Trying to log user out via Point.im API');
+
         try {
             $this->getPostRequestData('/api/logout', ['csrf_token' => $auth->getCsRfToken()]);
 
@@ -117,6 +125,8 @@ class UserApi extends AbstractApi
      */
     public function getUserSubscribersByLogin(string $login): array
     {
+        $this->logger->debug('Trying to get user subscribers by login', ['login' => $login]);
+
         try {
             $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscribers', [], true);
         } catch (RequestException $e) {
@@ -143,6 +153,8 @@ class UserApi extends AbstractApi
      */
     public function getUserSubscribersById(int $id): array
     {
+        $this->logger->debug('Trying to get user subscribers by id', ['id' => $id]);
+
         try {
             $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscribers', [], true);
         } catch (RequestException $e) {
@@ -169,6 +181,8 @@ class UserApi extends AbstractApi
      */
     public function getUserSubscriptionsByLogin(string $login): array
     {
+        $this->logger->debug('Trying to get user subscriptions by login', ['login' => $login]);
+
         try {
             $usersList = $this->getGetRequestData('/api/user/'.urlencode($login).'/subscriptions', [], true);
         } catch (RequestException $e) {
@@ -195,6 +209,8 @@ class UserApi extends AbstractApi
      */
     public function getUserSubscriptionsById(int $id): array
     {
+        $this->logger->debug('Trying to get user subscriptions by id', ['id' => $id]);
+
         try {
             $usersList = $this->getGetRequestData('/api/user/id/'.(int) $id.'/subscriptions', [], true);
         } catch (RequestException $e) {
@@ -220,6 +236,8 @@ class UserApi extends AbstractApi
      */
     public function getUserByLogin(string $login): User
     {
+        $this->logger->debug('Trying to get user by login', ['login' => $login]);
+
         try {
             $userInfo = $this->getGetRequestData('/api/user/login/'.urlencode($login), [], true);
         } catch (RequestException $e) {
@@ -245,6 +263,8 @@ class UserApi extends AbstractApi
      */
     public function getUserById(int $id): User
     {
+        $this->logger->debug('Trying to get user by id', ['id' => $id]);
+
         try {
             $userInfo = $this->getGetRequestData('/api/user/id/'.$id, [], true);
         } catch (RequestException $e) {
@@ -270,6 +290,8 @@ class UserApi extends AbstractApi
      */
     public function getUserFromUserInfo(array $userInfo): User
     {
+        $this->logger->debug('Trying to create user from array', ['array' => $userInfo]);
+
         // @todo Refactor to UserFactory->createFromArray()
         if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
             /** @var User $user */
@@ -294,6 +316,8 @@ class UserApi extends AbstractApi
     /**
      * Get array of User objects from API response containing user list
      *
+     * @todo refactor
+     *
      * @param array $users
      *
      * @return User[]
@@ -303,6 +327,8 @@ class UserApi extends AbstractApi
      */
     private function getUsersFromList(array $users = []): array
     {
+        $this->logger->debug('Trying to create multiple users from array', ['array' => $users]);
+
         /** @var User[] $resultUsers */
         $resultUsers = [];
 

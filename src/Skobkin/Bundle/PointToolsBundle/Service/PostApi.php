@@ -3,6 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use GuzzleHttp\ClientInterface;
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 
 /**
@@ -16,9 +17,9 @@ class PostApi extends AbstractApi
     private $postFactory;
 
 
-    public function __construct(ClientInterface $httpClient, PostFactory $postFactory)
+    public function __construct(ClientInterface $httpClient, LoggerInterface $logger, PostFactory $postFactory)
     {
-        parent::__construct($httpClient);
+        parent::__construct($httpClient, $logger);
 
         $this->postFactory = $postFactory;
     }
