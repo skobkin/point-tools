@@ -1,7 +1,6 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Tests;
-
+namespace Tests\Skobkin\PointToolsBundle;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
