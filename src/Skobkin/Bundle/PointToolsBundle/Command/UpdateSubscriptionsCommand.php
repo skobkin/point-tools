@@ -10,6 +10,7 @@ use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,6 +51,11 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
      * @var SubscriptionsManager
      */
     private $subscriptionManager;
+
+    /**
+     * @var ProgressBar
+     */
+    private $progress;
 
 
     public function setLogger(LoggerInterface $logger)
@@ -118,8 +124,13 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             return 1;
         }
 
+        $this->progress = new ProgressBar($output);
+        $this->progress->setFormat('debug');
+
         // Beginning transaction for all changes
         $this->em->beginTransaction();
+
+        $this->progress->setMessage('Getting service subscribers');
 
         try {
             $usersForUpdate = $this->getUsersForUpdate($appUserId);
@@ -136,8 +147,12 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         }
 
         $this->logger->info('Processing users subscribers');
+        $this->progress->setMessage('Processing users subscribers');
+        $this->progress->start(count($usersForUpdate));
 
         $this->updateUsersSubscribers($usersForUpdate);
+
+        $this->progress->finish();
 
         // Flushing all changes at once to database
         $this->em->flush();
@@ -191,6 +206,8 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                     ]
                 );
             }
+
+            $this->progress->advance();
 
             usleep($this->apiDelay);
         }

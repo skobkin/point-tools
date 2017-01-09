@@ -22,7 +22,7 @@ monolog:
         console:
             type:   console
             verbosity_levels:
-                VERBOSITY_NORMAL: INFO
+                VERBOSITY_NORMAL: WARNING
             channels: [!event, !doctrine]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
