@@ -250,7 +250,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 $usersForUpdate = [];
 
                 /** @var Subscription $subscription */
-                foreach ($serviceUser->getSubscribers()->getIterator() as $subscription) {
+                foreach ((array) $serviceUser->getSubscribers() as $subscription) {
                     $usersForUpdate[] = $subscription->getSubscriber();
                 }
             }
