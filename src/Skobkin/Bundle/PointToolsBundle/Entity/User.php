@@ -124,7 +124,7 @@ class User
         return $this->login;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name = null): self
     {
         $this->name = $name;
 
