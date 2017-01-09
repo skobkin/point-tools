@@ -1,12 +1,11 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\Blogs;
-
+namespace Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog;
 
 use Exception;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\Post;
 
-class InvalidPostDataException extends \Exception
+class InvalidPostDataException extends InvalidDataException
 {
     /**
      * @var Post
@@ -23,7 +22,7 @@ class InvalidPostDataException extends \Exception
     /**
      * @return Post
      */
-    public function getPost()
+    public function getPost(): Post
     {
         return $this->post;
     }

@@ -9,8 +9,9 @@ use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\MetaPost;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
+use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\Blogs\InvalidPostDataException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidPostDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
@@ -115,13 +116,12 @@ class PostFactory
      * @return Post
      *
      * @throws ApiException
-     * @throws InvalidPostDataException
+     * @throws InvalidDataException
      */
     private function createFromDTO(MetaPost $postData): Post
     {
         if (!$this->validateMetaPost($postData)) {
-            // FIXME
-            throw new InvalidPostDataException('Invalid post data', $postData);
+            throw new InvalidDataException('Invalid post data');
         }
 
         if (!$postData->getPost()->getAuthor()->getId()) {
