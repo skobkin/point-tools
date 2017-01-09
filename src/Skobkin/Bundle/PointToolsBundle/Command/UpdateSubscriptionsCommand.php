@@ -46,7 +46,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
 
-        $log->info('UpdateSubscriptionsCommand started.');
+        $log->debug('UpdateSubscriptionsCommand started.');
 
         /** @var UserApi $api */
         $api = $this->getContainer()->get('app.point.api_user');
@@ -75,15 +75,21 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 return 1;
             }
 
-            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
-                $output->writeln('Getting service subscribers');
-            }
+            $log->info('Getting service subscribers');
 
             try {
                 $usersForUpdate = $api->getUserSubscribersById($serviceUserId);
             } catch (\Exception $e) {
-                $output->writeln('Error while getting service subscribers');
-                $log->error('Error while getting service subscribers.', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->warning(
+                    'Error while getting service subscribers. Fallback to local list.',
+                    [
+                        'user_login' => $serviceUser->getLogin(),
+                        'user_id' => $serviceUser->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                );
 
                 $usersForUpdate = [];
 
@@ -91,56 +97,72 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                     $usersForUpdate[] = $subscription->getSubscriber();
                 }
 
-                $output->writeln('Fallback to local list');
-                $log->error('Fallback to local list');
-
                 if (!count($usersForUpdate)) {
                     $log->info('No local subscribers. Finishing.');
                     return 0;
                 }
             }
 
-            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
-                $output->writeln('Updating service subscribers');
-            }
+            $log->debug('Updating service subscribers');
 
             // Updating service subscribers
             try {
                 $subscriptionsManager->updateUserSubscribers($serviceUser, $usersForUpdate);
             } catch (\Exception $e) {
-                $log->error('Error while updating service subscribers', ['user_login' => $serviceUser->getLogin(), 'user_id' => $serviceUser->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->error(
+                    'Error while updating service subscribers',
+                    [
+                        'user_login' => $serviceUser->getLogin(),
+                        'user_id' => $serviceUser->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                );
 
                 return 1;
             }
         }
 
-        if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
-            $output->writeln('Processing users subscribers');
-        }
+        $log->info('Processing users subscribers');
 
         // Updating users subscribers
         foreach ($usersForUpdate as $user) {
-            $output->writeln('  Processing @' . $user->getLogin());
-            $log->info('Processing @' . $user->getLogin());
+            $log->info('Processing @'.$user->getLogin());
 
             try {
                 $userCurrentSubscribers = $api->getUserSubscribersById($user->getId());
             } catch (\Exception $e) {
-                $output->writeln('    Error while getting subscribers. Skipping.');
-                $log->error('Error while getting subscribers.', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->error(
+                    'Error while getting subscribers. Skipping.',
+                    [
+                        'user_login' => $user->getLogin(),
+                        'user_id' => $user->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                );
 
                 continue;
             }
 
-            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
-                $output->writeln('    Updating user subscribers');
-            }
+            $log->debug('Updating user subscribers');
 
             try {
                 // Updating user subscribers
                 $subscriptionsManager->updateUserSubscribers($user, $userCurrentSubscribers);
             } catch (\Exception $e) {
-                $log->error('Error while updating user subscribers', ['user_login' => $user->getLogin(), 'user_id' => $user->getId(), 'message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
+                $log->error(
+                    'Error while updating user subscribers',
+                    [
+                        'user_login' => $user->getLogin(),
+                        'user_id' => $user->getId(),
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                );
             }
 
             // @todo move to the config
@@ -150,6 +172,8 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         // Flushing all changes at once to database
         $em->flush();
         $em->commit();
+
+        $log->debug('Finished');
 
         return 0;
     }
