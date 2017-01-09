@@ -11,11 +11,9 @@ class UserRepository extends EntityRepository
     /**
      * Case-insensitive user search
      *
-     * @param string $login
-     * @return User|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findUserByLogin(string $login)
+    public function findUserByLogin(string $login): User
     {
         $qb = $this->createQueryBuilder('u');
 
@@ -31,12 +29,9 @@ class UserRepository extends EntityRepository
     /**
      * Case insensitive user LIKE %login% search
      *
-     * @param string $login
-     * @param int $limit
-     *
      * @return User[]
      */
-    public function findUsersLikeLogin(string $login, int $limit = 10)
+    public function findUsersLikeLogin(string $login, int $limit = 10): array
     {
         if (empty($login)) {
             return [];
@@ -54,10 +49,7 @@ class UserRepository extends EntityRepository
         ;
     }
 
-    /**
-     * @return integer
-     */
-    public function getUsersCount()
+    public function getUsersCount(): int
     {
         $qb = $this->createQueryBuilder('u');
 
@@ -65,10 +57,9 @@ class UserRepository extends EntityRepository
     }
 
     /**
-     * @param integer $id
      * @return User[]
      */
-    public function findUserSubscribersById(int $id)
+    public function findUserSubscribersById(int $id): array
     {
         if (!is_int($id)) {
             throw new \InvalidArgumentException('$id must be an integer');
@@ -89,11 +80,9 @@ class UserRepository extends EntityRepository
     /**
      * Returns top users by subscribers count
      *
-     * @param int $limit
-     *
      * @return TopUserDTO[]
      */
-    public function getTopUsers(int $limit = 30)
+    public function getTopUsers(int $limit = 30): array
     {
         if (!is_int($limit)) {
             throw new \InvalidArgumentException('$limit must be an integer');
