@@ -111,7 +111,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return bool
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -250,7 +250,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 $usersForUpdate = [];
 
                 /** @var Subscription $subscription */
-                foreach ($serviceUser->getSubscribers() as $subscription) {
+                foreach ($serviceUser->getSubscribers()->getIterator() as $subscription) {
                     $usersForUpdate[] = $subscription->getSubscriber();
                 }
             }
