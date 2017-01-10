@@ -93,4 +93,34 @@ class SubscriptionEventRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return SubscriptionEvent[]
+     */
+    public function getLastEventsByDay(int $days = 30): array
+    {
+        $qb = $this->createQueryBuilder('se');
+
+        $rows =  $qb
+            ->select([
+                'NEW Skobkin\Bundle\PointToolsBundle\DTO\DailyEvents(DAY(se.date), COUNT(se))',
+                'DAY(se.date) as day',
+            ])
+            ->groupBy('day')
+            ->orderBy('day', 'DESC')
+            ->setMaxResults($days)
+            ->getQuery()->getResult()
+        ;
+
+        $result = [];
+
+        // Removing unnecessary element, saving DTO
+        // @todo remove crutches, refactor query
+        foreach ($rows as $row) {
+            unset($row['day']);
+            $result[] = reset($row);
+        }
+
+        return $result;
+    }
 }

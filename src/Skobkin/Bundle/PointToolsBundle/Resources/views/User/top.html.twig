@@ -10,8 +10,13 @@
 
 {% block content %}
     <script type="text/javascript">
+        // Top chart
         {{ chart(top_chart) }}
+        // Events by day chart
+        {{ chart(events_dynamic_chat) }}
     </script>
 
     <div id="topchart" style="min-width: 400px; height: 600px; margin: 0 auto;"></div>
+
+    <div id="eventschart" style="min-width: 400px; height: 600px; margin: 0 auto;"></div>
 {% endblock %}

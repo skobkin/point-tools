@@ -3,6 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Skobkin\Bundle\PointToolsBundle\DTO\DailyEvents;
 use Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
@@ -49,22 +50,63 @@ class UserController extends Controller
 
     public function topAction(): Response
     {
-        $topUsers = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User')->getTopUsers();
-
-        $topChart = $this->createTopUsersGraph($topUsers);
+        $userRepo = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User');
+        $subscriptionsRecordsRepo = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:SubscriptionEvent');
+        $topUsers = $userRepo->getTopUsers();
+        $eventsByDay = $subscriptionsRecordsRepo->getLastEventsByDay();
 
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
-            'top_users' => $topUsers,
-            'top_chart' => $topChart,
+            //'top_users' => $topUsers,
+            'events_dynamic_chat' => $this->createEventsDynamicChart($eventsByDay),
+            'top_chart' => $this->createTopUsersGraph($topUsers),
         ]);
     }
 
     /**
      * @todo move to the service
      *
-     * @param TopUserDTO[] $topUsers
+     * @param DailyEvents[] $eventsByDay
+     */
+    private function createEventsDynamicChart(array $eventsByDay = []): Highchart
+    {
+        $translator = $this->get('translator');
+
+        $chartData = [
+            'titles' => [],
+            'events' => [],
+        ];
+
+        foreach ($eventsByDay as $day) {
+            $chartData['titles'][] = $day->getDate()->format('d.m');
+            $chartData['events'][] = $day->getEventsCount();
+        }
+
+        $series = [[
+            'name' => $translator->trans('Events'),
+            'data' => $chartData['events'],
+        ]];
+
+        $ob = new Highchart();
+        $ob->chart->renderTo('eventschart');
+        $ob->chart->type('line');
+        $ob->title->text($translator->trans('Events by day'));
+        $ob->xAxis->title(['text' => null]);
+        $ob->xAxis->categories($chartData['titles']);
+        $ob->yAxis->title(['text' => $translator->trans('amount')]);
+        $ob->plotOptions->bar([
+            'dataLabels' => [
+                'enabled' => true,
+            ]
+        ]);
+        $ob->series($series);
+
+        return $ob;
+    }
+
+    /**
+     * @todo move to the service
      *
-     * @return Highchart
+     * @param TopUserDTO[] $topUsers
      */
     private function createTopUsersGraph(array $topUsers = []): Highchart
     {
