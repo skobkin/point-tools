@@ -26,7 +26,7 @@ user_show:
     requirements:
         login: '[\w-]+'
 
-users_top:
+statistics:
     path:     /users/top
     defaults: { _controller: SkobkinPointToolsBundle:User:top }
     methods: [GET]
