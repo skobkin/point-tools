@@ -82,7 +82,7 @@ class UserController extends Controller
         }
 
         $series = [[
-            'name' => $translator->trans('Events'),
+            'name' => $translator->trans('Events count'),
             'data' => $chartData['events'],
         ]];
 
