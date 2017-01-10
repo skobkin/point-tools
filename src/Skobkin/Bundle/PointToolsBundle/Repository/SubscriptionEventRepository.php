@@ -121,6 +121,8 @@ class SubscriptionEventRepository extends EntityRepository
             $result[] = reset($row);
         }
 
+        $result = array_reverse($result);
+
         return $result;
     }
 }
