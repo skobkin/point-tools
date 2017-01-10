@@ -2,12 +2,12 @@
 
 {% block css %}
     {{ parent() }}
-    <link href="{{ asset('bundles/skobkinpointtools/css/lib/magnific-popup.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/lib/magnific-popup.css') }}" rel="stylesheet">
 {% endblock %}
 {% block footer_js %}
     {{ parent() }}
-    <script src="{{ asset('bundles/skobkinpointtools/js/lib/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('bundles/skobkinpointtools/js/popups.js') }}"></script>
+    <script src="{{ asset('js/lib/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('js/popups.js') }}"></script>
 {% endblock %}
 
 {% block header_title %}#{{ post.id }} @ Point Tools{% endblock %}
