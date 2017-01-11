@@ -96,6 +96,11 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository
         factory: 'doctrine:getRepository'
         arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File']
+    # Telegram Account repository
+    app.point.telegram_account_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account']
 
 
     # Factories
@@ -137,7 +142,7 @@ services:
     # Telegram accounts factory
     app.telegram.telegram_account_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
-        arguments: ['@doctrine.orm.entity_manager']
+        arguments: ['@app.point.telegram_account_repository']
 
 
     # Custom Markdown parser

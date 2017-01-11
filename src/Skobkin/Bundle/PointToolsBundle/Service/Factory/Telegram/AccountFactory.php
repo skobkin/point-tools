@@ -2,35 +2,28 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
+use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 
 class AccountFactory
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EntityRepository
+     * @var AccountRepository
      */
     private $accountRepo;
 
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(AccountRepository $accountRepository)
     {
-        $this->em = $em;
-        $this->accountRepo = $em->getRepository('SkobkinPointToolsBundle:Telegram\Account');
+        $this->accountRepo = $accountRepository;
     }
 
     public function findOrCreateFromMessage(Message $message): Account
     {
         if (null === $account = $this->accountRepo->findOneBy(['id' => $message->from->id])) {
             $account = new Account($message->from->id);
-            $this->em->persist($account);
+            $this->accountRepo->add($account);
         }
 
         // Setting/updating account data

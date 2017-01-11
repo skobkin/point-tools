@@ -3,9 +3,15 @@
 namespace Skobkin\Bundle\PointToolsBundle\Repository\Telegram;
 
 use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
 
 class AccountRepository extends EntityRepository
 {
+    public function add(Account $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     /**
      * @todo remove if not used
      *
@@ -14,7 +20,7 @@ class AccountRepository extends EntityRepository
      * @param int|null $limit
      * @param int|null $offset
      *
-     * @return array
+     * @return Account[]
      */
     public function findLinkedAccountsBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array
     {
