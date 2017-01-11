@@ -20,15 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class UserApi extends AbstractApi
 {
-    const AVATAR_SIZE_SMALL = '24';
-    const AVATAR_SIZE_MEDIUM = '40';
-    const AVATAR_SIZE_LARGE = '80';
-
-    /**
-     * @var string Base URL for user avatars
-     */
-    protected $avatarsBaseUrl = '//point.im/avatar/';
-
     /**
      * @var EntityManager
      */
@@ -50,6 +41,7 @@ class UserApi extends AbstractApi
 
         $this->em = $entityManager;
         $this->serializer = $serializer;
+        // @todo refactor
         $this->userRepository = $this->em->getRepository('SkobkinPointToolsBundle:User');
     }
 
@@ -354,35 +346,5 @@ class UserApi extends AbstractApi
         }
 
         return $resultUsers;
-    }
-
-    /**
-     * Creates URL of avatar with specified size by User object
-     *
-     * @param User $user
-     * @param string $size
-     *
-     * @return string
-     */
-    public function getAvatarUrl(User $user, string $size): string
-    {
-        return $this->getAvatarUrlByLogin($user->getLogin(), $size);
-    }
-
-    /**
-     * Creates URL of avatar with specified size by login string
-     *
-     * @param string $login
-     * @param string $size
-     *
-     * @return string
-     */
-    public function getAvatarUrlByLogin(string $login, string $size): string
-    {
-        if (!in_array($size, [self::AVATAR_SIZE_SMALL, self::AVATAR_SIZE_MEDIUM, self::AVATAR_SIZE_LARGE], true)) {
-            throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See UserApi class AVATAR_SIZE_* constants.');
-        }
-
-        return $this->avatarsBaseUrl.urlencode($login).'/'.$size;
     }
 }

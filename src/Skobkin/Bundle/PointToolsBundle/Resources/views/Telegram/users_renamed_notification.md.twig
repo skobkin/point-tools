@@ -4,5 +4,5 @@
 {% for event in events %}
 {% set login_old = event.oldLogin %}
 {% set login_new = event.user.login %}
-@{{ login_old }} -> [@{{ login_new }}]({{ login_new|point_user_url(true) }})
+@{{ login_old }} -> [@{{ login_new }}]({{ login_new|point_user_url }})
 {% endfor %}

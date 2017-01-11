@@ -7,5 +7,4 @@
 No subscribers
 {% endif %}
 
-{# @todo remove hardcoded URL #}
-See more events on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.
+See more events on [Point Tools]({{ url('user_show', {'login': user.login}) }}) site.

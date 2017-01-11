@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
+    const AVATAR_SIZE_SMALL = '24';
+    const AVATAR_SIZE_MEDIUM = '40';
+    const AVATAR_SIZE_LARGE = '80';
+
     /**
      * @var int
      *

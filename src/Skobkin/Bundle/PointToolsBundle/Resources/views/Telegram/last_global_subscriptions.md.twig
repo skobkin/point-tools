@@ -5,7 +5,7 @@
 {% for event in events %}
 {% set sub_login = event.subscriber.login %}
 {% set author_login = event.author.login %}
-{{ event.date|date('d M H:i') }} [@{{ sub_login }}]({{ sub_login|point_user_url(true) }}){% if subscription == event.action %} -> {% else %} X {% endif %}[@{{ author_login }}]({{ author_login|point_user_url(true) }})
+{{ event.date|date('d M H:i') }} [@{{ sub_login }}]({{ sub_login|point_user_url }}){% if subscription == event.action %} -> {% else %} X {% endif %}[@{{ author_login }}]({{ author_login|point_user_url }})
 {% endfor %}
 
-See more events on [Point Tools](https://point.skobk.in/) site.
+See more events on [Point Tools]({{ url('index') }}) site.

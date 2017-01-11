@@ -4,7 +4,8 @@
 
 {% block content %}
     <h1 class="user-login">
-        <img src="{{ avatar_url }}">
+        {# TODO: Add class with image size #}
+        <img src="{{ user.login|point_avatar_large }}">
         <a href="{{ user.login|point_user_blog_url }}" target="_blank">{{ user.login }}</a>
     </h1>
 

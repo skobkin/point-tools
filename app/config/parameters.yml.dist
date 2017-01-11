@@ -11,8 +11,15 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    point_base_url:    https://point.im/
-    point_api_base_url: https://point.im/api/
+    point_tools_domain: point.skobk.in
+    point_tools_scheme: https
+    # Path to public root (e.g. 'path/to/app')
+    point_tools_base_url: ''
+
+    point_domain: point.im
+    point_scheme: https
+    point_base_url:    '%point_scheme%://%point_domain%/'
+    point_api_base_url: '%point_base_url%/api/'
     # Delay between calls when updating users subscribers (in microseconds)
     point_api_delay: 500000
     point_use_https: true

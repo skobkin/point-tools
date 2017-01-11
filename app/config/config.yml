@@ -7,6 +7,10 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: ru
+    # Defining default router parameters to be able to generate correct full URL's when not processing HTTP request
+    router.request_context.host: "%point_tools_domain%"
+    router.request_context.scheme: "%point_tools_scheme%"
+    router.request_context.base_url: "%point_tools_base_url%"
 
 framework:
     #esi:             ~

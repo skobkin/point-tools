@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Skobkin\Bundle\PointToolsBundle\DTO\DailyEvents;
 use Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,14 +36,11 @@ class UserController extends Controller
             10
         );
 
-        $userApi = $this->get('app.point.api_user');
-
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
             'subscribers' => $em->getRepository('SkobkinPointToolsBundle:User')->findUserSubscribersById($user->getId()),
             'subscriptions_log' => $subscriberEventsPagination,
             'rename_log' => $em->getRepository('SkobkinPointToolsBundle:UserRenameEvent')->findBy(['user' => $user], ['date' => 'DESC'], 10),
-            'avatar_url' => $userApi->getAvatarUrl($user, UserApi::AVATAR_SIZE_LARGE),
         ]);
     }
 

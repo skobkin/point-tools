@@ -5,8 +5,7 @@
 {# @var event \Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent #}
 {% for event in events %}
 {% set sub_login = event.subscriber.login %}
-{{ event.date|date('d M y H:i') }} {% if subscription == event.action %} + {% else %} - {% endif %} [@{{ sub_login }}]({{ sub_login|point_user_url(true) }})
+{{ event.date|date('d M y H:i') }} {% if subscription == event.action %} + {% else %} - {% endif %} [@{{ sub_login }}]({{ sub_login|point_user_url }})
 {% endfor %}
 
-{# @todo remove hardcoded URL #}
-See more events on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.
+See more events on [Point Tools]({{ url('user_show', {'login': user.login}) }}) site.

@@ -5,16 +5,15 @@
 {% if subscribed|length > 0 %}
 New subscribers:
 {% for subscriber in subscribed %}
-[@{{ subscriber.login }}]({{ subscriber.login|point_user_url(true) }})
+[@{{ subscriber.login }}]({{ subscriber.login|point_user_url }})
 {% endfor %}
 
 {% endif %}
 {% if unsubscribed|length > 0 %}
 Lost subscribers:
 {% for subscriber in unsubscribed %}
-[@{{ subscriber.login }}]({{ subscriber.login|point_user_url(true) }})
+[@{{ subscriber.login }}]({{ subscriber.login|point_user_url }})
 {% endfor %}
 
 {% endif %}
-{# @todo remove hardcoded URL #}
-See full subscribers history on [Point Tools](https://point.skobk.in{{ path('user_show', {'login': user.login}) }}) site.
+See full subscribers history on [Point Tools]({{ url('user_show', {'login': user.login}) }}) site.

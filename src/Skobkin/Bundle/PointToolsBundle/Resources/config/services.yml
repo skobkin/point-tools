@@ -175,9 +175,12 @@ services:
 
     # Twig extensions
     app.twig.point_users_extension:
-        class: Skobkin\Bundle\PointToolsBundle\Twig\PointUserExtension
+        class: Skobkin\Bundle\PointToolsBundle\Twig\PointUrlExtension
         public: false
-        arguments: ['@app.point.api_user']
+        arguments:
+            - '%point_domain%'
+            - '%point_scheme%'
+            - '%point_base_url%'
         tags:
             - { name: twig.extension }
 

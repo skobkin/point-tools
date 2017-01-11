@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12"><a href="https://point.im/{{ post.id }}" class="post">#{{ post.id }}</a></div>
+            <div class="col-xs-12"><a href="{{ post.id|point_post_url }}" class="post">#{{ post.id }}</a></div>
         </div>
 
         {% if post.comments|length > 0 %}

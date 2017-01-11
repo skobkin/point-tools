@@ -61,8 +61,10 @@ class UserControllerTest extends WebTestCase
             'testuser page has no avatar'
         );
 
+        $pointScheme = static::createClient()->getContainer()->getParameter('point_scheme');
+
         $this->assertEquals(
-            '//point.im/avatar/testuser/80',
+            $pointScheme.'://point.im/avatar/testuser/80',
             $userAvatar->attr('src'),
             'testuser avatar image source is not correct'
         );
