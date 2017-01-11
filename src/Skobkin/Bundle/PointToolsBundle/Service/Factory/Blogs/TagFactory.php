@@ -2,35 +2,27 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository;
 
 class TagFactory
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
      * @var LoggerInterface
      */
-    private $log;
+    private $logger;
 
     /**
-     * @var EntityRepository
+     * @var TagRepository
      */
     private $tagRepository;
 
 
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
+    public function __construct(LoggerInterface $logger, TagRepository $tagRepository)
     {
-        $this->log = $log;
-        $this->em = $em;
-        $this->tagRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Tag');
+        $this->logger = $logger;
+        $this->tagRepository = $tagRepository;
     }
 
     /**
@@ -47,7 +39,7 @@ class TagFactory
                 $tag = $this->createFromString($string);
                 $tags[] = $tag;
             } catch (\Exception $e) {
-                $this->log->error('Error while creating tag from DTO', ['tag' => $string, 'message' => $e->getMessage()]);
+                $this->logger->error('Error while creating tag from DTO', ['tag' => $string, 'message' => $e->getMessage()]);
                 continue;
             }
         }
@@ -60,7 +52,7 @@ class TagFactory
         if (null === ($tag = $this->tagRepository->findOneByLowerText($text))) {
             // Creating new tag
             $tag = new Tag($text);
-            $this->em->persist($tag);
+            $this->tagRepository->add($tag);
         }
 
         return $tag;

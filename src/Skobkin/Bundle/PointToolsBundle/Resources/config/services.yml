@@ -86,6 +86,11 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository
         factory: 'doctrine:getRepository'
         arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment']
+    # Tag repository
+    app.point.tag_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag']
 
 
     # Factories
@@ -105,7 +110,7 @@ services:
     # Tag factory
     app.point.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
-        arguments: [ '@logger', '@doctrine.orm.entity_manager' ]
+        arguments: [ '@logger', '@app.point.tag_repository' ]
 
     # File factory
     app.point.file_factory:

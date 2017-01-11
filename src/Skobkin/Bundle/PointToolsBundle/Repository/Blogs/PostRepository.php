@@ -4,9 +4,15 @@ namespace Skobkin\Bundle\PointToolsBundle\Repository\Blogs;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 
 class PostRepository extends EntityRepository
 {
+    public function add(Post $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     public function getPostWithComments($postId)
     {
         /** @var QueryBuilder $qb */

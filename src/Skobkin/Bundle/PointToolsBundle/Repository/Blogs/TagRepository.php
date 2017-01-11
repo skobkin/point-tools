@@ -7,6 +7,11 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
 
 class TagRepository extends EntityRepository
 {
+    public function add(Tag $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     /**
      * @param $text
      * @return Tag|null
