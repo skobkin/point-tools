@@ -3,9 +3,9 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User as UserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\InvalidUserDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
@@ -14,22 +14,16 @@ use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 class UserFactory
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EntityRepository
+     * @var UserRepository
      */
     private $userRepository;
 
     /**
      * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->em = $em;
-        $this->userRepository = $em->getRepository('SkobkinPointToolsBundle:User');
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -48,7 +42,7 @@ class UserFactory
         if (null === ($user = $this->userRepository->find($data['id']))) {
             // Creating new user
             $user = new User($data['id']);
-            $this->em->persist($user);
+            $this->userRepository->add($user);
         }
 
         // Updating data
@@ -76,7 +70,7 @@ class UserFactory
         if (null === ($user = $this->userRepository->find($userData->getId()))) {
             // Creating new user
             $user = new User($userData->getId());
-            $this->em->persist($user);
+            $this->userRepository->add($user);
         }
 
         // Updating data

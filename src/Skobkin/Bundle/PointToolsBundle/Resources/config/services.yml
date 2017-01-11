@@ -82,7 +82,7 @@ services:
     # User factory
     app.point.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
-        arguments: [ '@doctrine.orm.entity_manager' ]
+        arguments: [ '@app.point.user_repository' ]
 
     # Comment factory
     app.point.comment_factory:
