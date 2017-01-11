@@ -2,8 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
-
-use Doctrine\ORM\EntityManagerInterface;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use unreal4u\TelegramAPI\Telegram\Methods\AnswerInlineQuery;
 use unreal4u\TelegramAPI\Telegram\Types\Inline\Query;
@@ -12,11 +10,6 @@ use unreal4u\TelegramAPI\TgLog;
 
 class InlineQueryProcessor
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
     /**
      * @var UserRepository
      */
@@ -28,12 +21,10 @@ class InlineQueryProcessor
     private $client;
 
 
-    public function __construct(EntityManagerInterface $em, TgLog $client)
+    public function __construct(UserRepository $userRepository, TgLog $client)
     {
-        $this->em = $em;
+        $this->userRepo = $userRepository;
         $this->client = $client;
-
-        $this->userRepo = $em->getRepository('SkobkinPointToolsBundle:User');
     }
 
     public function process(Query $inlineQuery)
@@ -45,7 +36,7 @@ class InlineQueryProcessor
         $answerInlineQuery = new AnswerInlineQuery();
         $answerInlineQuery->inline_query_id = $inlineQuery->id;
 
-        foreach ($this->em->getRepository('SkobkinPointToolsBundle:User')->findUsersLikeLogin($inlineQuery->query) as $user) {
+        foreach ($this->userRepo->findUsersLikeLogin($inlineQuery->query) as $user) {
             $article = new Query\Result\Article();
             $article->title = $user->getLogin();
 

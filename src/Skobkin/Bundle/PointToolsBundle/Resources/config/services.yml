@@ -209,7 +209,7 @@ services:
     app.telegram.inline_query_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
         lazy: true
-        arguments: ['@doctrine.orm.entity_manager', '@app.telegram.api_client']
+        arguments: ['@app.point.user_repository', '@app.telegram.api_client']
 
     # Private message processor
     app.telegram.private_message_processor:
