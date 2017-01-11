@@ -216,8 +216,12 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
         lazy: true
         arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@app.point.user_repository'
+            - '@app.point.telegram_account_repository'
+            - '@app.point.subscription_repository'
+            - '@app.point.subscription_record_repository'
             - '@app.telegram.message_sender'
             - '@app.point.api_user'
             - '@app.telegram.telegram_account_factory'
-            - '@doctrine.orm.entity_manager'
             - '%point_id%'

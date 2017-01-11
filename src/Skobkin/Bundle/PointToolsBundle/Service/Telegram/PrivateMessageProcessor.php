@@ -67,18 +67,26 @@ class PrivateMessageProcessor
     private $pointUserId;
 
 
-    public function __construct(MessageSender $messageSender, UserApi $userApi, AccountFactory $accountFactory, EntityManagerInterface $em, int $pointUserId)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        UserRepository $userRepository,
+        AccountRepository $accountRepository,
+        SubscriptionRepository $subscriptionRepository,
+        SubscriptionEventRepository $subscriptionRecordRepository,
+        MessageSender $messageSender,
+        UserApi $userApi,
+        AccountFactory $accountFactory,
+        int $pointUserId
+    ) {
+        $this->em = $em;
+        $this->userRepo = $userRepository;
+        $this->accountRepo = $accountRepository;
+        $this->subscriptionRepo = $subscriptionRepository;
+        $this->subscriptionEventRepo = $subscriptionRecordRepository;
         $this->messenger = $messageSender;
         $this->userApi = $userApi;
         $this->accountFactory = $accountFactory;
-        $this->em = $em;
         $this->pointUserId = $pointUserId;
-
-        $this->userRepo = $em->getRepository('SkobkinPointToolsBundle:User');
-        $this->accountRepo = $em->getRepository('SkobkinPointToolsBundle:Telegram\Account');
-        $this->subscriptionRepo = $em->getRepository('SkobkinPointToolsBundle:Subscription');
-        $this->subscriptionEventRepo = $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent');
     }
 
     public function process(Message $message)
