@@ -76,6 +76,16 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository
         factory: 'doctrine:getRepository'
         arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent']
+    # Post repository
+    app.point.post_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post']
+    # Comment repository
+    app.point.comment_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment']
 
 
     # Factories
@@ -87,7 +97,10 @@ services:
     # Comment factory
     app.point.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
-        arguments: [ '@doctrine.orm.entity_manager', '@app.point.user_factory' ]
+        arguments:
+            - '@app.point.comment_repository'
+            - '@app.point.post_repository'
+            - '@app.point.user_factory'
 
     # Tag factory
     app.point.tag_factory:

@@ -7,12 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
- * Comment
- *
  * @ORM\Table(name="comments", schema="posts", indexes={
  *      @ORM\Index(name="idx_comment_created_at", columns={"created_at"})
  * })
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository")
  */
 class Comment
 {

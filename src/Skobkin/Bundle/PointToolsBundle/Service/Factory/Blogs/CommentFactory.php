@@ -2,9 +2,9 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
@@ -12,17 +12,12 @@ use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 class CommentFactory
 {
     /**
-     * @var EntityManager
-     */
-    private $em;
-
-    /**
-     * @var EntityRepository
+     * @var CommentRepository
      */
     private $commentRepository;
 
     /**
-     * @var EntityRepository
+     * @var PostRepository
      */
     private $postRepository;
 
@@ -31,16 +26,12 @@ class CommentFactory
      */
     private $userFactory;
 
-    /**
-     * @param EntityManager $em
-     * @param UserFactory $userFactory
-     */
-    public function __construct(EntityManager $em, UserFactory $userFactory)
+
+    public function __construct(CommentRepository $commentRepository, PostRepository $postRepository, UserFactory $userFactory)
     {
-        $this->em = $em;
         $this->userFactory = $userFactory;
-        $this->commentRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Comment');
-        $this->postRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Post');
+        $this->commentRepository = $commentRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -68,7 +59,7 @@ class CommentFactory
 
             $comment = new Comment($data['id'], $post, $author, $toComment, $data['text'], $createdAt, $data['is_rec']);
 
-            $this->em->persist($comment);
+            $this->commentRepository->add($comment);
         }
 
         return $comment;
