@@ -4,6 +4,7 @@ imports:
 
 doctrine:
     dbal:
+        # todo move to new environment variables: https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
         dbname:   "%test_database_name%"
         port:     "%test_database_port%"
         user:     "%test_database_user%"
