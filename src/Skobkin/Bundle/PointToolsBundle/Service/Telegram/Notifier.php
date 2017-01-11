@@ -2,10 +2,10 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
+use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
 
 /**
  * Notifies Telegram users about some events
@@ -13,12 +13,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
 class Notifier
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EntityRepository
+     * @var AccountRepository
      */
     private $accountsRepo;
 
@@ -28,18 +23,10 @@ class Notifier
     private $messenger;
 
 
-    /**
-     * Notifier constructor.
-     *
-     * @param EntityManagerInterface $em
-     * @param MessageSender $messenger
-     */
-    public function __construct(EntityManagerInterface $em, MessageSender $messenger)
+    public function __construct(AccountRepository $accountRepository, MessageSender $messenger)
     {
-        $this->em = $em;
+        $this->accountsRepo = $accountRepository;
         $this->messenger = $messenger;
-
-        $this->accountsRepo = $em->getRepository('SkobkinPointToolsBundle:Telegram\Account');
     }
 
     /**
@@ -56,11 +43,12 @@ class Notifier
      * Send notification about changes in user's subscribers list
      *
      * @param User $user
-     * @param array $subscribed
-     * @param array $unsubscribed
+     * @param User[] $subscribed
+     * @param User[] $unsubscribed
      */
     public function sendUserSubscribersUpdatedNotification(User $user, array $subscribed, array $unsubscribed)
     {
+        /** @var Account $account */
         $account = $this->accountsRepo->findOneBy(
             [
                 'user' => $user,

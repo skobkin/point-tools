@@ -196,7 +196,7 @@ services:
     # User notifier
     app.telegram.notifier:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier
-        arguments: ['@doctrine.orm.entity_manager', '@app.telegram.message_sender']
+        arguments: ['@app.point.telegram_account_repository', '@app.telegram.message_sender']
 
     # Common incoming message processor
     app.telegram.update_dispatcher:
