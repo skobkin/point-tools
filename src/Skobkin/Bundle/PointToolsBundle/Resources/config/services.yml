@@ -91,6 +91,11 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository
         factory: 'doctrine:getRepository'
         arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag']
+    # File repository
+    app.point.file_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File']
 
 
     # Factories
@@ -115,7 +120,7 @@ services:
     # File factory
     app.point.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
-        arguments: [ '@logger', '@doctrine.orm.entity_manager' ]
+        arguments: [ '@logger', '@app.point.file_repository' ]
 
     # Post factory
     app.point.post_factory:

@@ -2,35 +2,28 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
 class FileFactory
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
     /**
      * @var LoggerInterface
      */
     private $log;
 
     /**
-     * @var EntityRepository
+     * @var FileRepository
      */
     private $fileRepository;
 
 
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em)
+    public function __construct(LoggerInterface $log, FileRepository $fileRepository)
     {
         $this->log = $log;
-        $this->em = $em;
-        $this->fileRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\File');
+        $this->fileRepository = $fileRepository;
     }
 
     /**
@@ -72,7 +65,7 @@ class FileFactory
         if (null === ($file = $this->fileRepository->findOneBy(['remoteUrl' => $url]))) {
             // Creating new file
             $file = new File($url);
-            $this->em->persist($file);
+            $this->fileRepository->add($file);
         }
 
         return $file;
