@@ -8,6 +8,11 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class UserRepository extends EntityRepository
 {
+    public function add(User $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     /**
      * Case-insensitive user search
      *

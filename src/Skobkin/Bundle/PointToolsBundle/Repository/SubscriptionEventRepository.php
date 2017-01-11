@@ -9,6 +9,11 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class SubscriptionEventRepository extends EntityRepository
 {
+    public function add(SubscriptionEvent $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     /**
      * @return int
      */

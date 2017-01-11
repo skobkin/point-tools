@@ -3,10 +3,16 @@
 namespace Skobkin\Bundle\PointToolsBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class SubscriptionRepository extends EntityRepository
 {
+    public function add(Subscription $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
     /**
      * @param int $id
      *
