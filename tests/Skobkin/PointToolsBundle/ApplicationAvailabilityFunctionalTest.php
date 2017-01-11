@@ -21,7 +21,7 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
     {
         return [
             'index_page' => ['/'],
-            'top_page' => ['/users/top'],
+            'statistics' => ['/statistics'],
             'last_events_page' => ['/events/last'],
             'test_user_page' => ['/user/testuser']
         ];
