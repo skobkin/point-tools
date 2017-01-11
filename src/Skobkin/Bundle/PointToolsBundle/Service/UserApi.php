@@ -2,8 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use JMS\Serializer\Serializer;
@@ -13,6 +11,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\UserNotFoundException;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -21,28 +20,20 @@ use Symfony\Component\HttpFoundation\Response;
 class UserApi extends AbstractApi
 {
     /**
-     * @var EntityManager
+     * @var UserFactory
      */
-    protected $em;
-
-    /**
-     * @var EntityRepository
-     */
-    protected $userRepository;
+    private $userFactory;
 
     /**
      * @var Serializer
      */
     private $serializer;
 
-    public function __construct(ClientInterface $httpClient, LoggerInterface $logger, EntityManager $entityManager, Serializer $serializer)
+    public function __construct(ClientInterface $httpClient, LoggerInterface $logger, UserFactory $userFactory, Serializer $serializer)
     {
         parent::__construct($httpClient, $logger);
 
-        $this->em = $entityManager;
         $this->serializer = $serializer;
-        // @todo refactor
-        $this->userRepository = $this->em->getRepository('SkobkinPointToolsBundle:User');
     }
 
     public function isAuthDataValid(string $login, string $password): bool
@@ -280,35 +271,15 @@ class UserApi extends AbstractApi
      * @throws ApiException
      * @throws InvalidResponseException
      */
-    public function getUserFromUserInfo(array $userInfo): User
+    private function getUserFromUserInfo(array $userInfo): User
     {
         $this->logger->debug('Trying to create user from array', ['array' => $userInfo]);
 
-        // @todo Refactor to UserFactory->createFromArray()
-        if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
-            /** @var User $user */
-            if (null === ($user = $this->userRepository->find($userInfo['id']))) {
-                // Creating new user
-                $user = new User($userInfo['id']);
-                $this->em->persist($user);
-            }
-
-            // Updating data
-            $user
-                ->setLogin($userInfo['login'])
-                ->setName($userInfo['name'])
-            ;
-
-            return $user;
-        }
-
-        throw new InvalidResponseException('Invalid API response. Mandatory fields do not exist.');
+        return $this->userFactory->createFromArray($userInfo);
     }
 
     /**
      * Get array of User objects from API response containing user list
-     *
-     * @todo refactor
      *
      * @param array $users
      *
@@ -325,24 +296,7 @@ class UserApi extends AbstractApi
         $resultUsers = [];
 
         foreach ($users as $userInfo) {
-            if (array_key_exists('id', $userInfo) && array_key_exists('login', $userInfo) && array_key_exists('name', $userInfo) && is_numeric($userInfo['id'])) {
-
-                // @todo Optimize with prehashed id's list
-                if (null === ($user = $this->userRepository->find($userInfo['id']))) {
-                    $user = new User((int) $userInfo['id']);
-                    $this->em->persist($user);
-                }
-
-                // Updating data
-                $user
-                    ->setLogin($userInfo['login'])
-                    ->setName($userInfo['name'])
-                ;
-
-                $resultUsers[] = $user;
-            } else {
-                throw new InvalidResponseException('Invalid API response. Mandatory fields do not exist.');
-            }
+            $resultUsers[] = $this->getUserFromUserInfo($userInfo);
         }
 
         return $resultUsers;

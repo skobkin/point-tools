@@ -26,7 +26,7 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
         parent: app.point.abstract_api
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@app.point.user_factory'
             - '@jms_serializer'
 
     app.point.api_post:

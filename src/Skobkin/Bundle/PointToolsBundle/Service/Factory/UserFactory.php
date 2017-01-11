@@ -10,7 +10,6 @@ use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\InvalidUserDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
 
-
 class UserFactory
 {
     /**
@@ -31,7 +30,6 @@ class UserFactory
      *
      * @return User
      *
-     * @throws ApiException
      * @throws InvalidResponseException
      */
     public function createFromArray(array $data): User
@@ -89,7 +87,7 @@ class UserFactory
      */
     private function validateArrayData(array $data)
     {
-        if (!(array_key_exists('id', $data) || !!array_key_exists('login', $data) || !array_key_exists('name', $data))) {
+        if (!array_key_exists('id', $data) || !array_key_exists('login', $data) || !array_key_exists('name', $data) || !is_numeric($data['id'])) {
             throw new InvalidResponseException('Invalid user data');
         }
     }
