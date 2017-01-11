@@ -40,9 +40,10 @@ services:
     app.point.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
         arguments:
-            - '@doctrine.orm.entity_manager'
             - '@event_dispatcher'
             - '@logger'
+            - '@app.point.subscription_repository'
+            - '@app.point.subscription_record_repository'
 
 
     # Console commands
@@ -56,6 +57,24 @@ services:
             - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
         tags:
             - { name: console.command }
+
+
+    # Entity repositories as services
+    # User
+    app.point.user_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\UserRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\User']
+    # Subscription
+    app.point.subscription_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Subscription']
+    # Subscription record/event
+    app.point.subscription_record_repository:
+        class: Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent']
 
 
     # Factories

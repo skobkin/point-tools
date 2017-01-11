@@ -2,20 +2,26 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
-use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Event\UserSubscribersUpdatedEvent;
+use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SubscriptionsManager
 {
     /**
-     * @var EntityManager
+     * @var SubscriptionRepository
      */
-    private $em;
+    private $subscriptionRepo;
+
+    /**
+     * @var SubscriptionEventRepository
+     */
+    private $subscriptionRecordRepo;
 
     /**
      * @var EventDispatcherInterface
@@ -28,11 +34,16 @@ class SubscriptionsManager
     private $logger;
 
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger)
-    {
-        $this->em = $entityManager;
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger,
+        SubscriptionRepository $subscriptionRepo,
+        SubscriptionEventRepository $subscriptionRecordRepo
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
+        $this->subscriptionRepo = $subscriptionRepo;
+        $this->subscriptionRecordRepo = $subscriptionRecordRepo;
     }
 
     /**
@@ -97,10 +108,10 @@ class SubscriptionsManager
             $subscription = new Subscription($user, $subscriber);
 
             $user->addSubscriber($subscription);
-            $this->em->persist($subscription);
+            $this->subscriptionRepo->add($subscription);
 
             $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
-            $this->em->persist($logEvent);
+            $this->subscriptionRecordRepo->add($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
         }
@@ -116,14 +127,14 @@ class SubscriptionsManager
 
         foreach ($subscribers as $subscriber) {
             $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_UNSUBSCRIBE);
-            $this->em->persist($logEvent);
+            $this->subscriptionRecordRepo->add($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
         }
 
         // Removing users from database
-        // @todo Maybe remove via ORM
-        $this->em->getRepository('SkobkinPointToolsBundle:Subscription')->removeSubscribers($user, $subscribers);
+        // @todo Refactor to collection usage (after dealing with orphanRemoval bug)
+        $this->subscriptionRepo->removeSubscribers($user, $subscribers);
     }
 
     /**
