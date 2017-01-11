@@ -59,6 +59,7 @@ doctrine:
         auto_mapping: true
         dql:
             string_functions:
+                # TODO fix to receive correct DateTime instead of string
                 DAY: Skobkin\Bundle\PointToolsBundle\DQL\Day
 
 doctrine_migrations:
