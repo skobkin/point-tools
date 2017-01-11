@@ -3,13 +3,13 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\MetaPost;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidPostDataException;
 use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
@@ -20,7 +20,7 @@ class PostFactory
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private $logger;
 
     /**
      * @var EntityManagerInterface
@@ -28,7 +28,7 @@ class PostFactory
     private $em;
 
     /**
-     * @var EntityRepository
+     * @var PostRepository
      */
     private $postRepository;
 
@@ -53,15 +53,22 @@ class PostFactory
     private $tagFactory;
 
 
-    public function __construct(LoggerInterface $log, EntityManagerInterface $em, UserFactory $userFactory, FileFactory $fileFactory, CommentFactory $commentFactory, TagFactory $tagFactory)
-    {
-        $this->log = $log;
+    public function __construct(
+        LoggerInterface $logger,
+        EntityManagerInterface $em,
+        PostRepository $postRepository,
+        UserFactory $userFactory,
+        FileFactory $fileFactory,
+        CommentFactory $commentFactory,
+        TagFactory $tagFactory
+    ) {
+        $this->logger = $logger;
+        $this->em = $em;
+        $this->postRepository = $postRepository;
         $this->userFactory = $userFactory;
         $this->fileFactory = $fileFactory;
         $this->commentFactory = $commentFactory;
         $this->tagFactory = $tagFactory;
-        $this->em = $em;
-        $this->postRepository = $em->getRepository('SkobkinPointToolsBundle:Blogs\Post');
     }
 
     /**
@@ -89,7 +96,7 @@ class PostFactory
                 $post = $this->createFromDTO($postData);
                 $posts[] = $post;
             } catch (\Exception $e) {
-                $this->log->error('Error while processing post DTO', [
+                $this->logger->error('Error while processing post DTO', [
                     'post_id' => $postData->getPost()->getId(),
                     'exception' => get_class($e),
                     'message' => $e->getMessage(),
@@ -125,21 +132,21 @@ class PostFactory
         }
 
         if (!$postData->getPost()->getAuthor()->getId()) {
-            $this->log->error('Post author does not contain id', ['post_id' => $postData->getPost()->getId()]);
+            $this->logger->error('Post author does not contain id', ['post_id' => $postData->getPost()->getId()]);
             throw new InvalidPostDataException('Post author does not contain id', $postData->getPost());
         }
 
         try {
             $user = $this->userFactory->createFromDTO($postData->getPost()->getAuthor());
         } catch (\Exception $e) {
-            $this->log->error('Error while creating user from DTO');
+            $this->logger->error('Error while creating user from DTO');
             throw $e;
         }
 
         if (null === ($post = $this->postRepository->find($postData->getPost()->getId()))) {
             // Creating new post
             $post = new Post($postData->getPost()->getId());
-            $this->em->persist($post);
+            $this->postRepository->add($post);
         }
 
         // Updating data
@@ -155,14 +162,14 @@ class PostFactory
         try {
             $this->updatePostTags($post, $postData->getPost()->getTags() ?: []);
         } catch (\Exception $e) {
-            $this->log->error('Error while updating post tags');
+            $this->logger->error('Error while updating post tags');
             throw $e;
         }
 
         try {
             $this->updatePostFiles($post, $postData->getPost()->getFiles() ?: []);
         } catch (\Exception $e) {
-            $this->log->error('Error while updating post files');
+            $this->logger->error('Error while updating post files');
             throw $e;
         }
 
@@ -239,12 +246,12 @@ class PostFactory
     private function validateMetaPost(MetaPost $post)
     {
         if (!$post->getPost()->getId()) {
-            $this->log->error('Post DTO contains no id');
+            $this->logger->error('Post DTO contains no id');
             return false;
         }
 
         if (null === $post->getPost()->getAuthor()->getId()) {
-            $this->log->error('Post DTO contains no valid User DTO.', ['post_id' => $post->getPost()->getId()]);
+            $this->logger->error('Post DTO contains no valid User DTO.', ['post_id' => $post->getPost()->getId()]);
             return false;
         }
 
