@@ -71,6 +71,11 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         $this->em = $em;
     }
 
+    public function setUserRepository(UserRepository $repository)
+    {
+        $this->userRepo = $repository;
+    }
+
     public function setApiClient(UserApi $userApi)
     {
         $this->api = $userApi;
@@ -116,7 +121,6 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
-        $this->userRepo = $this->em->getRepository('SkobkinPointToolsBundle:User');
 
         $this->logger->debug('UpdateSubscriptionsCommand started.');
 

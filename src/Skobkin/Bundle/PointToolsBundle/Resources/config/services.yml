@@ -52,6 +52,7 @@ services:
         calls:
             - [setLogger, ['@logger']]
             - [setEntityManager, ['@doctrine.orm.entity_manager']]
+            - [setUserRepository, ['@app.point.user_repository']]
             - [setApiClient, ['@app.point.api_user']]
             - [setApiDelay, ['%point_api_delay%']]
             - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
