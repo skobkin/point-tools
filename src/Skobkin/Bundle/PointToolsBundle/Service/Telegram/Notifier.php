@@ -32,7 +32,7 @@ class Notifier
     /**
      * @param UserRenameEvent[] $userRenameEvents
      */
-    public function sendUsersRenamedNotification(array $userRenameEvents)
+    public function sendUsersRenamedNotification(array $userRenameEvents): void
     {
         $accounts = $this->accountsRepo->findBy(['renameNotification' => true]);
 
@@ -46,7 +46,7 @@ class Notifier
      * @param User[] $subscribed
      * @param User[] $unsubscribed
      */
-    public function sendUserSubscribersUpdatedNotification(User $user, array $subscribed, array $unsubscribed)
+    public function sendUserSubscribersUpdatedNotification(User $user, array $subscribed, array $unsubscribed): bool
     {
         /** @var Account $account */
         $account = $this->accountsRepo->findOneBy(
@@ -57,10 +57,10 @@ class Notifier
         );
 
         if (null === $account) {
-            return;
+            return false;
         }
 
-        $this->messenger->sendTemplatedMessage(
+        return $this->messenger->sendTemplatedMessage(
             $account,
             '@SkobkinPointTools/Telegram/user_subscribers_updated_notification.md.twig',
             [

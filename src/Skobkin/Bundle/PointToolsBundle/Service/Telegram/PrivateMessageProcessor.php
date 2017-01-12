@@ -89,7 +89,7 @@ class PrivateMessageProcessor
         $this->pointUserId = $pointUserId;
     }
 
-    public function process(Message $message)
+    public function process(Message $message): void
     {
         if (!IncomingUpdateDispatcher::CHAT_TYPE_PRIVATE === $message->chat->type) {
             throw new \LogicException('This service can process only private chat messages');
@@ -183,7 +183,7 @@ class PrivateMessageProcessor
         return false;
     }
 
-    private function processLink(Account $account, array $words)
+    private function processLink(Account $account, array $words): void
     {
         if (array_key_exists(2, $words)) {
             if ($this->linkAccount($account, $words[1], $words[2])) {
@@ -198,7 +198,7 @@ class PrivateMessageProcessor
         }
     }
 
-    private function processMe(Account $account)
+    private function processMe(Account $account): void
     {
         if ($user = $account->getUser()) {
             $this->sendUserEvents($account, $user);
@@ -207,7 +207,7 @@ class PrivateMessageProcessor
         }
     }
 
-    private function processLast(Account $account, array $words)
+    private function processLast(Account $account, array $words): void
     {
         if (array_key_exists(1, $words)) {
             if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
@@ -220,7 +220,7 @@ class PrivateMessageProcessor
         }
     }
 
-    private function processSub(Account $account, array $words)
+    private function processSub(Account $account, array $words): void
     {
         if (array_key_exists(1, $words)) {
             if (null !== $user = $this->userRepo->findUserByLogin($words[1])) {
@@ -237,12 +237,12 @@ class PrivateMessageProcessor
         }
     }
 
-    private function processStats(Account $account)
+    private function processStats(Account $account): void
     {
         $this->sendStats($account);
     }
 
-    private function processSet(Account $account, array $words)
+    private function processSet(Account $account, array $words): void
     {
         $keyboard = new ReplyKeyboardMarkup();
 
@@ -288,24 +288,24 @@ class PrivateMessageProcessor
     /**
      * Processes exit from keyboard menus and removes the keyboard
      */
-    private function processExit(Account $account)
+    private function processExit(Account $account): void
     {
         $keyboardRemove = new ReplyKeyboardRemove();
 
         $this->messenger->sendMessage($account, 'Done', MessageSender::PARSE_PLAIN, $keyboardRemove);
     }
 
-    private function processHelp(Account $account)
+    private function processHelp(Account $account): void
     {
         $this->sendHelp($account);
     }
 
-    private function sendAccountLinked(Account $account)
+    private function sendAccountLinked(Account $account): void
     {
         $this->messenger->sendMessage($account, 'Account linked. Try using /me now.');
     }
 
-    private function sendUserSubscribers(Account $account, User $user)
+    private function sendUserSubscribers(Account $account, User $user): void
     {
         $subscribers = [];
         foreach ($user->getSubscribers() as $subscription) {
@@ -322,7 +322,7 @@ class PrivateMessageProcessor
         );
     }
 
-    private function sendUserEvents(Account $account, User $user)
+    private function sendUserEvents(Account $account, User $user): void
     {
         $events = $this->subscriptionEventRepo->getUserLastSubscribersEvents($user, 10);
 
@@ -336,14 +336,14 @@ class PrivateMessageProcessor
         );
     }
 
-    private function sendGlobalEvents(Account $account)
+    private function sendGlobalEvents(Account $account): void
     {
         $events = $this->subscriptionEventRepo->getLastSubscriptionEvents(10);
 
         $this->messenger->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/last_global_subscriptions.md.twig', ['events' => $events]);
     }
 
-    private function sendStats(Account $account)
+    private function sendStats(Account $account): void
     {
         $this->messenger->sendTemplatedMessage(
             $account,
@@ -358,12 +358,12 @@ class PrivateMessageProcessor
         );
     }
 
-    private function sendHelp(Account $account)
+    private function sendHelp(Account $account): void
     {
         $this->messenger->sendTemplatedMessage($account, '@SkobkinPointTools/Telegram/help.md.twig');
     }
 
-    private function sendError(Account $account, string $title, string $text = '')
+    private function sendError(Account $account, string $title, string $text = ''): void
     {
         $this->messenger->sendTemplatedMessage(
             $account,

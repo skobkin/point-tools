@@ -36,7 +36,7 @@ class IncomingUpdateDispatcher
      *
      * @param Update $update
      */
-    public function process(Update $update)
+    public function process(Update $update): void
     {
         if ($update->message && $update->message instanceof Message) {
             $chatType = $update->message->chat->type;

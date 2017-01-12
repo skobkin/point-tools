@@ -53,7 +53,8 @@ class MessageSender
         bool $disableWebPreview = true,
         bool $disableNotifications = false,
         string $parseMode = self::PARSE_MARKDOWN
-    ) {
+    ): void
+    {
         $text = $this->twig->render($template, $templateData);
 
         foreach ($accounts as $account) {
@@ -69,7 +70,8 @@ class MessageSender
         bool $disableWebPreview = true,
         bool $disableNotifications = false,
         string $parseMode = self::PARSE_MARKDOWN
-    ): bool {
+    ): bool
+    {
         $text = $this->twig->render($template, $templateData);
 
         return $this->sendMessage($account, $text, $parseMode, $keyboardMarkup, $disableWebPreview, $disableNotifications);
@@ -82,7 +84,8 @@ class MessageSender
         KeyboardMethods $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
-    ): bool {
+    ): bool
+    {
         return $this->sendMessageToChat($account->getChatId(), $text, $parseMode, $keyboardMarkup, $disableWebPreview, $disableNotifications);
     }
 
@@ -93,7 +96,8 @@ class MessageSender
         KeyboardMethods $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
-    ): bool {
+    ): bool
+    {
         $sendMessage = new SendMessage();
         $sendMessage->chat_id = (string)$chatId;
         $sendMessage->text = $text;

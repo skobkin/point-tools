@@ -27,7 +27,7 @@ class InlineQueryProcessor
         $this->client = $client;
     }
 
-    public function process(Query $inlineQuery)
+    public function process(Query $inlineQuery): void
     {
         if (mb_strlen($inlineQuery->query) < 2) {
             return;
