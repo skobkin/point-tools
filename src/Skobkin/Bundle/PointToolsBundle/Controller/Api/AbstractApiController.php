@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AbstractApiController extends Controller
 {
-    protected function createSuccessResponse($data, $code = 200): Response
+    protected function createSuccessResponse($data, int $code = 200): Response
     {
         return $this->json([
             'status' => 'success',
@@ -18,12 +18,12 @@ class AbstractApiController extends Controller
     /**
      *
      */
-    protected function createErrorResponse($message, $code = 400): Response
+    protected function createErrorResponse(string $message, int $code = 400): Response
     {
         return $this->json([
             'status' => 'fail',
             'error' => [
-                'code' => (int) $code,
+                'code' => $code,
                 'message' => $message
             ]
         ], $code);
