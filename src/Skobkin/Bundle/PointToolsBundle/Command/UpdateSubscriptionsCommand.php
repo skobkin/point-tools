@@ -61,32 +61,32 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     private $progress;
 
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    public function setEntityManager(EntityManagerInterface $em)
+    public function setEntityManager(EntityManagerInterface $em): void
     {
         $this->em = $em;
     }
 
-    public function setUserRepository(UserRepository $repository)
+    public function setUserRepository(UserRepository $repository): void
     {
         $this->userRepo = $repository;
     }
 
-    public function setApiClient(UserApi $userApi)
+    public function setApiClient(UserApi $userApi): void
     {
         $this->api = $userApi;
     }
 
-    public function setApiDelay(int $microSecs)
+    public function setApiDelay(int $microSecs): void
     {
         $this->apiDelay = $microSecs;
     }
 
-    public function setSubscriptionManager(SubscriptionsManager $subscriptionsManager)
+    public function setSubscriptionManager(SubscriptionsManager $subscriptionsManager): void
     {
         $this->subscriptionManager = $subscriptionsManager;
     }
@@ -173,7 +173,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     /**
      * @param User[] $users
      */
-    private function updateUsersSubscribers(array $users)
+    private function updateUsersSubscribers(array $users): void
     {
         // Updating users subscribers
         foreach ($users as $user) {

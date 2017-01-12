@@ -15,8 +15,8 @@ use unreal4u\TelegramAPI\Telegram\Methods\SetWebhook;
  */
 class TelegramSetWebHookCommand extends ContainerAwareCommand
 {
-    const MODE_SET = 'set';
-    const MODE_DELETE = 'delete';
+    private const MODE_SET = 'set';
+    private const MODE_DELETE = 'delete';
 
     /**
      * {@inheritdoc}
