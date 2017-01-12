@@ -66,10 +66,6 @@ class UserRepository extends EntityRepository
      */
     public function findUserSubscribersById(int $id): array
     {
-        if (!is_int($id)) {
-            throw new \InvalidArgumentException('$id must be an integer');
-        }
-
         $qb = $this->createQueryBuilder('u');
 
         return $qb
@@ -89,10 +85,6 @@ class UserRepository extends EntityRepository
      */
     public function getTopUsers(int $limit = 30): array
     {
-        if (!is_int($limit)) {
-            throw new \InvalidArgumentException('$limit must be an integer');
-        }
-
         $qb = $this->getEntityManager()->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
 
         $rows = $qb
