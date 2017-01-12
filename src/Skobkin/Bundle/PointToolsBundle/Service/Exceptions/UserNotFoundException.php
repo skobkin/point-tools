@@ -27,20 +27,12 @@ class UserNotFoundException extends ApiException
         $this->login = $login;
     }
 
-    /**
-     * Returns ID of user which was not found
-     *
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @return string
-     */
-    public function getLogin()
+    public function getLogin(): string
     {
         return $this->login;
     }

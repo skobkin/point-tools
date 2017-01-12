@@ -20,10 +20,7 @@ class InvalidUserDataException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
