@@ -28,8 +28,7 @@ class UserSubscribersUpdatedEvent extends Event
     private $unsubscribed;
 
     /**
-     * UserSubscribersUpdatedEvent constructor.
-     *
+     * @param User $user
      * @param User[] $subscribed
      * @param User[] $unsubscribed
      */
