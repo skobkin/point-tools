@@ -23,18 +23,15 @@ class MetaPost
     /**
      * @return Post
      */
-    public function getPost()
+    public function getPost(): ?Post
     {
         return $this->post;
     }
 
-    /**
-     * @param Post $post
-     * @return MetaPost
-     */
-    public function setPost(Post $post)
+    public function setPost(Post $post): self
     {
         $this->post = $post;
+
         return $this;
     }
 }

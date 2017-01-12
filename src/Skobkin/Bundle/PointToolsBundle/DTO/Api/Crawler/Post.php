@@ -76,37 +76,27 @@ class Post
     private $private;
 
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     * @return Post
-     */
-    public function setId($id)
+    public function setId(?string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
     /**
      * @return string[]
      */
-    public function getTags()
+    public function getTags(): ?array
     {
         return $this->tags;
     }
 
-    /**
-     * @param string[] $tags
-     * @return Post
-     */
-    public function setTags($tags)
+    public function setTags(?array $tags): self
     {
         $this->tags = $tags;
         return $this;
@@ -115,7 +105,7 @@ class Post
     /**
      * @return string[]
      */
-    public function getFiles()
+    public function getFiles(): ?array
     {
         return $this->files;
     }
@@ -125,106 +115,71 @@ class Post
      *
      * @return Post
      */
-    public function setFiles($files)
+    public function setFiles(?array $files): self
     {
         $this->files = $files;
 
         return $this;
     }
 
-    /**
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    /**
-     * @param User $author
-     * @return Post
-     */
-    public function setAuthor(User $author)
+    public function setAuthor(?User $author): self
     {
         $this->author = $author;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     * @return Post
-     */
-    public function setText($text)
+    public function setText(?string $text): self
     {
         $this->text = $text;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCreated()
+    public function getCreated(): ?string
     {
         return $this->created;
     }
 
-    /**
-     * @param string $created
-     * @return Post
-     */
-    public function setCreated($created)
+    public function setCreated(?string $created): self
     {
         $this->created = $created;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return Post
-     */
-    public function setType($type)
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getPrivate()
+    public function getPrivate(): ?bool
     {
         return $this->private;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isPrivate()
+    public function isPrivate(): ?bool
     {
         return $this->private;
     }
 
-    /**
-     * @param boolean $private
-     * @return Post
-     */
-    public function setPrivate($private)
+    public function setPrivate(?bool $private): self
     {
         $this->private = $private;
         return $this;

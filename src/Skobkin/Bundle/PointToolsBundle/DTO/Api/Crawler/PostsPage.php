@@ -22,7 +22,7 @@ class PostsPage
     /**
      * @return MetaPost[]
      */
-    public function getPosts()
+    public function getPosts(): ?array
     {
         return $this->posts;
     }
@@ -33,9 +33,10 @@ class PostsPage
      * @param MetaPost[] $posts
      * @return PostsPage
      */
-    public function setPosts($posts)
+    public function setPosts(?array $posts): self
     {
         $this->posts = $posts;
+
         return $this;
     }
 

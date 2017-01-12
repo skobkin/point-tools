@@ -34,60 +34,37 @@ class Auth
      */
     private $error;
 
-    /**
-     * @return string|null
-     */
-    public function getToken()
+
+    public function getToken(): ?string
     {
         return $this->token;
     }
 
-    /**
-     * @param string|null $token
-     *
-     * @return Auth
-     */
-    public function setToken(string $token = null): Auth
+    public function setToken(?string $token): self
     {
         $this->token = $token;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCsRfToken()
+    public function getCsRfToken(): ?string
     {
         return $this->csRfToken;
     }
 
-    /**
-     * @param string $csRfToken
-     *
-     * @return Auth
-     */
-    public function setCsRfToken(string $csRfToken = null)
+    public function setCsRfToken(?string $csRfToken): self
     {
         $this->csRfToken = $csRfToken;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getError()
+    public function getError(): ?string
     {
         return $this->error;
     }
 
-    /**
-     * @param string|null $error
-     *
-     * @return Auth
-     */
-    public function setError(string $error = null): Auth
+    public function setError(?string $error): self
     {
         $this->error = $error;
 

@@ -35,55 +35,34 @@ class User
     private $name;
 
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     * @return User
-     */
-    public function setId($id)
+    public function setId(?string $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLogin()
+    public function getLogin(): ?string
     {
         return $this->login;
     }
 
-    /**
-     * @param string $login
-     * @return User
-     */
-    public function setLogin($login)
+    public function setLogin(?string $login): self
     {
         $this->login = $login;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
-
-    /**
-     * @param string $name
-     * @return User
-     */
-    public function setName($name)
+    
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
