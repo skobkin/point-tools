@@ -199,7 +199,7 @@ class Post
      *
      * @return File[]|ArrayCollection
      */
-    public function getFiles()
+    public function getFiles(): iterable
     {
         return $this->files;
     }
@@ -222,7 +222,7 @@ class Post
      *
      * @return PostTag[]|ArrayCollection
      */
-    public function getPostTags()
+    public function getPostTags(): iterable
     {
         return $this->postTags;
     }
@@ -279,7 +279,7 @@ class Post
      *
      * @return Comment[]|ArrayCollection
      */
-    public function getComments()
+    public function getComments(): iterable
     {
         return $this->comments;
     }

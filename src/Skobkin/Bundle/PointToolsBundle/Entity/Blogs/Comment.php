@@ -204,7 +204,7 @@ class Comment
     /**
      * @return File[]|ArrayCollection
      */
-    public function getFiles()
+    public function getFiles(): iterable
     {
         return $this->files;
     }
@@ -256,7 +256,7 @@ class Comment
     /**
      * @return Comment[]|ArrayCollection
      */
-    public function getChildren()
+    public function getChildren(): iterable
     {
         return $this->children;
     }
