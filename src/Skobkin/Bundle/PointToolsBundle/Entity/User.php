@@ -32,7 +32,7 @@ class User
     private $login;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
@@ -135,6 +135,9 @@ class User
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName()
     {
         return $this->name;

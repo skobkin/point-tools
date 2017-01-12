@@ -81,6 +81,7 @@ class MainControllerTest extends WebTestCase
     public function testAjaxUserAutoComplete()
     {
         $client = static::createClient();
+        // We need to search all test user with 'testuser5' included which will test the code against null-string problem in User#getName()
         $client->request('GET', '/ajax/users/search/testuser');
 
         $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
@@ -99,7 +100,7 @@ class MainControllerTest extends WebTestCase
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
         $this->assertTrue(is_array($data), 'JSON data is array');
-        $this->assertGreaterThan(0, count($data), 'Array has at least one element');
+        $this->assertCount(5, $data, 'Array has 5 elements');
 
         return $data;
     }

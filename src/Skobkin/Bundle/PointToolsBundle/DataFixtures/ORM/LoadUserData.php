@@ -19,7 +19,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         // 99996
         ['login' => 'testuser4', 'name' => 'Test User 4'],
         //99995
-        ['login' => 'testuser5', 'name' => 'Test User 5'],
+        ['login' => 'testuser5', 'name' => null],
     ];
 
     public function load(ObjectManager $om)
