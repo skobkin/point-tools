@@ -33,6 +33,7 @@ class UserApi extends AbstractApi
     {
         parent::__construct($httpClient, $logger);
 
+        $this->userFactory = $userFactory;
         $this->serializer = $serializer;
     }
 
