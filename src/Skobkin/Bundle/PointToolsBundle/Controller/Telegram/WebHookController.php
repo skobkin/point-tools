@@ -5,6 +5,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller\Telegram;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use unreal4u\TelegramAPI\Telegram\Types\Update;
 
 /**
@@ -12,7 +13,7 @@ use unreal4u\TelegramAPI\Telegram\Types\Update;
  */
 class WebHookController extends Controller
 {
-    public function receiveUpdateAction(Request $request, $token)
+    public function receiveUpdateAction(Request $request, string $token): Response
     {
         if ($token !== $savedToken = $this->getParameter('telegram_token')) {
             throw $this->createNotFoundException();
