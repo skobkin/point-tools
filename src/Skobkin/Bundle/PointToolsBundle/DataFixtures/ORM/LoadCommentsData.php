@@ -55,7 +55,7 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
         $om->flush();
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 3;
     }

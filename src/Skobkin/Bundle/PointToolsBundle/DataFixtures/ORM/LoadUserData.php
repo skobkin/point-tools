@@ -39,7 +39,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $om->flush();
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 1;
     }

@@ -45,7 +45,7 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
         $om->flush();
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 4;
     }
@@ -58,7 +58,7 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
      *
      * @return User[]
      */
-    private function getRandomSubscribers($users, $min = 0)
+    private function getRandomSubscribers(array $users, int $min = 0): array
     {
         if (0 === $number = mt_rand($min, count($users))) {
             return [];

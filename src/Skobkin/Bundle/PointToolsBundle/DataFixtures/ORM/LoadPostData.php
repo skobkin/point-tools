@@ -40,7 +40,7 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
         $this->addReference('test_post_longpost', $longPost);
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 2;
     }
