@@ -50,7 +50,7 @@ class SubscriptionsManager
      * @param User $user
      * @param User[] $newSubscribersList
      */
-    public function updateUserSubscribers(User $user, $newSubscribersList = [])
+    public function updateUserSubscribers(User $user, $newSubscribersList = []): void
     {
         $tmpOldSubscribers = $user->getSubscribers();
 
@@ -100,7 +100,7 @@ class SubscriptionsManager
      * @param User $user
      * @param User[] $subscribers
      */
-    private function processSubscribedUsers(User $user, array $subscribers)
+    private function processSubscribedUsers(User $user, array $subscribers): void
     {
         $this->logger->debug('Processing subscribed users');
 
@@ -121,7 +121,7 @@ class SubscriptionsManager
      * @param User $user
      * @param User[] $subscribers
      */
-    private function processUnsubscribedUsers(User $user, array $subscribers)
+    private function processUnsubscribedUsers(User $user, array $subscribers): void
     {
         $this->logger->debug('Processing unsubscribed users');
 
@@ -142,7 +142,7 @@ class SubscriptionsManager
      * @param User[] $subscribed
      * @param User[] $unsubscribed
      */
-    private function dispatchSubscribersUpdatedEvent(User $user, array $subscribed, array $unsubscribed)
+    private function dispatchSubscribersUpdatedEvent(User $user, array $subscribed, array $unsubscribed): void
     {
         if (0 !== count($subscribed) || 0 !== count($unsubscribed)) {
             // Dispatching event

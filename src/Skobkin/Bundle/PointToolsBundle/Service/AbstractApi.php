@@ -99,16 +99,6 @@ class AbstractApi
     }
 
     /**
-     * Get HTTP client base URL
-     *
-     * @return string Base URL of client
-     */
-    public function getBaseUrl(): string
-    {
-        return (string) $this->client->getConfig('base_uri');
-    }
-
-    /**
      * @param ResponseInterface $response
      * @param bool $decodeJson
      * @param bool $decodeToObjects
