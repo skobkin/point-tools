@@ -13,9 +13,9 @@ use unreal4u\TelegramAPI\TgLog;
  */
 class MessageSender
 {
-    const PARSE_PLAIN = '';
-    const PARSE_MARKDOWN = 'Markdown';
-    const PARSE_HTML5 = 'HTML';
+    public const PARSE_PLAIN = '';
+    public const PARSE_MARKDOWN = 'Markdown';
+    public const PARSE_HTML5 = 'HTML';
 
     /**
      * @var TgLog
