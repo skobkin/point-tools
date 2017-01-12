@@ -7,17 +7,12 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
 
 class TagRepository extends EntityRepository
 {
-    public function add(Tag $entity)
+    public function add(Tag $entity): void
     {
         $this->getEntityManager()->persist($entity);
     }
 
-    /**
-     * @param $text
-     * @return Tag|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findOneByLowerText($text)
+    public function findOneByLowerText(string $text): ?Tag
     {
         $qb = $this->createQueryBuilder('t');
         return $qb

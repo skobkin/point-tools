@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
- * Account
- *
  * @ORM\Table(name="telegram_accounts", schema="users", indexes={
  *      @ORM\Index(name="subscriber_notification_idx", columns={"subscriber_notification"}, options={"where": "subscriber_notification = TRUE"}),
  *      @ORM\Index(name="rename_notification_idx", columns={"rename_notification"}, options={"where": "rename_notification = TRUE"}),
@@ -113,7 +111,7 @@ class Account
     /**
      * @ORM\PrePersist()
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $this->createdAt = new \DateTime();
     }
@@ -121,7 +119,7 @@ class Account
     /**
      * @ORM\PreUpdate()
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
     }
@@ -167,12 +165,12 @@ class Account
         return $this;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName = null): Account
+    public function setLastName(?string $lastName = null): Account
     {
         $this->lastName = $lastName;
 
@@ -203,10 +201,7 @@ class Account
         return $this->chatId;
     }
 
-    /**
-     * @return User|null
-     */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }

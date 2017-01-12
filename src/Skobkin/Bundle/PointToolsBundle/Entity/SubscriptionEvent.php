@@ -14,8 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SubscriptionEvent
 {
-    const ACTION_SUBSCRIBE = 'subscribe';
-    const ACTION_UNSUBSCRIBE = 'unsubscribe';
+    public const ACTION_SUBSCRIBE = 'subscribe';
+    public const ACTION_UNSUBSCRIBE = 'unsubscribe';
 
     /**
      * @var int

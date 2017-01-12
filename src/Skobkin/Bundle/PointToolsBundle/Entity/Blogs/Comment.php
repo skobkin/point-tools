@@ -107,182 +107,101 @@ class Comment
         $this->children = new ArrayCollection();
     }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Comment
-     */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime 
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * Set text
-     *
-     * @param string $text
-     * @return Comment
-     */
-    public function setText($text)
+    public function setText(string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * Set isRec
-     *
-     * @param boolean $rec
-     * @return Comment
-     */
-    public function setRec($rec)
+    public function setRec(bool $rec): self
     {
         $this->rec = $rec;
 
         return $this;
     }
 
-    /**
-     * Get isRec
-     *
-     * @return boolean 
-     */
-    public function isRec()
+    public function isRec(): bool
     {
         return $this->rec;
     }
 
-    /**
-     * Get isRec
-     *
-     * @return boolean
-     */
-    public function getRec()
+    public function getRec(): bool
     {
         return $this->rec;
     }
 
-    /**
-     * @return Post
-     */
-    public function getPost()
+    public function getPost(): Post
     {
         return $this->post;
     }
 
-    /**
-     * @param Post $post
-     * @return Comment
-     */
-    public function setPost($post)
+    public function setPost(Post $post): self
     {
         $this->post = $post;
 
         return $this;
     }
 
-    /**
-     * Set number
-     *
-     * @param int $number
-     * @return Comment
-     */
-    public function setNumber($number)
+    public function setNumber(int $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return int
-     */
-    public function getNumber()
+    public function getNumber(): int
     {
         return $this->number;
     }
 
-    /**
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * @param User $author
-     * @return Comment
-     */
-    public function setAuthor($author)
+    public function setAuthor(User $author): self
     {
         $this->author = $author;
 
         return $this;
     }
 
-    /**
-     * Add files
-     *
-     * @param File $files
-     * @return Comment
-     */
-    public function addFile(File $files)
+    public function addFile(File $files): self
     {
         $this->files[] = $files;
 
         return $this;
     }
 
-    /**
-     * Remove files
-     *
-     * @param File $files
-     */
-    public function removeFile(File $files)
+    public function removeFile(File $files): void
     {
         $this->files->removeElement($files);
     }
 
     /**
-     * Get files
-     *
      * @return File[]|ArrayCollection
      */
     public function getFiles()
@@ -293,81 +212,48 @@ class Comment
     /**
      * @return Comment
      */
-    public function getParent()
+    public function getParent(): ?Comment
     {
         return $this->parent;
     }
 
-    /**
-     * @param Comment $parent
-     * @return Comment
-     */
-    public function setParent($parent)
+    public function setParent(Comment $parent): self
     {
         $this->parent = $parent;
 
         return $this;
     }
 
-    /**
-     * Set deleted
-     *
-     * @param boolean $deleted
-     * @return Comment
-     */
-    public function setDeleted($deleted)
+    public function setDeleted(bool $deleted): self
     {
         $this->deleted = $deleted;
 
         return $this;
     }
 
-    /**
-     * Get deleted
-     *
-     * @return boolean 
-     */
-    public function getDeleted()
+    public function getDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * Get deleted
-     *
-     * @return boolean
-     */
-    public function isDeleted()
+    public function isDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * Add children
-     *
-     * @param Comment $children
-     * @return Comment
-     */
-    public function addChild(Comment $children)
+    public function addChild(Comment $children): self
     {
         $this->children[] = $children;
 
         return $this;
     }
 
-    /**
-     * Remove children
-     *
-     * @param Comment $children
-     */
-    public function removeChild(Comment $children)
+    public function removeChild(Comment $children): void
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Get children
-     *
      * @return Comment[]|ArrayCollection
      */
     public function getChildren()

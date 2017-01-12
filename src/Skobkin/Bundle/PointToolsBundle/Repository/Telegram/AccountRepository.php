@@ -7,48 +7,9 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
 
 class AccountRepository extends EntityRepository
 {
-    public function add(Account $entity)
+    public function add(Account $entity): void
     {
         $this->getEntityManager()->persist($entity);
-    }
-
-    /**
-     * @todo remove if not used
-     *
-     * @param array $criteria
-     * @param array|null $orderBy
-     * @param int|null $limit
-     * @param int|null $offset
-     *
-     * @return Account[]
-     */
-    public function findLinkedAccountsBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): array
-    {
-        $qb = $this->createQueryBuilder('a');
-
-        $i = 0;
-        foreach ($criteria as $property => $value) {
-            $qb
-                ->andWhere('a.'.$property.' = :criteria_'.$i)
-                ->setParameter('criteria_'.$i, $value)
-            ;
-        }
-
-        if (null !== $orderBy) {
-            foreach ($orderBy as $property => $order) {
-                $qb->addOrderBy($property, $order);
-            }
-        }
-
-        if (null !== $limit) {
-            $qb->setMaxResults($limit);
-        }
-
-        if (null !== $offset) {
-            $qb->setFirstResult($offset);
-        }
-
-        return $qb->getQuery()->getResult();
     }
 
     /**

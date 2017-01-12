@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
- * Post
- *
  * @ORM\Table(name="posts", schema="posts", indexes={
  *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
  *      @ORM\Index(name="idx_post_private", columns={"private"}),
@@ -18,8 +16,8 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
  */
 class Post
 {
-    const TYPE_POST = 'post';
-    const TYPE_FEED = 'feed';
+    public const TYPE_POST = 'post';
+    public const TYPE_FEED = 'feed';
 
     /**
      * @var string
@@ -121,135 +119,77 @@ class Post
     /**
      * @ORM\PreUpdate
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
     }
 
-    /**
-     * Get id
-     *
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * Set text
-     *
-     * @param string $text
-     * @return Post
-     */
-    public function setText($text)
+    public function setText(string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Post
-     */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime 
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
 
-    /**
-     * Set type
-     *
-     * @param string $type
-     * @return Post
-     */
-    public function setType($type)
+    public function setType(string $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return string 
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return User
-     */
-    public function getAuthor()
+    public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * @param User $author
-     * @return Post
-     */
-    public function setAuthor($author)
+    public function setAuthor(User $author): self
     {
         $this->author = $author;
+
         return $this;
     }
 
-    /**
-     * Add files
-     *
-     * @param File $files
-     * @return Post
-     */
-    public function addFile(File $files)
+    public function addFile(File $files): self
     {
         $this->files[] = $files;
 
         return $this;
     }
 
-    /**
-     * Remove files
-     *
-     * @param File $files
-     */
-    public function removeFile(File $files)
+    public function removeFile(File $files): void
     {
         $this->files->removeElement($files);
     }
@@ -264,13 +204,7 @@ class Post
         return $this->files;
     }
 
-    /**
-     * Add post tags
-     *
-     * @param PostTag $tag
-     * @return Post
-     */
-    public function addPostTag(PostTag $tag)
+    public function addPostTag(PostTag $tag): self
     {
         $tag->setPost($this);
         $this->postTags[] = $tag;
@@ -278,12 +212,7 @@ class Post
         return $this;
     }
 
-    /**
-     * Remove tags
-     *
-     * @param PostTag $tag
-     */
-    public function removePostTag(PostTag $tag)
+    public function removePostTag(PostTag $tag): void
     {
         $this->postTags->removeElement($tag);
     }
@@ -298,69 +227,41 @@ class Post
         return $this->postTags;
     }
 
-    /**
-     * Set deleted
-     *
-     * @param boolean $deleted
-     * @return Post
-     */
-    public function setDeleted($deleted)
+    public function setDeleted(bool $deleted): self
     {
         $this->deleted = $deleted;
 
         return $this;
     }
 
-    /**
-     * Get deleted
-     *
-     * @return boolean 
-     */
-    public function getDeleted()
+    public function getDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * Get deleted
-     *
-     * @return boolean
-     */
-    public function isDeleted()
+    public function isDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * Set private
-     *
-     * @param boolean $private
-     * @return Post
-     */
-    public function setPrivate($private)
+    public function setPrivate(bool $private): self
     {
         $this->private = $private;
 
         return $this;
     }
 
-    /**
-     * Get private
-     *
-     * @return boolean
-     */
-    public function getPrivate()
+    public function isPrivate(): bool
     {
         return $this->private;
     }
 
-    /**
-     * Add comments
-     *
-     * @param Comment $comment
-     * @return Post
-     */
-    public function addComment(Comment $comment)
+    public function getPrivate(): bool
+    {
+        return $this->private;
+    }
+
+    public function addComment(Comment $comment): self
     {
         $this->comments[] = $comment;
         $comment->setPost($this);
@@ -368,12 +269,7 @@ class Post
         return $this;
     }
 
-    /**
-     * Remove comments
-     *
-     * @param Comment $comment
-     */
-    public function removeComment(Comment $comment)
+    public function removeComment(Comment $comment): void
     {
         $this->comments->removeElement($comment);
     }

@@ -73,16 +73,12 @@ class User
     private $newSubscriberEvents;
 
 
-    /**
-     * @param int $id
-     * @param string $login
-     * @param string $name
-     */
     public function __construct(int $id, string $login = null, string $name = null)
     {
         $this->id = $id;
         $this->login = $login;
         $this->name = $name;
+        $this->createdAt = new \DateTime();
 
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
@@ -90,19 +86,9 @@ class User
     }
 
     /**
-     * @ORM\PrePersist
-     */
-    public function onCreate()
-    {
-        if (!$this->createdAt) {
-            $this->createdAt = new \DateTime();
-        }
-    }
-
-    /**
      * @ORM\PreUpdate
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
     }
@@ -112,10 +98,6 @@ class User
         return $this->id;
     }
 
-    /**
-     * @param string $login
-     * @return User
-     */
     public function setLogin(string $login): self
     {
         $this->login = $login;
@@ -128,17 +110,14 @@ class User
         return $this->login;
     }
 
-    public function setName(string $name = null): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -198,7 +177,7 @@ class User
         return $this;
     }
 
-    public function getUpdatedAt(): \DateTime
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }

@@ -9,7 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class SubscriptionEventRepository extends EntityRepository
 {
-    public function add(SubscriptionEvent $entity)
+    public function add(SubscriptionEvent $entity): void
     {
         $this->getEntityManager()->persist($entity);
     }
@@ -21,12 +21,12 @@ class SubscriptionEventRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('se');
 
-        $now = new \DateTime();
+        $from = (new \DateTime())->sub(new \DateInterval('PT24H'));
 
         return $qb
             ->select('COUNT(se)')
-            ->where('se.date > :time')
-            ->setParameter('time', $now->sub(new \DateInterval('PT24H')))
+            ->where('se.date > :from_time')
+            ->setParameter('from_time', $from)
             ->getQuery()->getSingleScalarResult()
         ;
     }

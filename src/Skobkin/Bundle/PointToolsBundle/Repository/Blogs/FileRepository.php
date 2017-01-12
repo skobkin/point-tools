@@ -7,7 +7,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File;
 
 class FileRepository extends EntityRepository
 {
-    public function add(File $entity)
+    public function add(File $entity): void
     {
         $this->getEntityManager()->persist($entity);
     }

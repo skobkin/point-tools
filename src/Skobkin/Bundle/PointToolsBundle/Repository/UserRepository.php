@@ -15,10 +15,8 @@ class UserRepository extends EntityRepository
 
     /**
      * Case-insensitive user search
-     *
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findUserByLogin(string $login): User
+    public function findUserByLogin(string $login): ?User
     {
         $qb = $this->createQueryBuilder('u');
 

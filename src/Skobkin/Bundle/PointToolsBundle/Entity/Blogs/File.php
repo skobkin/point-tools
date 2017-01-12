@@ -5,10 +5,8 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * File
- *
  * @ORM\Table(name="files", schema="posts")
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository", readOnly=true)
  */
 class File
 {
@@ -29,40 +27,17 @@ class File
     private $remoteUrl;
 
 
-    public function __construct($remoteUrl = null)
+    public function __construct($remoteUrl)
     {
         $this->remoteUrl = $remoteUrl;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set remoteUrl
-     *
-     * @param string $remoteUrl
-     * @return File
-     */
-    public function setRemoteUrl($remoteUrl)
-    {
-        $this->remoteUrl = $remoteUrl;
-
-        return $this;
-    }
-
-    /**
-     * Get remoteUrl
-     *
-     * @return string 
-     */
-    public function getRemoteUrl()
+    public function getRemoteUrl(): string
     {
         return $this->remoteUrl;
     }

@@ -5,15 +5,13 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PostTag
- *
  * @ORM\Table(name="posts_tags", schema="posts")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostTagRepository")
  */
 class PostTag
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -32,6 +30,8 @@ class PostTag
     /**
      * @var Tag
      *
+     * @todo fix SET NULL
+     *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EAGER")
      * @ORM\JoinColumn(name="tag_id", onDelete="SET NULL")
      */
@@ -45,53 +45,29 @@ class PostTag
     private $text;
 
 
-    /**
-     * PostTag constructor.
-     *
-     * @param Tag $tag
-     */
     public function __construct(Tag $tag)
     {
         $this->tag = $tag;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set text
-     *
-     * @param string $text
-     * @return PostTag
-     */
-    public function setText($text)
+    public function setText(string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * @return string
-     */
-    public function getOriginalTagText()
+    public function getOriginalTagText(): string
     {
         return $this->tag ? $this->tag->getText() : '';
     }
@@ -99,45 +75,24 @@ class PostTag
     /**
      * Set post
      *
+     * @todo move to constructor
+     *
      * @param Post $post
      * @return PostTag
      */
-    public function setPost(Post $post = null)
+    public function setPost(Post $post = null): self
     {
         $this->post = $post;
 
         return $this;
     }
 
-    /**
-     * Get post
-     *
-     * @return Post
-     */
-    public function getPost()
+    public function getPost(): Post
     {
         return $this->post;
     }
 
-    /**
-     * Set tag
-     *
-     * @param Tag $tag
-     * @return PostTag
-     */
-    public function setTag(Tag $tag = null)
-    {
-        $this->tag = $tag;
-
-        return $this;
-    }
-
-    /**
-     * Get tag
-     *
-     * @return Tag
-     */
-    public function getTag()
+    public function getTag(): Tag
     {
         return $this->tag;
     }

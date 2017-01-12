@@ -5,17 +5,15 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tag
- *
  * @ORM\Table(name="tags", schema="posts", indexes={
  *      @ORM\Index(name="idx_tag_text", columns={"text"})
  * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository", readOnly=true)
  */
 class Tag
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -31,43 +29,17 @@ class Tag
     private $text;
 
 
-    /**
-     * @param string $text
-     */
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set text
-     *
-     * @param string $text
-     * @return Tag
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
