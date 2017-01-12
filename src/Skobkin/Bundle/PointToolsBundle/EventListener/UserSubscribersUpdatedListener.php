@@ -23,7 +23,7 @@ class UserSubscribersUpdatedListener
         $this->notifier = $notifier;
     }
 
-    public function onAppUserSubscribersUpdated(UserSubscribersUpdatedEvent $event)
+    public function onAppUserSubscribersUpdated(UserSubscribersUpdatedEvent $event): void
     {
         $this->notifier->sendUserSubscribersUpdatedNotification($event->getUser(), $event->getSubscribedUsers(), $event->getUnsubscribedUsers());
     }

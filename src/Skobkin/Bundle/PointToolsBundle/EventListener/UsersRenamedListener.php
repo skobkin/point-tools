@@ -23,7 +23,7 @@ class UsersRenamedListener
         $this->notifier = $notifier;
     }
 
-    public function onAppUsersRenamed(UsersRenamedEvent $event)
+    public function onAppUsersRenamed(UsersRenamedEvent $event): void
     {
         $this->notifier->sendUsersRenamedNotification($event->getRenames());
     }

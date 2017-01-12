@@ -36,7 +36,7 @@ class UsersUpdatedSubscriber implements EventSubscriber
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             'preUpdate',
@@ -44,7 +44,7 @@ class UsersUpdatedSubscriber implements EventSubscriber
         ];
     }
 
-    public function preUpdate(PreUpdateEventArgs $event)
+    public function preUpdate(PreUpdateEventArgs $event): void
     {
         /** @var User $entity */
         $entity = $event->getObject();
@@ -58,7 +58,7 @@ class UsersUpdatedSubscriber implements EventSubscriber
         }
     }
 
-    public function postFlush(PostFlushEventArgs $event)
+    public function postFlush(PostFlushEventArgs $event): void
     {
         if (0 !== count($this->renames)) {
             // Creating event for dispatch
