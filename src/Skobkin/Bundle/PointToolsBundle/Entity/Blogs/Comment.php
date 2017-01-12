@@ -209,9 +209,6 @@ class Comment
         return $this->files;
     }
 
-    /**
-     * @return Comment
-     */
     public function getParent(): ?Comment
     {
         return $this->parent;
