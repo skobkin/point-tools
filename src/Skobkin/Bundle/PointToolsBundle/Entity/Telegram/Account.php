@@ -106,13 +106,6 @@ class Account
     public function __construct(int $id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function prePersist(): void
-    {
         $this->createdAt = new \DateTime();
     }
 
@@ -129,25 +122,16 @@ class Account
         return $this->id;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getLinkedAt(): \DateTime
     {
         return $this->linkedAt;
@@ -222,9 +206,6 @@ class Account
         return $this->user->getId();
     }
 
-    /**
-     * Disables all notifications
-     */
     public function disableNotifications(): self
     {
         $this->subscriberNotification = false;
