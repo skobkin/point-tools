@@ -57,11 +57,6 @@ class SubscriptionEvent
     private $action;
 
 
-    /**
-     * @param User $author
-     * @param User $subscriber
-     * @param string $action
-     */
     public function __construct(User $author, User $subscriber, string $action = self::ACTION_SUBSCRIBE)
     {
         $this->author = $author;

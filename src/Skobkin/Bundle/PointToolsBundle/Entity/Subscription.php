@@ -31,10 +31,6 @@ class Subscription
     private $subscriber;
 
 
-    /**
-     * @param User $author
-     * @param User $subscriber
-     */
     public function __construct(User $author, User $subscriber)
     {
         $this->author = $author;
