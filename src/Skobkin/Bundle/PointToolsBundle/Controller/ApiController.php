@@ -14,10 +14,8 @@ class ApiController extends Controller
      * Returns last user subscribers log
      *
      * @ParamConverter("user", class="SkobkinPointToolsBundle:User")
-     *
-     * @return Response
      */
-    public function lastUserSubscribersByIdAction(User $user)
+    public function lastUserSubscribersByIdAction(User $user): Response
     {
         $qb = $this->getDoctrine()->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createQueryBuilder('se');
         $qb
