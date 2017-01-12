@@ -19,9 +19,6 @@ class InvalidPostDataException extends InvalidDataException
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @return Post
-     */
     public function getPost(): Post
     {
         return $this->post;
