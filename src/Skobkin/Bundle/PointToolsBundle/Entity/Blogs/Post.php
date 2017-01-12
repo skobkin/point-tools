@@ -103,11 +103,7 @@ class Post
     private $comments;
 
 
-    /**
-     * Post constructor.
-     * @param string $id
-     */
-    public function __construct($id)
+    public function __construct(string $id)
     {
         $this->id = $id;
 
@@ -195,8 +191,6 @@ class Post
     }
 
     /**
-     * Get files
-     *
      * @return File[]|ArrayCollection
      */
     public function getFiles(): iterable
@@ -218,8 +212,6 @@ class Post
     }
 
     /**
-     * Get tags
-     *
      * @return PostTag[]|ArrayCollection
      */
     public function getPostTags(): iterable
@@ -275,8 +267,6 @@ class Post
     }
 
     /**
-     * Get comments
-     *
      * @return Comment[]|ArrayCollection
      */
     public function getComments(): iterable
