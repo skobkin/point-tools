@@ -76,7 +76,7 @@ class FileFactory
      *
      * @throws InvalidResponseException
      */
-    private function validateData($data)
+    private function validateData($data): void
     {
         if (!is_string($data)) {
             // @todo Change exception

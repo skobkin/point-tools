@@ -88,7 +88,7 @@ class CommentFactory
      *
      * @throws InvalidResponseException
      */
-    private function validateData(array $data)
+    private function validateData(array $data): void
     {
         if (!array_key_exists('author', $data)) {
             throw new InvalidResponseException('Comment author data not found in API response');

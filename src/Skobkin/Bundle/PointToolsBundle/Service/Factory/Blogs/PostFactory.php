@@ -180,7 +180,7 @@ class PostFactory
      * @param Post $post
      * @param string[] $tagsStrings
      */
-    private function updatePostTags(Post $post, array $tagsStrings)
+    private function updatePostTags(Post $post, array $tagsStrings): void
     {
         $tags = $this->tagFactory->createFromStringsArray($tagsStrings);
 
@@ -224,7 +224,7 @@ class PostFactory
      * @param Post $post
      * @param array $urls
      */
-    private function updatePostFiles(Post $post, array $urls)
+    private function updatePostFiles(Post $post, array $urls): void
     {
         $files = $this->fileFactory->createFromUrlsArray($urls);
 
@@ -243,7 +243,7 @@ class PostFactory
         }
     }
 
-    private function validateMetaPost(MetaPost $post)
+    private function validateMetaPost(MetaPost $post): bool
     {
         if (!$post->getPost()->getId()) {
             $this->logger->error('Post DTO contains no id');
