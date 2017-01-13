@@ -47,6 +47,7 @@ services:
 
 
     # Console commands
+    # Subsribers update
     app.point.update_subscribers_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
         calls:
@@ -56,8 +57,15 @@ services:
             - [setApiClient, ['@app.point.api_user']]
             - [setApiDelay, ['%point_api_delay%']]
             - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
-        tags:
-            - { name: console.command }
+        tags: [{ name: console.command }]
+    # Webhook management
+    app.telegram.webhook_command:
+        class: Skobkin\Bundle\PointToolsBundle\Command\TelegramWebHookCommand
+        calls:
+            - [setClient, ['@app.telegram.bot_client']]
+            - [setRouter, ['@router']]
+            - [setToken, ['%telegram_token%']]
+        tags: [{ name: console.command }]
 
 
     # Entity repositories as services
