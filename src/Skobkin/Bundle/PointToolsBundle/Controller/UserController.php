@@ -52,7 +52,6 @@ class UserController extends Controller
         $eventsByDay = $subscriptionsRecordsRepo->getLastEventsByDay();
 
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
-            //'top_users' => $topUsers,
             'events_dynamic_chat' => $this->createEventsDynamicChart($eventsByDay),
             'top_chart' => $this->createTopUsersGraph($topUsers),
         ]);
@@ -65,38 +64,13 @@ class UserController extends Controller
      */
     private function createEventsDynamicChart(array $eventsByDay = []): Highchart
     {
-        $translator = $this->get('translator');
+        $data = [];
 
-        $chartData = [
-            'titles' => [],
-            'events' => [],
-        ];
-
-        foreach ($eventsByDay as $day) {
-            $chartData['titles'][] = $day->getDate()->format('d.m');
-            $chartData['events'][] = $day->getEventsCount();
+        foreach ($eventsByDay as $dailyEvents) {
+            $data[$dailyEvents->getDate()->format('d.m')] = $dailyEvents->getEventsCount();
         }
 
-        $series = [[
-            'name' => $translator->trans('Events count'),
-            'data' => $chartData['events'],
-        ]];
-
-        $ob = new Highchart();
-        $ob->chart->renderTo('eventschart');
-        $ob->chart->type('line');
-        $ob->title->text($translator->trans('Events by day'));
-        $ob->xAxis->title(['text' => null]);
-        $ob->xAxis->categories($chartData['titles']);
-        $ob->yAxis->title(['text' => $translator->trans('amount')]);
-        $ob->plotOptions->bar([
-            'dataLabels' => [
-                'enabled' => true,
-            ]
-        ]);
-        $ob->series($series);
-
-        return $ob;
+        return $this->createChart('eventschart', 'line', $data, 'Events by day', 'amount');
     }
 
     /**
@@ -106,33 +80,44 @@ class UserController extends Controller
      */
     private function createTopUsersGraph(array $topUsers = []): Highchart
     {
+        $data = [];
+
+        foreach ($topUsers as $topUser) {
+            $data[$topUser->getLogin()] = $topUser->getSubscribersCount();
+        }
+
+        return $this->createChart('topchart', 'bar', $data, 'Top users', 'amount');
+    }
+
+    private function createChart(string $blockId, string $type, array $data, string $bottomLabel, string $amountLabel): Highchart
+    {
         $translator = $this->get('translator');
 
         $chartData = [
-            'titles' => [],
-            'subscribers' => [],
+            'keys' => [],
+            'values' => [],
         ];
 
         // Preparing chart data
-        foreach ($topUsers as $user) {
-            $chartData['titles'][] = $user->getLogin();
-            $chartData['subscribers'][] = $user->getSubscribersCount();
+        foreach ($data as $key => $value) {
+            $chartData['keys'][] = $key;
+            $chartData['values'][] = $value;
         }
 
         // Chart
         $series = [[
-            'name' => $translator->trans('Subscribers'),
-            'data' => $chartData['subscribers'],
+            'name' => $translator->trans($amountLabel),
+            'data' => $chartData['values'],
         ]];
 
         // Initializing chart
         $ob = new Highchart();
-        $ob->chart->renderTo('topchart');
-        $ob->chart->type('bar');
-        $ob->title->text($translator->trans('Top users'));
+        $ob->chart->renderTo($blockId);
+        $ob->chart->type($type);
+        $ob->title->text($translator->trans($bottomLabel));
         $ob->xAxis->title(['text' => null]);
-        $ob->xAxis->categories($chartData['titles']);
-        $ob->yAxis->title(['text' => $translator->trans('amount')]);
+        $ob->xAxis->categories($chartData['keys']);
+        $ob->yAxis->title(['text' => $translator->trans($amountLabel)]);
         $ob->plotOptions->bar([
             'dataLabels' => [
                 'enabled' => true
