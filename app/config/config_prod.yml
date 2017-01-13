@@ -19,5 +19,9 @@ monolog:
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
+        telegram:
+            type: service
+            id: app.log.telegram_handler
+            action_level: error
         console:
             type:  console

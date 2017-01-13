@@ -29,7 +29,8 @@
         "knplabs/knp-markdown-bundle": "^1.4",
         "knplabs/knp-paginator-bundle": "^2.5",
         "unreal4u/telegram-api": "^2.2",
-        "csa/guzzle-bundle": "^2.1"
+        "csa/guzzle-bundle": "^2.1",
+        "unreal4u/monolog-telegram": "^0.2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

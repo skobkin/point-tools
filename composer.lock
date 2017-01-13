@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b374e1b2cb413fbab3f0633d6f81c1a",
+    "content-hash": "88274224cc9dfe36d847acf69d5924d8",
     "packages": [
         {
             "name": "csa/guzzle-bundle",
@@ -3180,6 +3180,57 @@
                 "templating"
             ],
             "time": "2017-01-11T19:39:01+00:00"
+        },
+        {
+            "name": "unreal4u/monolog-telegram",
+            "version": "v0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unreal4u/monolog-telegram.git",
+                "reference": "13c34ac16e9dad06e632ca8ed8aeee2d44663e5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unreal4u/monolog-telegram/zipball/13c34ac16e9dad06e632ca8ed8aeee2d44663e5c",
+                "reference": "13c34ac16e9dad06e632ca8ed8aeee2d44663e5c",
+                "shasum": ""
+            },
+            "require": {
+                "monolog/monolog": "~1.17",
+                "php": ">=7.0.0",
+                "unreal4u/telegram-api": "~2.1"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "@stable",
+                "phpunit/phpunit": "@stable",
+                "squizlabs/php_codesniffer": "@stable"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "unreal4u\\": "src/unreal4u"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Camilo Sperberg",
+                    "email": "me@unreal4u.com",
+                    "homepage": "https://github.com/unreal4u/monolog-telegram/graphs/contributors"
+                }
+            ],
+            "description": "Monolog handler to enable sending messages through Telegram",
+            "keywords": [
+                "api",
+                "monolog",
+                "monolog handler",
+                "telegram",
+                "telegram bot"
+            ],
+            "time": "2016-12-14T00:25:05+00:00"
         },
         {
             "name": "unreal4u/telegram-api",

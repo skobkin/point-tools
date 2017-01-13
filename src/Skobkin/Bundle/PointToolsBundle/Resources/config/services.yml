@@ -186,15 +186,28 @@ services:
 
 
     # Telegram services
-    # API client
-    app.telegram.api_client:
+    # Bot API client
+    app.telegram.bot_client:
         class: unreal4u\TelegramAPI\TgLog
         arguments: ['%telegram_token%', '@logger', '@app.http.telegram_client']
+
+    # Logger API client
+    app.telegram.logger_client:
+        class: unreal4u\TelegramAPI\TgLog
+        arguments: ['%telegram_token%', null, '@app.http.telegram_client']
+
+    # Monolog handler
+    app.log.telegram_handler:
+        class: unreal4u\MonologHandler
+        arguments:
+            - '@app.telegram.logger_client'
+            - '%telegram_log_chat_id%'
+            - 'error'
 
     # Message sender
     app.telegram.message_sender:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
-        arguments: ['@app.telegram.api_client', '@twig']
+        arguments: ['@app.telegram.bot_client', '@twig']
 
     # User notifier
     app.telegram.notifier:
@@ -212,7 +225,7 @@ services:
     app.telegram.inline_query_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
         lazy: true
-        arguments: ['@app.point.user_repository', '@app.telegram.api_client']
+        arguments: ['@app.point.user_repository', '@app.telegram.bot_client']
 
     # Private message processor
     app.telegram.private_message_processor:
