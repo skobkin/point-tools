@@ -71,16 +71,27 @@ class UserRepositoryTest extends KernelTestCase
     public function testFindUserSubscribersById()
     {
         $subscribers = $this->userRepo->findUserSubscribersById(99999);
+        $this->assertCount(4, $subscribers, 'Not exactly 4 subscribers found for user#99999');
 
-        $this->assertGreaterThanOrEqual(2, count($subscribers), 'Less than 2 subscribers found');
-        $this->assertLessThanOrEqual(5, count($subscribers), 'More than 5 subscribers found');
+        $subscribers = $this->userRepo->findUserSubscribersById(99998);
+        $this->assertCount(2, $subscribers, 'Not exactly 2 subscribers found for user#99998');
+
+        $subscribers = $this->userRepo->findUserSubscribersById(99997);
+        $this->assertCount(1, $subscribers, 'Not exactly 1 subscriber found for user#99997');
+
+        $subscribers = $this->userRepo->findUserSubscribersById(99996);
+        $this->assertCount(0, $subscribers, 'Not exactly 0 subscribers found for user#99996');
+
+        $subscribers = $this->userRepo->findUserSubscribersById(99995);
+        $this->assertCount(0, $subscribers, 'Not exactly 0 subscribers found for user#99995');
+
     }
 
     public function testGetTopUsers()
     {
         $topUsers = $this->userRepo->getTopUsers();
 
-        $this->assertCount(5, $topUsers, 'Found not exactly 5 top users');
+        $this->assertCount(3, $topUsers, 'Found not exactly 3 top users');
 
         foreach ($topUsers as $topUser) {
             $this->assertEquals(TopUserDTO::class, get_class($topUser), 'Invalid type returned');
