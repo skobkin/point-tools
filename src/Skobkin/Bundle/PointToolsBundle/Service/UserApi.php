@@ -293,6 +293,12 @@ class UserApi extends AbstractApi
     {
         $this->logger->debug('Trying to create multiple users from array', ['array' => $users]);
 
+        if (array_key_exists('error', $users)) {
+            $this->logger->error('User list contains error object', ['error' => $users['error']]);
+
+            throw new ApiException('User list response contains error object');
+        }
+
         /** @var User[] $resultUsers */
         $resultUsers = [];
 
