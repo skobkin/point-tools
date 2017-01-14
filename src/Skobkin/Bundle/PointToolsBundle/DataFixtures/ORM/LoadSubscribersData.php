@@ -18,22 +18,22 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
     {
         /** @var User[] $users */
         $users = [
-            $this->getReference('test_user_99999'),
-            $this->getReference('test_user_99998'),
-            $this->getReference('test_user_99997'),
-            $this->getReference('test_user_99996'),
-            $this->getReference('test_user_99995'),
+            99999 => $this->getReference('test_user_99999'),
+            99998 => $this->getReference('test_user_99998'),
+            99997 => $this->getReference('test_user_99997'),
+            99996 => $this->getReference('test_user_99996'),
+            99995 => $this->getReference('test_user_99995'),
+        ];
+
+        $subscriptions = [
+            99999 => [99998, 99997, 99996, 99995],
+            99998 => [99999, 99997],
+            99997 => [99999],
         ];
 
         foreach ($users as $key => $user) {
-            // At least 2 subscribers for first user in the list
-            if (0 === $key) {
-                $minimum = 2;
-            } else {
-                $minimum = random_int(0, count($users));
-            }
-
-            foreach ($this->getRandomSubscribers($users, $minimum) as $subscriber) {
+            foreach ($subscriptions[$key] as $userId) {
+                $subscriber = $users[$userId];
                 $subscription = new Subscription($user, $subscriber);
                 $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
                 $om->persist($subscription);
@@ -48,35 +48,5 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
     public function getOrder(): int
     {
         return 4;
-    }
-
-    /**
-     * Returns array with random users from given users array
-     *
-     * @param User[] $users
-     * @param int $min
-     *
-     * @return User[]
-     */
-    private function getRandomSubscribers(array $users, int $min = 0): array
-    {
-        if (0 === $number = mt_rand($min, count($users))) {
-            return [];
-        }
-
-        $keys = array_rand($users, $number);
-
-        // If array_rand was called with $number = 1
-        if (!is_array($keys)) {
-            $keys = [$keys];
-        }
-
-        $result = [];
-
-        foreach ($keys as $key) {
-            $result[] = $users[$key];
-        }
-
-        return $result;
     }
 }
