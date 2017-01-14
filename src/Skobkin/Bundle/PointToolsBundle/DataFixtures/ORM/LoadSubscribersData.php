@@ -32,13 +32,15 @@ class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInter
         ];
 
         foreach ($users as $key => $user) {
-            foreach ($subscriptions[$key] as $userId) {
-                $subscriber = $users[$userId];
-                $subscription = new Subscription($user, $subscriber);
-                $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
-                $om->persist($subscription);
-                $om->persist($subscriptionEvent);
-                $user->addSubscriber($subscription);
+            if (array_key_exists($key, $subscriptions)) {
+                foreach ($subscriptions[$key] as $userId) {
+                    $subscriber = $users[$userId];
+                    $subscription = new Subscription($user, $subscriber);
+                    $subscriptionEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
+                    $om->persist($subscription);
+                    $om->persist($subscriptionEvent);
+                    $user->addSubscriber($subscription);
+                }
             }
         }
 
