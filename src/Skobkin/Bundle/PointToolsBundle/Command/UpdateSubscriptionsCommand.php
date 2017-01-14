@@ -177,6 +177,8 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     {
         // Updating users subscribers
         foreach ($users as $user) {
+            usleep($this->apiDelay);
+
             $this->logger->info('Processing @'.$user->getLogin());
 
             try {
@@ -215,8 +217,6 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             }
 
             $this->progress->advance();
-
-            usleep($this->apiDelay);
         }
     }
 
