@@ -44,6 +44,8 @@ services:
             - '@logger'
             - '@app.point.subscription_repository'
             - '@app.point.subscription_record_repository'
+        tags:
+            - { name: monolog.logger, channel: subscribers_update }
 
 
     # Console commands
@@ -57,7 +59,9 @@ services:
             - [setApiClient, ['@app.point.api_user']]
             - [setApiDelay, ['%point_api_delay%']]
             - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
-        tags: [{ name: console.command }]
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: subscribers_update }
     # Webhook management
     app.telegram.webhook_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\TelegramWebHookCommand

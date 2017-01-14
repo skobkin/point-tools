@@ -13,15 +13,25 @@ monolog:
         main:
             type:         fingers_crossed
             action_level: error
-            handler:      nested
-        nested:
+            handler:      main_grouped
+        main_grouped:
+            type: group
+            members: [rotated_file, telegram_deduplicated]
+            bubble: false
+        rotated_file:
             type:  rotating_file
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
+        telegram_deduplicated:
+            type: deduplication
+            action_level: error
+            handler: telegram
+            time: 600
         telegram:
             type: service
             id: app.log.telegram_handler
             action_level: error
+        # for commands
         console:
-            type:  console
+            type: console
