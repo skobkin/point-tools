@@ -146,8 +146,9 @@ class Post implements ValidableInterface
             null !== $this->author &&
             $this->author->isValid() &&
             null !== $this->text &&
-            null !== $this->created &&
-            null !== $this->type
+            null !== $this->created// &&
+            // @todo check type existence in incoming data
+            //null !== $this->type
         ) {
             return true;
         }
