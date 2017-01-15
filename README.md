@@ -69,7 +69,7 @@ You can use following jobs as an example:
 ## Setting Telegram webhook (to enable bot)
 
 ```bash
-php app/console telegram:webhook set your-domain.tld
+php app/console telegram:webhook set
 ```
 
 ## Removing Telegram webhook
@@ -87,6 +87,7 @@ export SYMFONY__TEST_DATABASE_USER=some_database_user
 export SYMFONY__TEST_DATABASE_PASSWORD=some_database_password
 export SYMFONY__TEST_DATABASE_NAME=some_database_name
 export SYMFONY__TEST_DATABASE_PORT=postgresql_port
+export SYMFONY_ENV=test
 ```
 
 ## Load fixtures (if needed)
