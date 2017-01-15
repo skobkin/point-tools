@@ -10,7 +10,6 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidPostDataException;
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
@@ -69,10 +68,6 @@ class PostFactory extends AbstractFactory
     /**
      * Creates posts and return status of new insertions
      *
-     * @param PostsPage $page
-     *
-     * @return bool
-     *
      * @throws InvalidResponseException
      */
     public function createFromPageDTO(PostsPage $page): bool
@@ -110,23 +105,14 @@ class PostFactory extends AbstractFactory
     }
 
     /**
-     * @todo Implement full post with comments processing
-     *
-     * @param MetaPost $postData
-     *
-     * @return Post
+     * @todo Implement full post processing with comments
      *
      * @throws InvalidDataException
      */
     private function createFromDTO(MetaPost $postData): Post
     {
-        if (!$this->validateMetaPost($postData)) {
+        if (!$postData->isValid()) {
             throw new InvalidDataException('Invalid post data');
-        }
-
-        if (!$postData->getPost()->getAuthor()->getId()) {
-            $this->logger->error('Post author does not contain id', ['post_id' => $postData->getPost()->getId()]);
-            throw new InvalidPostDataException('Post author does not contain id', $postData->getPost());
         }
 
         try {
@@ -146,8 +132,7 @@ class PostFactory extends AbstractFactory
         $post
             ->setAuthor($user)
             ->setCreatedAt((new \DateTime($postData->getPost()->getCreated())) ?: null)
-            // @fixme Need bugfix for point API (type is not showing now)
-            //->setType($postData->getPost()->getType())
+            ->setType($postData->getPost()->getType() ?: Post::TYPE_POST)
             ->setText($postData->getPost()->getText())
             ->setPrivate($postData->getPost()->getPrivate())
         ;
@@ -234,20 +219,5 @@ class PostFactory extends AbstractFactory
                 $post->removeFile($file);
             }
         }
-    }
-
-    private function validateMetaPost(MetaPost $post): bool
-    {
-        if (!$post->getPost()->getId()) {
-            $this->logger->error('Post DTO contains no id');
-            return false;
-        }
-
-        if (null === $post->getPost()->getAuthor()->getId()) {
-            $this->logger->error('Post DTO contains no valid User DTO.', ['post_id' => $post->getPost()->getId()]);
-            return false;
-        }
-
-        return true;
     }
 }
