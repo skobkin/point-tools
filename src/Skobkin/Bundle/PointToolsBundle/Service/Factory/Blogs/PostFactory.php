@@ -5,9 +5,11 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\MetaPost;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\Post as PostDTO;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
+use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
@@ -68,6 +70,8 @@ class PostFactory extends AbstractFactory
     /**
      * Creates posts and return status of new insertions
      *
+     * @todo refactor
+     *
      * @throws InvalidResponseException
      */
     public function createFromPageDTO(PostsPage $page): bool
@@ -82,7 +86,7 @@ class PostFactory extends AbstractFactory
                     $hasNew = true;
                 }
 
-                $post = $this->createFromDTO($postData);
+                $post = $this->findOrCreateFromDTOWithTagsAndFiles($postData);
                 $posts[] = $post;
             } catch (\Exception $e) {
                 $this->logger->error('Error while processing post DTO', [
@@ -109,47 +113,57 @@ class PostFactory extends AbstractFactory
      *
      * @throws InvalidDataException
      */
-    private function createFromDTO(MetaPost $postData): Post
+    public function findOrCreateFromDTOWithTagsAndFiles(MetaPost $metaPost): Post
     {
-        if (!$postData->isValid()) {
+        if (!$metaPost->isValid()) {
             throw new InvalidDataException('Invalid post data');
         }
 
+        $postData = $metaPost->getPost();
+
         try {
-            $user = $this->userFactory->findOrCreateFromDTO($postData->getPost()->getAuthor());
+            $author = $this->userFactory->findOrCreateFromDTO($metaPost->getPost()->getAuthor());
         } catch (\Exception $e) {
             $this->logger->error('Error while creating user from DTO');
             throw $e;
         }
 
-        if (null === ($post = $this->postRepository->find($postData->getPost()->getId()))) {
-            // Creating new post
-            $post = new Post($postData->getPost()->getId());
-            $this->postRepository->add($post);
-        }
-
-        // Updating data
-        $post
-            ->setAuthor($user)
-            ->setCreatedAt((new \DateTime($postData->getPost()->getCreated())) ?: null)
-            ->setType($postData->getPost()->getType() ?: Post::TYPE_POST)
-            ->setText($postData->getPost()->getText())
-            ->setPrivate($postData->getPost()->getPrivate())
-        ;
+        $post = $this->findOrCreateFromDto($postData, $author);
 
         try {
-            $this->updatePostTags($post, $postData->getPost()->getTags() ?: []);
+            $this->updatePostTags($post, $postData->getTags() ?: []);
         } catch (\Exception $e) {
             $this->logger->error('Error while updating post tags');
             throw $e;
         }
 
         try {
-            $this->updatePostFiles($post, $postData->getPost()->getFiles() ?: []);
+            $this->updatePostFiles($post, $postData->getFiles() ?: []);
         } catch (\Exception $e) {
             $this->logger->error('Error while updating post files');
             throw $e;
         }
+
+        return $post;
+    }
+
+    private function findOrCreateFromDto(PostDTO $postData, User $author): Post
+    {
+        if (null === ($post = $this->postRepository->find($postData->getId()))) {
+            // Creating new post
+            $post = new Post(
+                $postData->getId(),
+                $author,
+                new \DateTime($postData->getCreated()),
+                $postData->getType() ?: Post::TYPE_POST
+            );
+            $this->postRepository->add($post);
+        }
+
+        $post
+            ->setText($postData->getText())
+            ->setPrivate($postData->getPrivate())
+        ;
 
         return $post;
     }

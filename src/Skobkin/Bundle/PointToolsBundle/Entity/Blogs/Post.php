@@ -103,9 +103,12 @@ class Post
     private $comments;
 
 
-    public function __construct(string $id)
+    public function __construct(string $id, User $author, \DateTime $createdAt, string $type)
     {
         $this->id = $id;
+        $this->author = $author;
+        $this->createdAt = $createdAt;
+        $this->type = $type;
 
         $this->files = new ArrayCollection();
         $this->postTags = new ArrayCollection();
@@ -137,13 +140,6 @@ class Post
         return $this->text;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
@@ -154,13 +150,6 @@ class Post
         return $this->updatedAt;
     }
 
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getType(): string
     {
         return $this->type;
@@ -169,13 +158,6 @@ class Post
     public function getAuthor(): User
     {
         return $this->author;
-    }
-
-    public function setAuthor(User $author): self
-    {
-        $this->author = $author;
-
-        return $this;
     }
 
     public function addFile(File $files): self

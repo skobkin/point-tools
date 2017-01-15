@@ -15,21 +15,15 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
         /** @var User $testUser */
         $testUser = $this->getReference('test_user_99999');
 
-        $longPost = (new Post('longpost'))
-            ->setAuthor($testUser)
-            ->setCreatedAt(new \DateTime())
+        $longPost = (new Post('longpost', $testUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Test post with many comments')
             ->setPrivate(false)
-            ->setType(Post::TYPE_POST)
             ->setDeleted(false)
         ;
 
-        $shortPost = (new Post('shortpost'))
-            ->setAuthor($testUser)
-            ->setCreatedAt(new \DateTime())
+        $shortPost = (new Post('shortpost', $testUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Test short post')
             ->setPrivate(false)
-            ->setType(Post::TYPE_POST)
             ->setDeleted(false)
         ;
 
