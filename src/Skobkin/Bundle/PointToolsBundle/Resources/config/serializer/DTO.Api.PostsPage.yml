@@ -5,3 +5,6 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage:
         posts:
             type: 'array<Skobkin\Bundle\PointToolsBundle\DTO\Api\MetaPost>'
             max_depth: 3
+        hasNext:
+            serialized_name: 'has_next'
+            type: bool
