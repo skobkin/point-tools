@@ -1,4 +1,4 @@
-Skobkin\Bundle\PointToolsBundle\DTO\Api\PostPage:
+Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage:
     exclusion_policy: none
     access_type: public_method
     properties:
