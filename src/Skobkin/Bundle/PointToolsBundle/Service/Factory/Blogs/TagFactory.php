@@ -5,14 +5,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 
-class TagFactory
+class TagFactory extends AbstractFactory
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @var TagRepository
      */
@@ -21,7 +17,7 @@ class TagFactory
 
     public function __construct(LoggerInterface $logger, TagRepository $tagRepository)
     {
-        $this->logger = $logger;
+        parent::__construct($logger);
         $this->tagRepository = $tagRepository;
     }
 

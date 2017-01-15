@@ -1,0 +1,7 @@
+Skobkin\Bundle\PointToolsBundle\DTO\Api\PostPage:
+    exclusion_policy: none
+    access_type: public_method
+    properties:
+        posts:
+            type: 'array<Skobkin\Bundle\PointToolsBundle\DTO\Api\MetaPost>'
+            max_depth: 3

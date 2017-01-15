@@ -8,7 +8,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
-use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
+use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;

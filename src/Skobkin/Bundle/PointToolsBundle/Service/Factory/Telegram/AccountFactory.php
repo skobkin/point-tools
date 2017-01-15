@@ -2,11 +2,13 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram;
 
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
 use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 
-class AccountFactory
+class AccountFactory extends AbstractFactory
 {
     /**
      * @var AccountRepository
@@ -14,8 +16,9 @@ class AccountFactory
     private $accountRepo;
 
 
-    public function __construct(AccountRepository $accountRepository)
+    public function __construct(LoggerInterface $logger, AccountRepository $accountRepository)
     {
+        parent::__construct($logger);
         $this->accountRepo = $accountRepository;
     }
 

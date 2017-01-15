@@ -5,24 +5,20 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 
-class FileFactory
+class FileFactory extends AbstractFactory
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
-
     /**
      * @var FileRepository
      */
     private $fileRepository;
 
 
-    public function __construct(LoggerInterface $log, FileRepository $fileRepository)
+    public function __construct(LoggerInterface $logger, FileRepository $fileRepository)
     {
-        $this->log = $log;
+        parent::__construct($logger);
         $this->fileRepository = $fileRepository;
     }
 
@@ -40,7 +36,7 @@ class FileFactory
                 $file = $this->createFromUrl($url);
                 $files[] = $file;
             } catch (\Exception $e) {
-                $this->log->error('Error while creating file from DTO', ['file' => $url, 'message' => $e->getMessage()]);
+                $this->logger->error('Error while creating file from DTO', ['file' => $url, 'message' => $e->getMessage()]);
                 continue;
             }
         }

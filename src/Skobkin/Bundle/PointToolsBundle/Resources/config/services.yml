@@ -20,20 +20,24 @@ services:
         abstract: true
         arguments:
             - '@app.http.point_client'
+            - '@jms_serializer'
             - '@logger'
-
+    # User
     app.point.api_user:
-        class: Skobkin\Bundle\PointToolsBundle\Service\UserApi
+        class: Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi
         parent: app.point.abstract_api
         arguments:
             - '@app.point.user_factory'
-            - '@jms_serializer'
-
+        tags:
+            - { name: monolog.logger, channel: point_user_api }
+    # Post
     app.point.api_post:
-        class: Skobkin\Bundle\PointToolsBundle\Service\PostApi
+        class: Skobkin\Bundle\PointToolsBundle\Service\Api\PostApi
         parent: app.point.abstract_api
         arguments:
             - '@app.point.post_factory'
+        tags:
+            - { name: monolog.logger, channel: point_post_api }
 
 
     # Point subscription manager
@@ -116,44 +120,48 @@ services:
 
 
     # Factories
-    # User factory
+    # Abstract factory
+    app.point.abstract_factory:
+        abstract: true
+        arguments: [ '@logger' ]
+    # User
     app.point.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
+        parent: app.point.abstract_factory
         arguments: [ '@app.point.user_repository' ]
-
-    # Comment factory
+    # Comment
     app.point.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
+        parent: app.point.abstract_factory
         arguments:
             - '@app.point.comment_repository'
             - '@app.point.post_repository'
             - '@app.point.user_factory'
-
-    # Tag factory
+    # Tag
     app.point.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
-        arguments: [ '@logger', '@app.point.tag_repository' ]
-
-    # File factory
+        parent: app.point.abstract_factory
+        arguments: [ '@app.point.tag_repository' ]
+    # File
     app.point.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
-        arguments: [ '@logger', '@app.point.file_repository' ]
-
-    # Post factory
+        parent: app.point.abstract_factory
+        arguments: [ '@app.point.file_repository' ]
+    # Post
     app.point.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
+        parent: app.point.abstract_factory
         arguments:
-            - '@logger'
             - '@doctrine.orm.entity_manager'
             - '@app.point.post_repository'
             - '@app.point.user_factory'
             - '@app.point.file_factory'
             - '@app.point.comment_factory'
             - '@app.point.tag_factory'
-
-    # Telegram accounts factory
+    # Telegram account
     app.telegram.telegram_account_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
+        parent: app.point.abstract_factory
         arguments: ['@app.point.telegram_account_repository']
 
 

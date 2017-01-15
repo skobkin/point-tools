@@ -1,7 +1,6 @@
 <?php
 
-namespace Skobkin\Bundle\PointToolsBundle\Service\Exceptions;
-
+namespace Skobkin\Bundle\PointToolsBundle\Exception\Api;
 
 class InvalidResponseException extends ApiException
 {

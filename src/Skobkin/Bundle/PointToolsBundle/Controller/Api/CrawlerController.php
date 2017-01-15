@@ -21,7 +21,7 @@ class CrawlerController extends AbstractApiController
 
         $serializer = $this->get('jms_serializer');
 
-        $page = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage', 'json');
+        $page = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage', 'json');
 
         /** @var PostFactory $factory */
         $factory = $this->get('app.point.post_factory');

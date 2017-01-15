@@ -1,0 +1,49 @@
+Skobkin\Bundle\PointToolsBundle\DTO\Api\User:
+    exclusion_policy: none
+    access_type: public_method
+    properties:
+        id:
+            type: integer
+            groups: [user_short, user_full]
+        login:
+            type: string
+            groups: [user_short, user_full]
+        name:
+            type: string
+            groups: [user_short, user_full]
+        about:
+            type: string
+            groups: [user_full]
+        xmpp:
+            type: string
+            groups: [user_full]
+        created:
+            type: string
+            groups: [user_full]
+        gender:
+            type: boolean
+            groups: [user_full]
+        denyAnonymous:
+            serialized_name: 'deny_anonymous'
+            type: boolean
+            groups: [user_full]
+        private:
+            type: boolean
+            groups: [user_full]
+        birthDate:
+            serialized_name: 'birthdate'
+            type: string
+            groups: [user_full]
+        homepage:
+            type: string
+            groups: [user_full]
+        email:
+            type: string
+            groups: [user_full]
+        location:
+            type: string
+            groups: [user_full]
+
+    # TODO automatically convert string date to DateTime
+    #callback_methods:
+    #    post_deserialize: [foo, bar]

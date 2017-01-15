@@ -4,24 +4,19 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\MetaPost;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\PostsPage;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\MetaPost;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidPostDataException;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
-class PostFactory
+class PostFactory extends AbstractFactory
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @var EntityManagerInterface
      */
@@ -62,7 +57,7 @@ class PostFactory
         CommentFactory $commentFactory,
         TagFactory $tagFactory
     ) {
-        $this->logger = $logger;
+        parent::__construct($logger);
         $this->em = $em;
         $this->postRepository = $postRepository;
         $this->userFactory = $userFactory;
@@ -78,7 +73,6 @@ class PostFactory
      *
      * @return bool
      *
-     * @throws ApiException
      * @throws InvalidResponseException
      */
     public function createFromPageDTO(PostsPage $page): bool
@@ -122,7 +116,6 @@ class PostFactory
      *
      * @return Post
      *
-     * @throws ApiException
      * @throws InvalidDataException
      */
     private function createFromDTO(MetaPost $postData): Post
@@ -137,7 +130,7 @@ class PostFactory
         }
 
         try {
-            $user = $this->userFactory->createFromDTO($postData->getPost()->getAuthor());
+            $user = $this->userFactory->findOrCreateFromDTO($postData->getPost()->getAuthor());
         } catch (\Exception $e) {
             $this->logger->error('Error while creating user from DTO');
             throw $e;

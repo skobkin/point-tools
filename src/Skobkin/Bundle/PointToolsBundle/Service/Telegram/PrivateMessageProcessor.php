@@ -11,7 +11,7 @@ use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\UserApi;
+use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
 use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardRemove;
@@ -174,7 +174,7 @@ class PrivateMessageProcessor
             throw new CommandProcessingException('User not found in Point Tools database. Please try again later.');
         }
 
-        if ($this->userApi->isAuthDataValid($login, $password)) {
+        if ($this->userApi->isLoginAndPasswordValid($login, $password)) {
             $account->setUser($user);
 
             return true;
