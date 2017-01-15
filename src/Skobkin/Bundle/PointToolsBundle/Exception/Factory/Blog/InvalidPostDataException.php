@@ -2,8 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog;
 
-use Exception;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\Post;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\Post;
 
 class InvalidPostDataException extends InvalidDataException
 {
@@ -12,7 +11,7 @@ class InvalidPostDataException extends InvalidDataException
      */
     private $post;
 
-    public function __construct($message = '', Post $post, $code = 0, Exception $previous = null)
+    public function __construct($message = '', Post $post, $code = 0, \Exception $previous = null)
     {
         $this->post = $post;
 

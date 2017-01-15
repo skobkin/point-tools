@@ -2,35 +2,20 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DTO\Api;
 
-use JMS\Serializer\Annotation as JMSS;
-
-/**
- * @JMSS\ExclusionPolicy("none")
- * @JMSS\AccessType("public_method")
- */
-class Auth
+class Auth implements ValidableInterface
 {
     /**
-     * @var string
-     *
-     * @JMSS\SerializedName("token")
-     * @JMSS\Type("string")
+     * @var string|null
      */
     private $token;
 
     /**
-     * @var string
-     *
-     * @JMSS\SerializedName("csrf_token")
-     * @JMSS\Type("string")
+     * @var string|null
      */
     private $csRfToken;
 
     /**
-     * @var string
-     *
-     * @JMSS\SerializedName("error")
-     * @JMSS\Type("string")
+     * @var string|null
      */
     private $error;
 
@@ -40,11 +25,9 @@ class Auth
         return $this->token;
     }
 
-    public function setToken(?string $token): self
+    public function setToken(?string $token): void
     {
         $this->token = $token;
-
-        return $this;
     }
 
     public function getCsRfToken(): ?string
@@ -52,11 +35,9 @@ class Auth
         return $this->csRfToken;
     }
 
-    public function setCsRfToken(?string $csRfToken): self
+    public function setCsRfToken(?string $csRfToken): void
     {
         $this->csRfToken = $csRfToken;
-
-        return $this;
     }
 
     public function getError(): ?string
@@ -64,10 +45,17 @@ class Auth
         return $this->error;
     }
 
-    public function setError(?string $error): self
+    public function setError(?string $error): void
     {
         $this->error = $error;
+    }
 
-        return $this;
+    public function isValid(): bool
+    {
+        if (null !== $this->token && null !== $this->csRfToken && null === $this->error) {
+            return true;
+        }
+
+        return false;
     }
 }

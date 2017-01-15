@@ -2,54 +2,24 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Crawler\User as UserDTO;
+use Psr\Log\LoggerInterface;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\User as UserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\ApiException;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\Factory\InvalidUserDataException;
-use Skobkin\Bundle\PointToolsBundle\Service\Exceptions\InvalidResponseException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Factory\InvalidUserDataException;
 
-class UserFactory
+class UserFactory extends AbstractFactory
 {
     /**
      * @var UserRepository
      */
     private $userRepository;
 
-    /**
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(UserRepository $userRepository)
+
+    public function __construct(LoggerInterface $logger, UserRepository $userRepository)
     {
+        parent::__construct($logger);
         $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return User
-     *
-     * @throws InvalidResponseException
-     */
-    public function createFromArray(array $data): User
-    {
-        $this->validateArrayData($data);
-
-        /** @var User $user */
-        if (null === ($user = $this->userRepository->find($data['id']))) {
-            // Creating new user
-            $user = new User($data['id']);
-            $this->userRepository->add($user);
-        }
-
-        // Updating data
-        $user
-            ->setLogin($data['login'])
-            ->setName($data['name'])
-        ;
-
-        return $user;
     }
 
     /**
@@ -57,12 +27,15 @@ class UserFactory
      *
      * @return User
      *
-     * @throws ApiException
      * @throws InvalidUserDataException
      */
-    public function createFromDTO(UserDTO $userData): User
+    public function findOrCreateFromDTO(UserDTO $userData): User
     {
-        $this->validateDTOData($userData);
+        // @todo LOG
+
+        if (!$userData->isValid()) {
+            throw new InvalidUserDataException('Invalid user data', $userData);
+        }
 
         /** @var User $user */
         if (null === ($user = $this->userRepository->find($userData->getId()))) {
@@ -80,27 +53,16 @@ class UserFactory
         return $user;
     }
 
-    /**
-     * @param array $data
-     *
-     * @throws InvalidResponseException
-     */
-    private function validateArrayData(array $data): void
+    public function findOrCreateFromDTOArray(array $usersData): array
     {
-        if (!array_key_exists('id', $data) || !array_key_exists('login', $data) || !array_key_exists('name', $data) || !is_numeric($data['id'])) {
-            throw new InvalidResponseException('Invalid user data');
-        }
-    }
+        // @todo LOG
 
-    /**
-     * @param UserDTO $data
-     *
-     * @throws InvalidResponseException
-     */
-    private function validateDTOData(UserDTO $data): void
-    {
-        if (!$data->getId() || !$data->getLogin()) {
-            throw new InvalidUserDataException('User have no id or login', $data);
+        $result = [];
+
+        foreach ($usersData as $userData) {
+            $result[] = $this->findOrCreateFromDTO($userData);
         }
+
+        return $result;
     }
 }
