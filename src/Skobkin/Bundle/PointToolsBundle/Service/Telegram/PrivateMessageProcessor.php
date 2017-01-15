@@ -75,8 +75,7 @@ class PrivateMessageProcessor
         SubscriptionEventRepository $subscriptionRecordRepository,
         MessageSender $messageSender,
         UserApi $userApi,
-        AccountFactory $accountFactory,
-        int $pointUserId
+        AccountFactory $accountFactory
     ) {
         $this->em = $em;
         $this->userRepo = $userRepository;
@@ -86,6 +85,10 @@ class PrivateMessageProcessor
         $this->messenger = $messageSender;
         $this->userApi = $userApi;
         $this->accountFactory = $accountFactory;
+    }
+
+    public function setPointUserId(int $pointUserId)
+    {
         $this->pointUserId = $pointUserId;
     }
 

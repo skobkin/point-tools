@@ -9,6 +9,7 @@ services:
     # HTTP client for Point API
     app.http.point_client:
         class: GuzzleHttp\Client
+        autowiring_types: GuzzleHttp\ClientInterface
         arguments: [ { base_uri: '%point_base_url%', timeout: 5.0 } ]
         tags:
             - { name: csa_guzzle.client }
@@ -18,24 +19,19 @@ services:
     # Abstract API client with common dependency
     app.point.abstract_api:
         abstract: true
-        arguments:
-            - '@app.http.point_client'
-            - '@jms_serializer'
-            - '@logger'
+        autowire: true
     # User
     app.point.api_user:
         class: Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi
         parent: app.point.abstract_api
-        arguments:
-            - '@app.point.user_factory'
+        autowire: true
         tags:
             - { name: monolog.logger, channel: point_user_api }
     # Post
     app.point.api_post:
         class: Skobkin\Bundle\PointToolsBundle\Service\Api\PostApi
         parent: app.point.abstract_api
-        arguments:
-            - '@app.point.post_factory'
+        autowire: true
         tags:
             - { name: monolog.logger, channel: point_post_api }
 
@@ -43,6 +39,7 @@ services:
     # Point subscription manager
     app.point.subscriptions_manager:
         class: Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager
+        # TODO deal with autowire for EventDispatcherInterface
         arguments:
             - '@event_dispatcher'
             - '@logger'
@@ -56,6 +53,7 @@ services:
     # Subsribers update
     app.point.update_subscribers_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
+        #autowire: []
         calls:
             - [setLogger, ['@logger']]
             - [setEntityManager, ['@doctrine.orm.entity_manager']]
@@ -69,10 +67,19 @@ services:
     # Webhook management
     app.telegram.webhook_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\TelegramWebHookCommand
+        #autowire: []
         calls:
             - [setClient, ['@app.telegram.bot_client']]
             - [setRouter, ['@router']]
             - [setToken, ['%telegram_token%']]
+        tags: [{ name: console.command }]
+    # Send message
+    app.telegram.send_message:
+        class: Skobkin\Bundle\PointToolsBundle\Command\TelegramSendMessageCommand
+        #autowire: []
+        calls:
+            - [setMessenger, ['@app.telegram.message_sender']]
+            - [setLogChatId, ['%telegram_log_chat_id%']]
         tags: [{ name: console.command }]
 
 
@@ -123,46 +130,37 @@ services:
     # Abstract factory
     app.point.abstract_factory:
         abstract: true
-        arguments: [ '@logger' ]
+        autowire: true
     # User
     app.point.user_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory
         parent: app.point.abstract_factory
-        arguments: [ '@app.point.user_repository' ]
+        autowire: true
     # Comment
     app.point.comment_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory
         parent: app.point.abstract_factory
-        arguments:
-            - '@app.point.comment_repository'
-            - '@app.point.post_repository'
-            - '@app.point.user_factory'
+        autowire: true
     # Tag
     app.point.tag_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\TagFactory
         parent: app.point.abstract_factory
-        arguments: [ '@app.point.tag_repository' ]
+        autowire: true
     # File
     app.point.file_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\FileFactory
         parent: app.point.abstract_factory
-        arguments: [ '@app.point.file_repository' ]
+        autowire: true
     # Post
     app.point.post_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory
         parent: app.point.abstract_factory
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@app.point.post_repository'
-            - '@app.point.user_factory'
-            - '@app.point.file_factory'
-            - '@app.point.comment_factory'
-            - '@app.point.tag_factory'
+        autowire: true
     # Telegram account
     app.telegram.telegram_account_factory:
         class: Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory
         parent: app.point.abstract_factory
-        arguments: ['@app.point.telegram_account_repository']
+        autowire: true
 
 
     # Custom Markdown parser
@@ -173,22 +171,23 @@ services:
             - { name: markdown.parser }
 
 
-    # Event listener
+    # Event listeners
+    # User name changed in Doctrine
     app.event_listener.users_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersUpdatedSubscriber
         arguments: ['@event_dispatcher']
         tags:
             - { name: doctrine.event_subscriber, connection: default }
-
+    # User renaming
     app.event_listener.users_renamed_notifier:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedListener
-        arguments: ['@app.telegram.notifier']
+        autowire: true
         tags:
             - { name: kernel.event_listener, event: app.users.renamed }
-
+    # User subscribers updated
     app.event_listener.user_subscribers_updated:
         class: Skobkin\Bundle\PointToolsBundle\EventListener\UserSubscribersUpdatedListener
-        arguments: ['@app.telegram.notifier']
+        autowire: true
         tags:
             - { name: kernel.event_listener, event: app.user.subscribers_updated }
 
@@ -209,8 +208,8 @@ services:
     # Bot API client
     app.telegram.bot_client:
         class: unreal4u\TelegramAPI\TgLog
+        autowiring_types: unreal4u\TelegramAPI\TgLog
         arguments: ['%telegram_token%', '@logger', '@app.http.telegram_client']
-
     # Logger API client
     app.telegram.logger_client:
         class: unreal4u\TelegramAPI\TgLog
@@ -224,40 +223,28 @@ services:
             - '%telegram_log_chat_id%'
             - 'error'
 
-    # Message sender
-    app.telegram.message_sender:
-        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
-        arguments: ['@app.telegram.bot_client', '@twig']
-
     # User notifier
     app.telegram.notifier:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\Notifier
-        arguments: ['@app.point.telegram_account_repository', '@app.telegram.message_sender']
+        autowire: true
 
+    # Message sender
+    app.telegram.message_sender:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender
+        autowire: true
     # Common incoming message processor
     app.telegram.update_dispatcher:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher
-        arguments:
-            - '@app.telegram.private_message_processor'
-            - '@app.telegram.inline_query_processor'
-
+        autowire: true
     # InlineQuery processor
     app.telegram.inline_query_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\InlineQueryProcessor
         lazy: true
-        arguments: ['@app.point.user_repository', '@app.telegram.bot_client']
-
+        autowire: true
     # Private message processor
     app.telegram.private_message_processor:
         class: Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor
         lazy: true
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@app.point.user_repository'
-            - '@app.point.telegram_account_repository'
-            - '@app.point.subscription_repository'
-            - '@app.point.subscription_record_repository'
-            - '@app.telegram.message_sender'
-            - '@app.point.api_user'
-            - '@app.telegram.telegram_account_factory'
-            - '%point_id%'
+        autowire: true
+        calls:
+            - [setPointUserId, ['%point_id%']]
