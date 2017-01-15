@@ -7,4 +7,4 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage:
             max_depth: 3
         hasNext:
             serialized_name: 'has_next'
-            type: bool
+            type: boolean
