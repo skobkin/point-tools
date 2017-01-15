@@ -76,7 +76,7 @@ class PostFactory extends AbstractFactory
 
         $hasNew = false;
 
-        foreach ($page->getPosts() as $postData) {
+        foreach ((array) $page->getPosts() as $postData) {
             try {
                 if (null === $this->postRepository->find($postData->getPost()->getId())) {
                     $hasNew = true;

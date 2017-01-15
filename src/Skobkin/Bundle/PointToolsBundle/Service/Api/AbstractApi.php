@@ -52,53 +52,11 @@ class AbstractApi
     }
 
     /**
-     * @param string $path Request path
-     * @param array $parameters Key => Value array of query parameters
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     */
-    public function sendGetRequest(string $path, array $parameters = []): ResponseInterface
-    {
-        $this->logger->debug('Sending GET request', ['path' => $path, 'parameters' => $parameters]);
-
-        try {
-            return $this->client->request('GET', $path, ['query' => $parameters]);
-        } catch (TransferException $e) {
-            throw new NetworkException('Request error', $e->getCode(), $e);
-        }
-    }
-
-    /**
-     * @param string $path Request path
-     * @param array $parameters Key => Value array of request data
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     */
-    public function sendPostRequest(string $path, array $parameters = []): ResponseInterface
-    {
-        $this->logger->debug('Sending POST request', ['path' => $path, 'parameters' => $parameters]);
-
-        try {
-            return $this->client->request('POST', $path, ['form_params' => $parameters]);
-        } catch (TransferException $e) {
-            throw new NetworkException('Request error', $e->getCode(), $e);
-        }
-    }
-
-    /**
      * Make GET request and return response body
      */
     public function getGetResponseBody($path, array $parameters = []): StreamInterface
     {
-        $response = $this->sendGetRequest($path, $parameters);
-
-        $this->checkResponse($response);
-
-        return $response->getBody();
+        return $this->sendGetRequest($path, $parameters)->getBody();
     }
 
     /**
@@ -106,11 +64,7 @@ class AbstractApi
      */
     public function getPostResponseBody(string $path, array $parameters = []): StreamInterface
     {
-        $response = $this->sendPostRequest($path, $parameters);
-
-        $this->checkResponse($response);
-
-        return $response->getBody();
+        return $this->sendPostRequest($path, $parameters)->getBody();
     }
 
     /**
@@ -144,6 +98,49 @@ class AbstractApi
     }
 
     /**
+     * @param string $path Request path
+     * @param array $parameters Key => Value array of query parameters
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException
+     */
+    private function sendGetRequest(string $path, array $parameters = []): ResponseInterface
+    {
+        $this->logger->debug('Sending GET request', ['path' => $path, 'parameters' => $parameters]);
+
+        return $this->sendRequest('GET', $path, ['query' => $parameters]);
+    }
+
+    /**
+     * @param string $path Request path
+     * @param array $parameters Key => Value array of request data
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException
+     */
+    private function sendPostRequest(string $path, array $parameters = []): ResponseInterface
+    {
+        $this->logger->debug('Sending POST request', ['path' => $path, 'parameters' => $parameters]);
+
+        return $this->sendRequest('POST', $path, ['form_params' => $parameters]);
+    }
+
+    private function sendRequest(string $method, string $path, array $parameters): ResponseInterface
+    {
+        try {
+            $response = $this->client->request($method, $path, ['query' => $parameters]);
+
+            $this->checkResponse($response);
+
+            return $response;
+        } catch (TransferException $e) {
+            throw new NetworkException('Request error', $e->getCode(), $e);
+        }
+    }
+
+    /**
      * @throws ForbiddenException
      * @throws NotFoundException
      * @throws ServerProblemException
@@ -157,20 +154,16 @@ class AbstractApi
         switch ($code) {
             case SymfonyResponse::HTTP_UNAUTHORIZED:
                 throw new UnauthorizedException($reason, $code);
-                break;
             case SymfonyResponse::HTTP_FORBIDDEN:
                 throw new ForbiddenException($reason, $code);
-                break;
             case SymfonyResponse::HTTP_NOT_FOUND:
                 throw new NotFoundException($reason, $code);
-                break;
             case SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR:
             case SymfonyResponse::HTTP_NOT_IMPLEMENTED:
             case SymfonyResponse::HTTP_BAD_GATEWAY:
             case SymfonyResponse::HTTP_SERVICE_UNAVAILABLE:
             case SymfonyResponse::HTTP_GATEWAY_TIMEOUT:
                 throw new ServerProblemException($reason, $code);
-                break;
         }
     }
 }
