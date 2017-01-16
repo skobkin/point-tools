@@ -48,7 +48,7 @@ class PointUrlExtension extends \Twig_Extension
             new \Twig_SimpleFilter('point_avatar_small', [$this, 'avatarSmallFunction']),
             new \Twig_SimpleFilter('point_avatar_medium', [$this, 'avatarMediumFunction']),
             new \Twig_SimpleFilter('point_avatar_large', [$this, 'avatarLargeFunction']),
-            new \Twig_SimpleFilter('point_user_url', [$this, 'pointUserUrl']),
+            new \Twig_SimpleFilter('point_user_url', [$this, 'userUrl']),
             new \Twig_SimpleFilter('point_user_blog_url', [$this, 'userBlogUrl']),
             new \Twig_SimpleFilter('point_post_url', [$this, 'postUrl']),
         ];
