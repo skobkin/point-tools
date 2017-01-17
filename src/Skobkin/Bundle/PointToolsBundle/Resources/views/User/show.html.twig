@@ -9,6 +9,13 @@
         <a href="{{ user.login|point_user_blog_url }}" target="_blank">{{ user.login }}</a>
     </h1>
 
+    {% if user.removed %}
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        {{ 'User was removed from Point.im. It could be caused by Terms of Service violation.'|trans }}
+    </div>
+    {% endif %}
+
     <div class="user-subscribers">
         {% if subscribers|length > 0 %}
             <div class="panel-group" id="accordion-subscribers">
