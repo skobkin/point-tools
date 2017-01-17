@@ -14,15 +14,15 @@ class UserSubscribersUpdatedEventTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $user = new User(99999, new \DateTime(), 'testuser', 'Test User 1');
+        $user = new User(99999, 'testuser', 'Test User 1');
 
         $subscribed = [
-            new User(99998, new \DateTime(), 'testuser2', 'Test User 2'),
+            new User(99998, 'testuser2', 'Test User 2'),
         ];
 
         $unsubscribed = [
-            new User(99997, new \DateTime(), 'testuser3', 'Test User 3'),
-            new User(99996, new \DateTime(), 'testuser4', 'Test User 4'),
+            new User(99997, 'testuser3', 'Test User 3'),
+            new User(99996, 'testuser4', 'Test User 4'),
         ];
 
         return new UserSubscribersUpdatedEvent($user, $subscribed, $unsubscribed);

@@ -15,7 +15,7 @@ class UsersRenamedEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRenames()
     {
-        $user = new User(99999, new \DateTime(), 'testuser', 'Test User 1');
+        $user = new User(99999, 'testuser', 'Test User 1');
         $renameRecords = [
             new UserRenameEvent($user, 'testuser_old1'),
             new UserRenameEvent($user, 'testuser_old2'),

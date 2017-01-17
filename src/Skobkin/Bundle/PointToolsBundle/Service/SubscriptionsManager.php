@@ -52,7 +52,6 @@ class SubscriptionsManager
      */
     public function updateUserSubscribers(User $user, $newSubscribersList = []): void
     {
-        // @todo optimize
         $tmpOldSubscribers = $user->getSubscribers();
 
         $oldSubscribersList = [];

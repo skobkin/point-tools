@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\UserNotFoundException;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
 use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
@@ -186,11 +185,6 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
 
             try {
                 $userCurrentSubscribers = $this->api->getUserSubscribersById($user->getId());
-            } catch (UserNotFoundException $e) {
-                $this->logger->warning('User not found. Marking as removed', ['login' => $user->getLogin(), 'user_id' => $user->getId()]);
-                $user->markAsRemoved();
-
-                continue;
             } catch (\Exception $e) {
                 $this->logger->error(
                     'Error while getting subscribers. Skipping.',
@@ -228,16 +222,14 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
 
     private function getUsersForUpdate(int $appUserId): array
     {
-        $usersForUpdate = [];
-
         if ($this->input->getOption('all-users')) {
-            $usersForUpdate = $this->userRepo->findBy(['removed' => false]);
+            $usersForUpdate = $this->userRepo->findAll();
         } else {
             /** @var User $serviceUser */
-            $serviceUser = $this->userRepo->findActiveUserWithSubscribers($appUserId);
+            $serviceUser = $this->userRepo->find($appUserId);
 
             if (!$serviceUser) {
-                $this->logger->critical('Service user not found');
+                $this->logger->info('Service user not found');
                 // @todo Retrieving user
 
                 throw new \RuntimeException('Service user not found in the database');
@@ -247,10 +239,6 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
 
             try {
                 $usersForUpdate = $this->api->getUserSubscribersById($appUserId);
-            } catch (UserNotFoundException $e) {
-                $this->logger->critical('Service user deleted or API response is invalid');
-
-                throw $e;
             } catch (\Exception $e) {
                 $this->logger->warning(
                     'Error while getting service subscribers. Fallback to local list.',
@@ -262,6 +250,8 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                         'line' => $e->getLine(),
                     ]
                 );
+
+                $usersForUpdate = [];
 
                 /** @var Subscription $subscription */
                 foreach ((array) $serviceUser->getSubscribers() as $subscription) {
