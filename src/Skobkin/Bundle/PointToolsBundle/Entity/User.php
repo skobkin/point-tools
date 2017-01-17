@@ -68,17 +68,25 @@ class User
 
     /**
      * @var ArrayCollection|SubscriptionEvent[]
+     *
      * @ORM\OneToMany(targetEntity="SubscriptionEvent", mappedBy="author", fetch="EXTRA_LAZY")
      */
     private $newSubscriberEvents;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_removed", type="boolean", options={"default": false})
+     */
+    private $removed = false;
 
-    public function __construct(int $id, string $login = null, string $name = null)
+
+    public function __construct(int $id, \DateTime $createdAt = null, string $login = null, string $name = null)
     {
         $this->id = $id;
         $this->login = $login;
         $this->name = $name;
-        $this->createdAt = new \DateTime();
+        $this->createdAt = $createdAt ?: new \DateTime();
 
         $this->subscribers = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
@@ -98,28 +106,23 @@ class User
         return $this->id;
     }
 
-    public function setLogin(string $login): self
-    {
-        $this->login = $login;
-
-        return $this;
-    }
 
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    public function setName(?string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function updateLoginAndName(string $login, string $name): self
+    {
+        $this->login = $login;
+        $this->name = $name;
+
+        return $this;
     }
 
     public function addSubscriber(Subscription $subscribers): self
@@ -170,15 +173,18 @@ class User
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
+    }
+
+    public function isRemoved(): bool
+    {
+        return $this->isRemoved();
+    }
+
+    public function markAsRemoved(): void
+    {
+        $this->removed = true;
     }
 }

@@ -39,16 +39,14 @@ class UserFactory extends AbstractFactory
 
         /** @var User $user */
         if (null === ($user = $this->userRepository->find($userData->getId()))) {
-            // Creating new user
-            $user = new User($userData->getId());
+            $user = new User(
+                $userData->getId(),
+                \DateTime::createFromFormat('Y-m-d_H:i:s', $userData->getCreated()) ?: new \DateTime()
+            );
             $this->userRepository->add($user);
         }
 
-        // Updating data
-        $user
-            ->setLogin($userData->getLogin())
-            ->setName($userData->getName())
-        ;
+        $user->updateLoginAndName($userData->getLogin(), $userData->getName());
 
         return $user;
     }

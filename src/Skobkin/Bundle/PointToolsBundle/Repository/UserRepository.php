@@ -13,6 +13,19 @@ class UserRepository extends EntityRepository
         $this->getEntityManager()->persist($entity);
     }
 
+    public function findActiveUserWithSubscribers(int $id): ?User
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        return $qb
+            ->select(['u', ''])
+            ->innerJoin('u.subscribers', 's')
+            ->innerJoin('s.subscriber', 'us')
+            ->where('u.removed = FALSE')
+            ->getQuery()->getOneOrNullResult()
+        ;
+    }
+
     /**
      * Case-insensitive user search
      */

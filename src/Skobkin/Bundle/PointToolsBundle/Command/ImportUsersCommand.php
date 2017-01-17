@@ -75,15 +75,9 @@ class ImportUsersCommand extends ContainerAwareCommand
                 continue;
             }
 
-            $createdAt = \DateTime::createFromFormat('Y-m-d_H:i:s', $row[3]);
+            $createdAt = \DateTime::createFromFormat('Y-m-d_H:i:s', $row[3]) ?: new \DateTime();
 
-            if (!$createdAt) {
-                $createdAt = new \DateTime();
-            }
-
-            $user = (new User($row[0], $row[1], $row[2]))
-                ->setCreatedAt($createdAt)
-            ;
+            $user = new User($row[0], $createdAt, $row[1], $row[2]);
 
             if (!$input->getOption('check-only')) {
                 $em->persist($user);
