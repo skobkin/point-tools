@@ -180,7 +180,7 @@ class User
 
     public function isRemoved(): bool
     {
-        return $this->isRemoved();
+        return $this->removed;
     }
 
     public function markAsRemoved(): void
