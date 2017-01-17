@@ -27,9 +27,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $userId = 99999;
 
         foreach ($this->users as $userData) {
-            $user = (new User($userId--, $userData['login'], $userData['name']))
-                ->setCreatedAt(new \DateTime())
-            ;
+            $user = new User($userId--, new \DateTime(), $userData['login'], $userData['name']);
 
             $om->persist($user);
 

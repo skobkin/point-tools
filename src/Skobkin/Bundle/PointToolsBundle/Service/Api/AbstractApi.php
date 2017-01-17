@@ -52,22 +52,6 @@ class AbstractApi
     }
 
     /**
-     * Make GET request and return response body
-     */
-    public function getGetResponseBody($path, array $parameters = []): StreamInterface
-    {
-        return $this->sendGetRequest($path, $parameters)->getBody();
-    }
-
-    /**
-     * Make POST request and return response body
-     */
-    public function getPostResponseBody(string $path, array $parameters = []): StreamInterface
-    {
-        return $this->sendPostRequest($path, $parameters)->getBody();
-    }
-
-    /**
      * Make GET request and return DTO objects
      *
      * @return array|object
@@ -95,6 +79,22 @@ class AbstractApi
             'json',
             $context
         );
+    }
+
+    /**
+     * Make GET request and return response body
+     */
+    public function getGetResponseBody($path, array $parameters = []): StreamInterface
+    {
+        return $this->sendGetRequest($path, $parameters)->getBody();
+    }
+
+    /**
+     * Make POST request and return response body
+     */
+    public function getPostResponseBody(string $path, array $parameters = []): StreamInterface
+    {
+        return $this->sendPostRequest($path, $parameters)->getBody();
     }
 
     /**
@@ -150,6 +150,12 @@ class AbstractApi
     {
         $code = $response->getStatusCode();
         $reason = $response->getReasonPhrase();
+
+        // @todo remove after fix
+        // Temporary fix until @arts fixes this bug
+        if ('{"error": "UserNotFound"}' === (string) $response->getBody()) {
+            throw new NotFoundException($reason, $code);
+        }
 
         switch ($code) {
             case SymfonyResponse::HTTP_UNAUTHORIZED:
