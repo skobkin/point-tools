@@ -234,7 +234,13 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             $usersForUpdate = $this->userRepo->findBy(['removed' => false]);
         } else {
             /** @var User $serviceUser */
-            $serviceUser = $this->userRepo->findActiveUserWithSubscribers($appUserId);
+            try {
+                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($appUserId);
+            } catch (\Exception $e) {
+                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $appUserId]);
+
+                throw $e;
+            }
 
             if (!$serviceUser) {
                 $this->logger->critical('Service user not found or marked as removed');

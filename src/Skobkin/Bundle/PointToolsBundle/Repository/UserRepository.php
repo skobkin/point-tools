@@ -22,9 +22,9 @@ class UserRepository extends EntityRepository
             ->select(['u', 's', 'us'])
             ->innerJoin('u.subscribers', 's')
             ->innerJoin('s.subscriber', 'us')
-            ->where('u.id = :id')
-            ->where('u.removed = FALSE')
-            ->setParameter('id', $id)
+            ->where('u.id = :user_id')
+            ->andWhere('u.removed = FALSE')
+            ->setParameter('user_id', $id)
             ->getQuery()->getOneOrNullResult()
         ;
     }
