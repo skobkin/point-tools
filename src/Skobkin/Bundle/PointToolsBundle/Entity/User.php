@@ -187,4 +187,9 @@ class User
     {
         $this->removed = true;
     }
+
+    public function restore(): void
+    {
+        $this->removed = false;
+    }
 }

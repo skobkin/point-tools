@@ -64,6 +64,13 @@ services:
         tags:
             - { name: console.command }
             - { name: monolog.logger, channel: subscribers_update }
+    # Restore users removed by error
+    app.point.restore_users:
+        class: Skobkin\Bundle\PointToolsBundle\Command\RestoreRemovedUsersCommand
+        calls:
+            - [setDependencies, ['@logger', '@doctrine.orm.entity_manager', '@app.point.user_repository', '@app.point.api_user', '%point_api_delay%']]
+        tags:
+            - { name: console.command }
     # Webhook management
     app.telegram.webhook_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\TelegramWebHookCommand

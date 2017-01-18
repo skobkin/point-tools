@@ -136,10 +136,40 @@ class AbstractApi
 
             return $response;
         } catch (TransferException $e) {
+            $this->processTransferException($e);
+            
             throw new NetworkException('Request error', $e->getCode(), $e);
         }
     }
 
+    /**
+     * @todo refactor with $this->checkResponse()
+     *
+     * @param \Exception $e
+     *
+     * @throws ForbiddenException
+     * @throws NotFoundException
+     * @throws ServerProblemException
+     * @throws UnauthorizedException
+     */
+    private function processTransferException(\Exception $e): void
+    {
+        switch ($e->getCode()) {
+            case SymfonyResponse::HTTP_UNAUTHORIZED:
+                throw new UnauthorizedException('Unauthorized', SymfonyResponse::HTTP_UNAUTHORIZED, $e);
+            case SymfonyResponse::HTTP_NOT_FOUND:
+                throw new NotFoundException('Resource not found', SymfonyResponse::HTTP_NOT_FOUND, $e);
+            case SymfonyResponse::HTTP_FORBIDDEN:
+                throw new ForbiddenException('Forbidden', SymfonyResponse::HTTP_FORBIDDEN, $e);
+            case SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR:
+            case SymfonyResponse::HTTP_NOT_IMPLEMENTED:
+            case SymfonyResponse::HTTP_BAD_GATEWAY:
+            case SymfonyResponse::HTTP_SERVICE_UNAVAILABLE:
+            case SymfonyResponse::HTTP_GATEWAY_TIMEOUT:
+                throw new ServerProblemException('Server error', SymfonyResponse::HTTP_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+    
     /**
      * @throws ForbiddenException
      * @throws NotFoundException
