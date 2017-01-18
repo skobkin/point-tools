@@ -66,6 +66,8 @@ You can use following jobs as an example:
 0 0 * * * /usr/bin/php /path/to/point-tools/app/console point:update:subscriptions --all-users --env=prod
 ```
 
+See [`app/crontab`](https://bitbucket.org/skobkin/point-tools/src/master/app/crontab) for more advanced usage.
+
 ## Setting Telegram webhook (to enable bot)
 
 ```bash
