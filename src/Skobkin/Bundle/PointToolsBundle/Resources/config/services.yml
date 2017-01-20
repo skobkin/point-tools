@@ -55,12 +55,8 @@ services:
         class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
         #autowire: []
         calls:
-            - [setLogger, ['@logger']]
-            - [setEntityManager, ['@doctrine.orm.entity_manager']]
-            - [setUserRepository, ['@app.point.user_repository']]
-            - [setApiClient, ['@app.point.api_user']]
+            - [setDeps, ['@logger', '@doctrine.orm.entity_manager', '@app.point.user_repository', '@app.point.api_user', '@app.point.subscriptions_manager']]
             - [setApiDelay, ['%point_api_delay%']]
-            - [setSubscriptionManager, ['@app.point.subscriptions_manager']]
         tags:
             - { name: console.command }
             - { name: monolog.logger, channel: subscribers_update }

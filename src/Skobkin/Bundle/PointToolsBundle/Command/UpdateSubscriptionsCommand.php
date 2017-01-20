@@ -62,34 +62,18 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     private $progress;
 
 
-    public function setLogger(LoggerInterface $logger): void
+    public function setDeps(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, SubscriptionsManager $subscriptionsManager): void
     {
         $this->logger = $logger;
-    }
-
-    public function setEntityManager(EntityManagerInterface $em): void
-    {
         $this->em = $em;
-    }
-
-    public function setUserRepository(UserRepository $repository): void
-    {
-        $this->userRepo = $repository;
-    }
-
-    public function setApiClient(UserApi $userApi): void
-    {
+        $this->userRepo = $userRepo;
         $this->api = $userApi;
+        $this->subscriptionManager = $subscriptionsManager;
     }
 
     public function setApiDelay(int $microSecs): void
     {
         $this->apiDelay = $microSecs;
-    }
-
-    public function setSubscriptionManager(SubscriptionsManager $subscriptionsManager): void
-    {
-        $this->subscriptionManager = $subscriptionsManager;
     }
 
     protected function configure()
@@ -109,7 +93,6 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
                 InputOption::VALUE_NONE,
                 'If set, command will not perform write operations in the database'
             )
-            // @todo add option for checking only selected user
         ;
     }
 
