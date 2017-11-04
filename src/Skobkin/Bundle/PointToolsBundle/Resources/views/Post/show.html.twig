@@ -1,63 +1,7 @@
-{% extends "::base.html.twig" %}
-
-{% block css %}
-    {{ parent() }}
-    <link href="{{ asset('css/lib/magnific-popup.css') }}" rel="stylesheet">
-{% endblock %}
-{% block footer_js %}
-    {{ parent() }}
-    <script src="{{ asset('js/lib/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('js/popups.js') }}"></script>
-{% endblock %}
+{% extends 'SkobkinPointToolsBundle:Post:base_feed.html.twig' %}
 
 {% block header_title %}#{{ post.id }} @ Point Tools{% endblock %}
 
 {% block content %}
-    <div class="container post-block">
-        <div class="row">
-            <div class="col-xs-1">
-                <img src="{{ point_avatar_large(post.author.login) }}" alt="Avatar">
-            </div>
-            <div class="col-xs-11">
-                <div><a href="{{ path('user_show', {'login': post.author.login}) }}">@{{ post.author.login }}</a></div>
-                <div class="post-date">{{ post.createdAt|date('j M Y G:i') }}</div>
-                <div>
-                    {% for pt in post.postTags %}
-                        <a href="#" class="tag">{{ pt.text }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="row post-text">
-            <div class="col-xs-12">
-                {{ post.text|markdown('app.point.markdown_parser') }}
-            </div>
-        </div>
-        <div class="row post-files">
-            <div class="col-xs-2">
-                {% for file in post.files %}
-                    <div class="post-attachment">
-                        <a href="{{ file.remoteUrl }}" class="post-image"><img src="{{ file.remoteUrl }}" class="img-thumbnail" /></a>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12"><a href="{{ post.id|point_post_url }}" class="post">#{{ post.id }}</a></div>
-        </div>
-
-        {% if post.comments|length > 0 %}
-        <div class="row comments">
-            {#
-            {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
-                'comments': post.firstLevelComments
-            } only %}
-            #}
-
-            {% include '@SkobkinPointTools/Post/comments_list.html.twig' with {
-                'comments': post.comments
-            } %}
-        </div>
-        {% endif %}
-    </div>
+    {% include 'SkobkinPointToolsBundle:Post:post.html.twig' with {'post': post} %}
 {% endblock %}

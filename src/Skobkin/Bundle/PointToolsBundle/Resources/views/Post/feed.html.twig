@@ -1,0 +1,26 @@
+{% extends 'SkobkinPointToolsBundle:Post:base_feed.html.twig' %}
+
+{% block header_title %}{{ feed_title }} @ Point Tools{% endblock %}
+
+{% block content %}
+    {% if is_feed is defined %}
+        <div class="navigation">
+            {{ knp_pagination_render(posts) }}
+        </div>
+    {% endif %}
+
+    {% for post in posts %}
+        <div class="feed-post panel panel-default">
+            {% include 'SkobkinPointToolsBundle:Post:post.html.twig' with {
+            'post': post,
+            'is_feed': is_feed
+            } %}
+        </div>
+    {% endfor %}
+
+    {% if is_feed is defined %}
+        <div class="navigation">
+            {{ knp_pagination_render(posts) }}
+        </div>
+    {% endif %}
+{% endblock %}

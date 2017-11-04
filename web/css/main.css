@@ -106,7 +106,8 @@ ul.users.mosaic li:nth-child(odd) {
     color: red;
 }
 
-a.tag {
+a.tag,
+span.tag {
     position: relative;
     display: inline-block;
     margin: .8em .8em 0 0;
@@ -115,6 +116,12 @@ a.tag {
     /* font-size: .85em; */
     color: #35587c;
     text-decoration: none;
+}
+
+/* Posts */
+
+.feed-post {
+    padding: 10px 0;
 }
 
 .post-block .post-date {

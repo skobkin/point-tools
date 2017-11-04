@@ -1,0 +1,11 @@
+{% extends "::base.html.twig" %}
+
+{% block css %}
+    {{ parent() }}
+  <link href="{{ asset('css/lib/magnific-popup.css') }}" rel="stylesheet">
+{% endblock %}
+{% block footer_js %}
+    {{ parent() }}
+  <script src="{{ asset('js/lib/jquery.magnific-popup.min.js') }}"></script>
+  <script src="{{ asset('js/popups.js') }}"></script>
+{% endblock %}

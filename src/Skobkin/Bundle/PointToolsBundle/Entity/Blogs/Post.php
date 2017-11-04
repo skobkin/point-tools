@@ -89,7 +89,7 @@ class Post
     private $files;
 
     /**
-     * @var Tag[]|ArrayCollection
+     * @var PostTag[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag", mappedBy="post", fetch="EXTRA_LAZY", cascade={"persist"}, orphanRemoval=true)
      */
