@@ -6,15 +6,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="users", schema="users")
+ * @ORM\Table(name="users", schema="users", indexes={
+ *      @ORM\Index(name="idx_user_public", columns={"public"}),
+ *      @ORM\Index(name="idx_user_removed", columns={"is_removed"})
+ * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class User
 {
-    const AVATAR_SIZE_SMALL = '24';
-    const AVATAR_SIZE_MEDIUM = '40';
-    const AVATAR_SIZE_LARGE = '80';
+    public const AVATAR_SIZE_SMALL = '24';
+    public const AVATAR_SIZE_MEDIUM = '40';
+    public const AVATAR_SIZE_LARGE = '80';
 
     /**
      * @var int
@@ -51,6 +54,20 @@ class User
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="public", type="boolean", nullable=false, options={"default": false})
+     */
+    private $public = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="whitelist_only", type="boolean", nullable=false, options={"default": false})
+     */
+    private $whitelistOnly = false;
 
     /**
      * @var ArrayCollection|Subscription[]
@@ -140,7 +157,7 @@ class User
     /**
      * @return Subscription[]|ArrayCollection
      */
-    public function getSubscribers(): iterable
+    public function getSubscribers(): ArrayCollection
     {
         return $this->subscribers;
     }
@@ -148,7 +165,7 @@ class User
     /**
      * @return Subscription[]|ArrayCollection
      */
-    public function getSubscriptions(): iterable
+    public function getSubscriptions(): ArrayCollection
     {
         return $this->subscriptions;
     }
@@ -163,7 +180,7 @@ class User
     /**
      * @return SubscriptionEvent[]|ArrayCollection
      */
-    public function getNewSubscriberEvents(): iterable
+    public function getNewSubscriberEvents(): ArrayCollection
     {
         return $this->newSubscriberEvents;
     }
@@ -176,6 +193,22 @@ class User
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
+    }
+
+    public function updatePrivacy(?bool $public, ?bool $whitelistOnly): void
+    {
+        $this->public = $public;
+        $this->whitelistOnly = $whitelistOnly;
+    }
+
+    public function isPublic(): ?bool
+    {
+        return $this->public;
+    }
+
+    public function isWhitelistOnly(): ?bool
+    {
+        return $this->whitelistOnly;
     }
 
     public function isRemoved(): bool

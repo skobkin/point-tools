@@ -4,16 +4,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
-use JMS\Serializer\DeserializationContext;
-use JMS\Serializer\Serializer;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use JMS\Serializer\{DeserializationContext, Serializer};
+use Psr\Http\Message\{ResponseInterface, StreamInterface};
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\ForbiddenException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\NetworkException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\NotFoundException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\ServerProblemException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\UnauthorizedException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Api\{ForbiddenException, NetworkException, NotFoundException, ServerProblemException, UnauthorizedException};
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AbstractApi
@@ -184,7 +178,9 @@ class AbstractApi
         // @todo remove after fix
         // Temporary fix until @arts fixes this bug
         if ('{"error": "UserNotFound"}' === (string) $response->getBody()) {
-            throw new NotFoundException($reason, $code);
+            throw new NotFoundException('Not found', SymfonyResponse::HTTP_NOT_FOUND);
+        } elseif ('{"message": "Forbidden", "code": 403, "error": "Forbidden"}' === (string) $response->getBody()) {
+            throw new ForbiddenException('Forbidden', SymfonyResponse::HTTP_FORBIDDEN);
         }
 
         switch ($code) {

@@ -17,7 +17,7 @@ class UserRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('u');
 
-        // May be optimize hydration procedure
+        // @todo May be optimize hydration procedure
         return $qb
             ->select(['u', 's', 'us'])
             ->innerJoin('u.subscribers', 's')

@@ -2,7 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Exception\Api;
 
-class UserNotFoundException extends ApiException
+class UserNotFoundException extends NotFoundException
 {
     /**
      * @var int
@@ -22,6 +22,7 @@ class UserNotFoundException extends ApiException
     public function __construct($message = 'User not found', $code = 0, \Exception $previous = null, $userId = null, $login = null)
     {
         parent::__construct($message, $code, $previous);
+
         $this->userId = $userId;
         $this->login = $login;
     }

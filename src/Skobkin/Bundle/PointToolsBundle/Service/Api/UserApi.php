@@ -3,16 +3,11 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
-use JMS\Serializer\DeserializationContext;
-use JMS\Serializer\Serializer;
+use JMS\Serializer\{DeserializationContext, Serializer};
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Auth;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\User as UserDTO;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\{Auth, User as UserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\ForbiddenException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\NotFoundException;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\UserNotFoundException;
+use Skobkin\Bundle\PointToolsBundle\Exception\Api\{ForbiddenException, InvalidResponseException, NotFoundException, UserNotFoundException};
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
 
 /**
@@ -177,6 +172,7 @@ class UserApi extends AbstractApi
         } catch (NotFoundException $e) {
             throw new UserNotFoundException('User not found', 0, $e, $id);
         }
+        // Not catching ForbiddenException right now
 
         return $this->userFactory->findOrCreateFromDTO($userData);
     }

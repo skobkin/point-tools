@@ -2,9 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
-use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent;
+use Skobkin\Bundle\PointToolsBundle\Entity\{Telegram\Account, User, UserRenameEvent};
 use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
 
 /**
