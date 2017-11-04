@@ -50,6 +50,7 @@ services:
 
 
     # Console commands
+    # @todo https://github.com/symfony/symfony/blob/3.4/UPGRADE-3.4.md#httpkernel
     # Subsribers update
     app.point.update_subscribers_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
