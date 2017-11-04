@@ -42,6 +42,7 @@ class PostRepository extends EntityRepository
             ->leftJoin('p.files', 'pf')
             ->where('p.private = FALSE')
             ->andWhere('pa.public = TRUE')
+            ->orderBy('p.createdAt', 'desc')
         ;
     }
 }
