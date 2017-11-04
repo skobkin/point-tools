@@ -31,7 +31,7 @@
     <div class="col-xs-12"><a href="{{ post.id|point_post_url }}" class="post">#{{ post.id }}</a></div>
   </div>
 
-    {% if is_feed is defined and post.comments|length > 0 %}
+    {% if is_feed is not defined and post.comments|length > 0 %}
       <div class="row comments">
           {#
           {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
