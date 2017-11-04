@@ -3,13 +3,11 @@
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Skobkin\Bundle\PointToolsBundle\DTO\DailyEvents;
-use Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO;
+use Skobkin\Bundle\PointToolsBundle\DTO\{DailyEvents, TopUserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ob\HighchartsBundle\Highcharts\Highchart;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 class UserController extends Controller
 {

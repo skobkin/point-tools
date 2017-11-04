@@ -17,6 +17,7 @@ class PostRepository extends EntityRepository
     {
         /** @var QueryBuilder $qb */
         $qb = $this->createQueryBuilder('p');
+
         return $qb
             ->select(['p', 'c', 'a'])
             ->leftJoin('p.comments', 'c')
@@ -26,6 +27,21 @@ class PostRepository extends EntityRepository
             ->orderBy('c.number', 'asc')
             ->setParameter('post_id', $postId)
             ->getQuery()->getOneOrNullResult()
+        ;
+    }
+
+    public function createPublicFeedPostsQuery(): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        return $qb
+            // @todo optimize hydration
+            ->select(['p', 'pa', 'pt', 'pf'])
+            ->innerJoin('p.author', 'pa')
+            ->leftJoin('p.postTags', 'pt')
+            ->leftJoin('p.files', 'pf')
+            ->where('p.private = FALSE')
+            ->andWhere('pa.public = TRUE')
         ;
     }
 }

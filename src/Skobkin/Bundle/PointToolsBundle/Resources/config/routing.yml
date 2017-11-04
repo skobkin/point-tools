@@ -36,6 +36,11 @@ events_last:
     defaults: { _controller: SkobkinPointToolsBundle:Events:last }
     methods: [GET]
 
+feed_public:
+    path:     /posts/all
+    defaults: { _controller: SkobkinPointToolsBundle:PublicFeed:index }
+    methods: [GET]
+
 post_show:
     path:     /{id}
     defaults: { _controller: SkobkinPointToolsBundle:Post:show }
