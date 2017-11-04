@@ -13,7 +13,7 @@ class UserControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/user/testuser');
 
-        $userLoginHeading = $crawler->filter('h1.user-login')->first();
+        $userLoginHeading = $crawler->filter('h1#user-login')->first();
 
         $this->assertEquals(
             1,
