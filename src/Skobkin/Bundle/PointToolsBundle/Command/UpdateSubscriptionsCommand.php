@@ -4,16 +4,13 @@ namespace Skobkin\Bundle\PointToolsBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Entity\{Subscription, User};
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\UserNotFoundException;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
-use Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager;
-use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
+use Skobkin\Bundle\PointToolsBundle\Service\{SubscriptionsManager, Api\UserApi};
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -52,6 +49,11 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
     private $apiDelay = 500000;
 
     /**
+     * @var int
+     */
+    private $appUserId;
+
+    /**
      * @var SubscriptionsManager
      */
     private $subscriptionManager;
@@ -61,19 +63,24 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
      */
     private $progress;
 
+    public function __construct(
+        EntityManagerInterface $em,
+        LoggerInterface $logger,
+        UserRepository $userRepo,
+        UserApi $api,
+        SubscriptionsManager $subscriptionManager,
+        int $apiDelay,
+        int $appUserId
+    ) {
+        parent::__construct();
 
-    public function setDeps(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, SubscriptionsManager $subscriptionsManager): void
-    {
-        $this->logger = $logger;
         $this->em = $em;
+        $this->logger = $logger;
         $this->userRepo = $userRepo;
-        $this->api = $userApi;
-        $this->subscriptionManager = $subscriptionsManager;
-    }
-
-    public function setApiDelay(int $microSecs): void
-    {
-        $this->apiDelay = $microSecs;
+        $this->api = $api;
+        $this->subscriptionManager = $subscriptionManager;
+        $this->apiDelay = $apiDelay;
+        $this->appUserId = $appUserId;
     }
 
     protected function configure()
@@ -96,35 +103,21 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         ;
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
 
         $this->logger->debug('UpdateSubscriptionsCommand started.');
 
-        try {
-            $appUserId = $this->getContainer()->getParameter('point_id');
-        } catch (\InvalidArgumentException $e) {
-            $this->logger->alert('Could not get point_id parameter from config file', ['exception_message' => $e->getMessage()]);
-            return 1;
-        }
-
         $this->progress = new ProgressBar($output);
         $this->progress->setFormat('debug');
 
-        // Beginning transaction for all changes
-        $this->em->beginTransaction();
-
-        $this->progress->setMessage('Getting service subscribers');
+        if ($input->getOption('check-only')) { // Beginning transaction for all changes
+            $this->em->beginTransaction();
+        }
 
         try {
-            $usersForUpdate = $this->getUsersForUpdate($appUserId);
+            $usersForUpdate = $this->getUsersForUpdate();
         } catch (\Exception $e) {
             $this->logger->error('Error while getting service subscribers', ['exception' => get_class($e), 'message' => $e->getMessage()]);
 
@@ -138,78 +131,75 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         }
 
         $this->logger->info('Processing users subscribers');
-        $this->progress->setMessage('Processing users subscribers');
         $this->progress->start(count($usersForUpdate));
 
-        $this->updateUsersSubscribers($usersForUpdate);
+        foreach ($usersForUpdate as $user) {
+            usleep($this->apiDelay);
+
+            $this->progress->advance();
+            $this->logger->info('Processing @'.$user->getLogin());
+
+            $this->updateUser($user);
+        }
 
         $this->progress->finish();
 
-        // Flushing all changes at once to database
-        $this->em->flush();
-        $this->em->commit();
+
+        if ($input->getOption('check-only')) { // Flushing all changes at once to the database
+            $this->em->flush();
+            $this->em->commit();
+        }
 
         $this->logger->debug('Finished');
 
         return 0;
     }
 
-    /**
-     * @param User[] $users
-     */
-    private function updateUsersSubscribers(array $users): void
+    private function updateUser(User $user): void
     {
-        // Updating users subscribers
-        foreach ($users as $user) {
-            usleep($this->apiDelay);
+        try {
+            $userCurrentSubscribers = $this->api->getUserSubscribersById($user->getId());
+        } catch (UserNotFoundException $e) {
+            $this->logger->warning('User not found. Marking as removed.', ['login' => $user->getLogin(), 'user_id' => $user->getId()]);
 
-            $this->progress->advance();
+            $user->markAsRemoved();
 
-            $this->logger->info('Processing @'.$user->getLogin());
+            return;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Error while getting subscribers. Skipping.',
+                [
+                    'user_login' => $user->getLogin(),
+                    'user_id' => $user->getId(),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]
+            );
 
-            try {
-                $userCurrentSubscribers = $this->api->getUserSubscribersById($user->getId());
-            } catch (UserNotFoundException $e) {
-                $this->logger->warning('User not found. Marking as removed', ['login' => $user->getLogin(), 'user_id' => $user->getId()]);
-                $user->markAsRemoved();
+            return;
+        }
 
-                continue;
-            } catch (\Exception $e) {
-                $this->logger->error(
-                    'Error while getting subscribers. Skipping.',
-                    [
-                        'user_login' => $user->getLogin(),
-                        'user_id' => $user->getId(),
-                        'message' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]
-                );
+        $this->logger->debug('Updating user subscribers');
 
-                continue;
-            }
-
-            $this->logger->debug('Updating user subscribers');
-
-            try {
-                // Updating user subscribers
-                $this->subscriptionManager->updateUserSubscribers($user, $userCurrentSubscribers);
-            } catch (\Exception $e) {
-                $this->logger->error(
-                    'Error while updating user subscribers',
-                    [
-                        'user_login' => $user->getLogin(),
-                        'user_id' => $user->getId(),
-                        'message' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]
-                );
-            }
+        try {
+            // Updating user subscribers
+            $this->subscriptionManager->updateUserSubscribers($user, $userCurrentSubscribers);
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Error while updating user subscribers',
+                [
+                    'user_login' => $user->getLogin(),
+                    'user_id' => $user->getId(),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]
+            );
         }
     }
 
-    private function getUsersForUpdate(int $appUserId): array
+    private function getUsersForUpdate(): array
     {
         $usersForUpdate = [];
 
@@ -218,7 +208,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
         } else {
             /** @var User $serviceUser */
             try {
-                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($appUserId);
+                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->appUserId);
             } catch (\Exception $e) {
                 $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $appUserId]);
 
@@ -235,7 +225,7 @@ class UpdateSubscriptionsCommand extends ContainerAwareCommand
             $this->logger->info('Getting service subscribers');
 
             try {
-                $usersForUpdate = $this->api->getUserSubscribersById($appUserId);
+                $usersForUpdate = $this->api->getUserSubscribersById($this->appUserId);
             } catch (UserNotFoundException $e) {
                 $this->logger->critical('Service user deleted or API response is invalid');
 

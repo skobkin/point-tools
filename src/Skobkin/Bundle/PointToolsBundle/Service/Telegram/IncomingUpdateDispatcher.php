@@ -2,9 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
-use unreal4u\TelegramAPI\Telegram\Types\Inline\Query;
-use unreal4u\TelegramAPI\Telegram\Types\Message;
-use unreal4u\TelegramAPI\Telegram\Types\Update;
+use unreal4u\TelegramAPI\Telegram\Types\{Inline\Query, Message, Update};
 
 /**
  * Dispatches incoming messages processing to corresponding services

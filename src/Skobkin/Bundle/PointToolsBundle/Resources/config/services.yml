@@ -53,18 +53,40 @@ services:
     # Subsribers update
     app.point.update_subscribers_command:
         class: Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand
-        #autowire: []
-        calls:
-            - [setDeps, ['@logger', '@doctrine.orm.entity_manager', '@app.point.user_repository', '@app.point.api_user', '@app.point.subscriptions_manager']]
-            - [setApiDelay, ['%point_api_delay%']]
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@app.point.user_repository'
+            - '@app.point.api_user'
+            - '@app.point.subscriptions_manager'
+            - '%point_api_delay%'
+            - '%point_id%'
         tags:
             - { name: console.command }
             - { name: monolog.logger, channel: subscribers_update }
+    # Privacy update
+    app.point.update_privacy_command:
+        class: Skobkin\Bundle\PointToolsBundle\Command\UpdateUsersPrivacyCommand
+        #autowire: []
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@app.point.user_repository'
+            - '@app.point.api_user'
+            - '%point_api_delay%'
+            - '%point_id%'
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: privacy_update }
     # Restore users removed by error
     app.point.restore_users:
         class: Skobkin\Bundle\PointToolsBundle\Command\RestoreRemovedUsersCommand
-        calls:
-            - [setDependencies, ['@logger', '@doctrine.orm.entity_manager', '@app.point.user_repository', '@app.point.api_user', '%point_api_delay%']]
+        arguments:
+            - '@logger'
+            - '@doctrine.orm.entity_manager'
+            - '@app.point.user_repository'
+            - '@app.point.api_user'
+            - '%point_api_delay%'
         tags:
             - { name: console.command }
     # Webhook management

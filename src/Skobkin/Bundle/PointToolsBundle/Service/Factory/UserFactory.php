@@ -48,6 +48,10 @@ class UserFactory extends AbstractFactory
 
         $user->updateLoginAndName($userData->getLogin(), $userData->getName());
 
+        if (null !== $userData->getDenyAnonymous() && null !== $userData->getPrivate()) {
+            $user->updatePrivacy(!$userData->getDenyAnonymous(), $userData->getPrivate());
+        }
+
         return $user;
     }
 

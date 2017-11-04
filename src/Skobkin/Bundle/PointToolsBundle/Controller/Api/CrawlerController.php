@@ -2,9 +2,9 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 class CrawlerController extends AbstractApiController
 {
@@ -21,7 +21,7 @@ class CrawlerController extends AbstractApiController
 
         $serializer = $this->get('jms_serializer');
 
-        $page = $serializer->deserialize($json, 'Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage', 'json');
+        $page = $serializer->deserialize($json, PostsPage::class, 'json');
 
         /** @var PostFactory $factory */
         $factory = $this->get('app.point.post_factory');

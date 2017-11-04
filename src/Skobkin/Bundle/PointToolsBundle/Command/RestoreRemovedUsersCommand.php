@@ -38,8 +38,10 @@ class RestoreRemovedUsersCommand extends Command
      */
     private $delay;
 
-    public function setDependencies(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, int $delay): void
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, int $delay)
     {
+        parent::__construct();
+
         $this->logger = $logger;
         $this->em = $em;
         $this->userRepo = $userRepo;
@@ -77,6 +79,8 @@ class RestoreRemovedUsersCommand extends Command
                         'login' => $removedUser->getLogin(),
                     ]);
                     $removedUser->restore();
+
+                    $this->em->flush();
                 }
             } catch (UserNotFoundException $e) {
                 $this->logger->debug('User is really removed. Keep going.', [
