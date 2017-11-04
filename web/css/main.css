@@ -72,7 +72,7 @@ h4.panel-title a {
 
 }
 
-h1.user-login a {
+h1#user-login a {
     text-decoration: none;
     margin-left: 10px;
 }

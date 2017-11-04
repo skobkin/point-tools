@@ -3,10 +3,12 @@
 {% block header_title %}{{ user.login }} @ Point Tools{% endblock %}
 
 {% block content %}
-    <h1 class="user-login">
+    <h1 id="user-login">
         {# TODO: Add class with image size #}
         <img src="{{ user.login|point_avatar_large }}">
         <a href="{{ user.login|point_user_blog_url }}" target="_blank">{{ user.login }}</a>
+        {% if not user.public %}<span title="{{ 'Non-public'|trans }}" class="glyphicon glyphicon-lock"></span>{% endif %}
+        {% if user.whitelistOnly %}<span title="{{ 'Whitelist-only'|trans }}" class="glyphicon glyphicon-list"></span>{% endif %}
     </h1>
 
     {% if user.removed %}
