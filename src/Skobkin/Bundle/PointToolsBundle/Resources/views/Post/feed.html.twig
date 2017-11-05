@@ -1,6 +1,6 @@
 {% extends 'SkobkinPointToolsBundle:Post:base_feed.html.twig' %}
 
-{% block header_title %}{{ feed_title }} @ Point Tools{% endblock %}
+{% block header_title %}{{ feed_title|trans }} @ Point Tools{% endblock %}
 
 {% block content %}
     {% if is_feed is defined %}

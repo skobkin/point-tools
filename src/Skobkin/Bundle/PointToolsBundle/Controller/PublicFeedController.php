@@ -23,7 +23,7 @@ class PublicFeedController extends AbstractController
             'SkobkinPointToolsBundle:Post:feed.html.twig',
             [
                 // @todo Move to translation
-                'feed_title' => 'All',
+                'feed_title' => 'Public feed',
                 'posts' => $postsPagination,
                 // Special feed mark (to not show comments and other)
                 'is_feed' => true,
