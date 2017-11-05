@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7bd97fb38754e5cebb09b72951f19cd",
+    "content-hash": "71a9b3759d77d9b4770ae1aedcda61c6",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -67,24 +67,24 @@
         },
         {
             "name": "csa/guzzle-bundle",
-            "version": "v2.2.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/csarrazi/CsaGuzzleBundle.git",
-                "reference": "bbe54641ad6171dc562034f2824f7c18cec80ca4"
+                "reference": "6b10e6f318ea6a20fa32cfcda471bd0bbebcdb96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/csarrazi/CsaGuzzleBundle/zipball/bbe54641ad6171dc562034f2824f7c18cec80ca4",
-                "reference": "bbe54641ad6171dc562034f2824f7c18cec80ca4",
+                "url": "https://api.github.com/repos/csarrazi/CsaGuzzleBundle/zipball/6b10e6f318ea6a20fa32cfcda471bd0bbebcdb96",
+                "reference": "6b10e6f318ea6a20fa32cfcda471bd0bbebcdb96",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1",
-                "php": ">=5.5.0",
-                "symfony/dependency-injection": "^2.7|^3.0",
-                "symfony/filesystem": "^2.7|^3.0",
-                "symfony/framework-bundle": "^2.7|^3.0",
+                "php": ">=5.6.0",
+                "symfony/dependency-injection": "^2.7|^3.0|^4.0",
+                "symfony/filesystem": "^2.7|^3.0|^4.0",
+                "symfony/framework-bundle": "^2.7|^3.0|^4.0",
                 "twig/twig": "^1.12|^2.0"
             },
             "require-dev": {
@@ -92,8 +92,9 @@
                 "namshi/cuzzle": "^2.0",
                 "phpunit/phpunit": "^4.8",
                 "psr/cache": "^1.0",
-                "symfony/phpunit-bridge": "^2.7|^3.0",
-                "symfony/web-profiler-bundle": "^2.3|^3.0"
+                "symfony/phpunit-bridge": "^2.7|^3.0|^4.0",
+                "symfony/stopwatch": "^2.7|^3.0|^4.0",
+                "symfony/web-profiler-bundle": "^2.3|^3.0|^4.0"
             },
             "suggest": {
                 "doctrine/cache": "Allows caching of responses",
@@ -124,7 +125,7 @@
                 }
             ],
             "description": "A bundle integrating GuzzleHttp >= 4.0",
-            "time": "2017-03-27T07:49:26+00:00"
+            "time": "2017-10-29T11:18:46+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -5205,7 +5206,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "symfony/symfony": 20
+        "symfony/symfony": 20,
+        "csa/guzzle-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
