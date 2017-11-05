@@ -2,33 +2,37 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
+use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 use Symfony\Component\HttpFoundation\{Request, Response};
 
 class CrawlerController extends AbstractApiController
 {
-    public function receiveAllPageAction(Request $request): Response
+    /** @var string */
+    private $crawlerToken;
+
+    public function __construct(string $crawlerToken)
+    {
+        $this->crawlerToken = $crawlerToken;
+    }
+
+    public function receiveAllPageAction(Request $request, SerializerInterface $serializer, PostFactory $postFactory, EntityManagerInterface $em): Response
     {
         $remoteToken = $request->request->get('token');
-        $localToken = $this->getParameter('crawler_token');
 
-        if (!$localToken || ($localToken !== $remoteToken)) {
+        if (!$this->crawlerToken || ($this->crawlerToken !== $remoteToken)) {
             return $this->createErrorResponse('Token error. Please check it in crawler and API parameters.', Response::HTTP_FORBIDDEN);
         }
 
         $json = $request->request->get('json');
 
-        $serializer = $this->get('jms_serializer');
-
         $page = $serializer->deserialize($json, PostsPage::class, 'json');
-
-        /** @var PostFactory $factory */
-        $factory = $this->get('app.point.post_factory');
         
-        $continue = $factory->createFromPageDTO($page);
+        $continue = $postFactory->createFromPageDTO($page);
 
-        $this->getDoctrine()->getManager()->flush();
+        $em->flush();
 
         return $this->createSuccessResponse([
             'continue' => $continue,

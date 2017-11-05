@@ -5,10 +5,10 @@ imports:
 doctrine:
     dbal:
         # todo move to new environment variables: https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
-        dbname:   "%test_database_name%"
-        port:     "%test_database_port%"
-        user:     "%test_database_user%"
-        password: "%test_database_password%"
+        dbname:   "%env(SYMFONY__TEST_DATABASE_NAME)%"
+        port:     "%env(SYMFONY__TEST_DATABASE_PORT)%"
+        user:     "%env(SYMFONY__TEST_DATABASE_USER)%"
+        password: "%env(SYMFONY__TEST_DATABASE_PASSWORD)%"
 
 framework:
     test: ~

@@ -3,34 +3,23 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
-use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Entity\{Subscription, SubscriptionEvent, User};
 use Skobkin\Bundle\PointToolsBundle\Event\UserSubscribersUpdatedEvent;
-use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
-use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, SubscriptionRepository};
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SubscriptionsManager
 {
-    /**
-     * @var SubscriptionRepository
-     */
+    /** @var SubscriptionRepository */
     private $subscriptionRepo;
 
-    /**
-     * @var SubscriptionEventRepository
-     */
+    /** @var SubscriptionEventRepository */
     private $subscriptionRecordRepo;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
 

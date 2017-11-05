@@ -3,7 +3,9 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
-use JMS\Serializer\{DeserializationContext, Serializer};
+use JMS\Serializer\{
+    DeserializationContext, SerializerInterface
+};
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\{Auth, User as UserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
@@ -22,7 +24,7 @@ class UserApi extends AbstractApi
      */
     private $userFactory;
 
-    public function __construct(ClientInterface $httpClient, Serializer $serializer, LoggerInterface $logger, UserFactory $userFactory)
+    public function __construct(ClientInterface $httpClient, SerializerInterface $serializer, LoggerInterface $logger, UserFactory $userFactory)
     {
         parent::__construct($httpClient, $serializer, $logger);
 

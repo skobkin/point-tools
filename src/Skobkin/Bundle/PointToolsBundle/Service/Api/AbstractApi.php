@@ -4,7 +4,9 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
-use JMS\Serializer\{DeserializationContext, Serializer};
+use JMS\Serializer\{
+    DeserializationContext, SerializerInterface
+};
 use Psr\Http\Message\{ResponseInterface, StreamInterface};
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\{ForbiddenException, NetworkException, NotFoundException, ServerProblemException, UnauthorizedException};
@@ -18,7 +20,7 @@ class AbstractApi
     protected $client;
 
     /**
-     * @var Serializer
+     * @var SerializerInterface
      */
     protected $serializer;
 
@@ -38,7 +40,7 @@ class AbstractApi
     protected $csRfToken;
 
 
-    public function __construct(ClientInterface $httpClient, Serializer $serializer, LoggerInterface $logger)
+    public function __construct(ClientInterface $httpClient, SerializerInterface $serializer, LoggerInterface $logger)
     {
         $this->client = $httpClient;
         $this->serializer = $serializer;

@@ -3,7 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
-use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 
@@ -18,7 +18,7 @@ class PostApi extends AbstractApi
     private $postFactory;
 
 
-    public function __construct(ClientInterface $httpClient, Serializer $serializer, LoggerInterface $logger, PostFactory $postFactory)
+    public function __construct(ClientInterface $httpClient, SerializerInterface $serializer, LoggerInterface $logger, PostFactory $postFactory)
     {
         parent::__construct($httpClient, $serializer, $logger);
 

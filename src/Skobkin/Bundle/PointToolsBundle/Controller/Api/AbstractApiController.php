@@ -2,10 +2,10 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
-class AbstractApiController extends Controller
+class AbstractApiController extends AbstractController
 {
     protected function createSuccessResponse($data, int $code = 200): Response
     {

@@ -3,21 +3,21 @@
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Skobkin\Bundle\PointToolsBundle\Entity\{SubscriptionEvent, User};
+use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ApiController extends Controller
+class ApiController
 {
     /**
      * Returns last user subscribers log
      *
      * @ParamConverter("user", class="SkobkinPointToolsBundle:User")
      */
-    public function lastUserSubscribersByIdAction(User $user): Response
+    public function lastUserSubscribersByIdAction(User $user, SubscriptionEventRepository $subscriptionEventRepository): Response
     {
-        $qb = $this->getDoctrine()->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createQueryBuilder('se');
+        $qb = $subscriptionEventRepository->createQueryBuilder('se');
         $qb
             ->select(['se', 'sub'])
             ->innerJoin('se.subscriber', 'sub')
@@ -38,6 +38,6 @@ class ApiController extends Controller
             ];
         }
 
-        return $this->json($data);
+        return new JsonResponse($data);
     }
 }

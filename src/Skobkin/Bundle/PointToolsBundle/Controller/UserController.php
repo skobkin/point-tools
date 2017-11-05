@@ -2,52 +2,61 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Knp\Component\Pager\Paginator;
 use Skobkin\Bundle\PointToolsBundle\DTO\{DailyEvents, TopUserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, UserRenameEventRepository, UserRepository};
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\{Request, Response};
+use Symfony\Component\Translation\TranslatorInterface;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
+    /** @var TranslatorInterface */
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @param string $login
      */
-    public function showAction(Request $request, string $login): Response
-    {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
+    public function showAction(
+        Request $request,
+        string $login,
+        SubscriptionEventRepository $subscriptionEventRepository,
+        UserRepository $userRepository,
+        UserRenameEventRepository $renameEventRepository,
+        Paginator $paginator
+    ): Response {
         /** @var User $user */
-        $user = $em->getRepository('SkobkinPointToolsBundle:User')->findUserByLogin($login);
+        $user = $userRepository->findUserByLogin($login);
 
         if (!$user) {
             throw $this->createNotFoundException('User ' . $login . ' not found.');
         }
 
-        $paginator = $this->get('knp_paginator');
-
         $subscriberEventsPagination = $paginator->paginate(
-            $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createUserLastSubscribersEventsQuery($user),
+            $subscriptionEventRepository->createUserLastSubscribersEventsQuery($user),
             $request->query->getInt('page', 1),
             10
         );
 
         return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
             'user' => $user,
-            'subscribers' => $em->getRepository('SkobkinPointToolsBundle:User')->findUserSubscribersById($user->getId()),
+            'subscribers' => $userRepository->findUserSubscribersById($user->getId()),
             'subscriptions_log' => $subscriberEventsPagination,
-            'rename_log' => $em->getRepository('SkobkinPointToolsBundle:UserRenameEvent')->findBy(['user' => $user], ['date' => 'DESC'], 10),
+            'rename_log' => $renameEventRepository->findBy(['user' => $user], ['date' => 'DESC'], 10),
         ]);
     }
 
-    public function topAction(): Response
+    public function topAction(UserRepository $userRepository, SubscriptionEventRepository $subscriptionEventRepository): Response
     {
-        $userRepo = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:User');
-        $subscriptionsRecordsRepo = $this->getDoctrine()->getManager()->getRepository('SkobkinPointToolsBundle:SubscriptionEvent');
-        $topUsers = $userRepo->getTopUsers();
-        $eventsByDay = $subscriptionsRecordsRepo->getLastEventsByDay();
+        $topUsers = $userRepository->getTopUsers();
+        $eventsByDay = $subscriptionEventRepository->getLastEventsByDay();
 
         return $this->render('@SkobkinPointTools/User/top.html.twig', [
             'events_dynamic_chat' => $this->createEventsDynamicChart($eventsByDay),
@@ -89,8 +98,6 @@ class UserController extends Controller
 
     private function createChart(string $blockId, string $type, array $data, string $bottomLabel, string $amountLabel): Highchart
     {
-        $translator = $this->get('translator');
-
         $chartData = [
             'keys' => [],
             'values' => [],
@@ -104,7 +111,7 @@ class UserController extends Controller
 
         // Chart
         $series = [[
-            'name' => $translator->trans($amountLabel),
+            'name' => $this->translator->trans($amountLabel),
             'data' => $chartData['values'],
         ]];
 
@@ -112,10 +119,10 @@ class UserController extends Controller
         $ob = new Highchart();
         $ob->chart->renderTo($blockId);
         $ob->chart->type($type);
-        $ob->title->text($translator->trans($bottomLabel));
+        $ob->title->text($this->translator->trans($bottomLabel));
         $ob->xAxis->title(['text' => null]);
         $ob->xAxis->categories($chartData['keys']);
-        $ob->yAxis->title(['text' => $translator->trans($amountLabel)]);
+        $ob->yAxis->title(['text' => $this->translator->trans($amountLabel)]);
         $ob->plotOptions->bar([
             'dataLabels' => [
                 'enabled' => true

@@ -4,48 +4,30 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\MetaPost;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\Post as PostDTO;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Skobkin\Bundle\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\{MetaPost, Post as PostDTO, PostsPage};
+use Skobkin\Bundle\PointToolsBundle\Entity\{Blogs\Post, Blogs\PostTag, User};
+use Skobkin\Bundle\PointToolsBundle\Exception\{Api\InvalidResponseException, Factory\Blog\InvalidDataException};
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Skobkin\Bundle\PointToolsBundle\Exception\Api\InvalidResponseException;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\{AbstractFactory, UserFactory};
 
 class PostFactory extends AbstractFactory
 {
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
-    /**
-     * @var PostRepository
-     */
+    /** @var PostRepository */
     private $postRepository;
 
-    /**
-     * @var UserFactory
-     */
+    /** @var UserFactory */
     private $userFactory;
 
-    /**
-     * @var FileFactory
-     */
+    /** @var FileFactory */
     private $fileFactory;
 
-    /**
-     * @var CommentFactory
-     */
+    /** @var CommentFactory */
     private $commentFactory;
 
-    /**
-     * @var TagFactory
-     */
+    /** @var TagFactory */
     private $tagFactory;
 
 

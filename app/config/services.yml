@@ -1,9 +1,200 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Skobkin\Bundle\PointToolsBundle\:
+        resource: '../../src/Skobkin/Bundle/PointToolsBundle/*'
+        exclude:  '../../src/Skobkin/Bundle/PointToolsBundle/{DataFixtures,DependencyInjection,DQL,DTO,Entity,Exception,Repository,Twig}'
+
+    # HTTP clients
+    # Default
+    GuzzleHttp\ClientInterface:
+        alias: app.http.point_client
+
+    # HTTP client for Telegram
+    app.http.telegram_client:
+        class: GuzzleHttp\Client
+        arguments: [{ timeout: 3.0 }]
+        tags:
+            - { name: csa_guzzle.client }
+
+    # HTTP client for Point API
+    app.http.point_client:
+        class: GuzzleHttp\Client
+        arguments: [ { base_uri: '%point_base_url%', timeout: 5.0 } ]
+        tags:
+            - { name: csa_guzzle.client }
+
+
+    # Point API clients
+    # User
+    Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi:
+        tags:
+            - { name: monolog.logger, channel: point_user_api }
+    # Post
+    Skobkin\Bundle\PointToolsBundle\Service\Api\PostApi:
+        tags:
+            - { name: monolog.logger, channel: point_post_api }
+
+
+    # Point subscription manager
+    Skobkin\Bundle\PointToolsBundle\Service\SubscriptionsManager:
+        # TODO deal with autowire for EventDispatcherInterface
+        tags:
+            - { name: monolog.logger, channel: subscribers_update }
+
+    # Controllers
+    Skobkin\Bundle\PointToolsBundle\Controller\:
+        resource: '../../src/Skobkin/Bundle/PointToolsBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Skobkin\Bundle\PointToolsBundle\Controller\MainController:
+        arguments:
+            $appUserId: '%point_id%'
+            $appUserLogin: '%point_login%'
+
+    Skobkin\Bundle\PointToolsBundle\Controller\Api\CrawlerController:
+        arguments:
+            $crawlerToken: '%crawler_token%'
+
+    Skobkin\Bundle\PointToolsBundle\Controller\Telegram\WebHookController:
+        arguments:
+            $telegramToken: '%telegram_token%'
+            $debug: '%kernel.debug%'
+
+
+    # Console commands
+    # @todo https://github.com/symfony/symfony/blob/3.4/UPGRADE-3.4.md#httpkernel
+    # Subsribers update
+    Skobkin\Bundle\PointToolsBundle\Command\UpdateSubscriptionsCommand:
+        arguments:
+            $apiDelay: '%point_api_delay%'
+            $appUserId: '%point_id%'
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: subscribers_update }
+    # Privacy update
+    Skobkin\Bundle\PointToolsBundle\Command\UpdateUsersPrivacyCommand:
+        arguments:
+            $apiDelay: '%point_api_delay%'
+            $appUserId: '%point_id%'
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: privacy_update }
+    # Restore users removed by error
+    Skobkin\Bundle\PointToolsBundle\Command\RestoreRemovedUsersCommand:
+        arguments:
+            $apiDelay: '%point_api_delay%'
+        tags:
+            - { name: console.command }
+    # Webhook management
+    Skobkin\Bundle\PointToolsBundle\Command\TelegramWebHookCommand:
+        arguments:
+            $telegramToken: '%telegram_token%'
+            $telegramWebhookMaxConnections: '%telegram_max_connections%'
+        tags: [{ name: console.command }]
+    # Send message
+    Skobkin\Bundle\PointToolsBundle\Command\TelegramSendMessageCommand:
+        arguments:
+            $logChatId: '%telegram_log_chat_id%'
+        tags: [{ name: console.command }]
+
+
+    # Entity repositories as services
+    # User
+    Skobkin\Bundle\PointToolsBundle\Repository\UserRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\User']
+    # Subscription
+    Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Subscription']
+    # Subscription record/event
+    Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent']
+
+    # Subscription record/event
+    Skobkin\Bundle\PointToolsBundle\Repository\UserRenameEventRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent']
+    # Post repository
+    Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post']
+    # Comment repository
+    Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment']
+    # Tag repository
+    Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag']
+    # File repository
+    Skobkin\Bundle\PointToolsBundle\Repository\Blogs\FileRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File']
+    # Telegram Account repository
+    Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository:
+        factory: 'doctrine:getRepository'
+        arguments: ['Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account']
+
+    # Custom Markdown parser
+    app.point.markdown_parser:
+        class: Skobkin\Bundle\PointToolsBundle\Service\Markdown\PointParser
+        arguments: [[], '@router']
+        tags:
+            - { name: markdown.parser }
+
+
+    # Event listeners
+    # User name changed in Doctrine
+    Skobkin\Bundle\PointToolsBundle\EventListener\UsersUpdatedSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+    # User renaming
+    Skobkin\Bundle\PointToolsBundle\EventListener\UsersRenamedListener:
+        tags:
+            - { name: kernel.event_listener, event: app.users.renamed }
+    # User subscribers updated
+    Skobkin\Bundle\PointToolsBundle\EventListener\UserSubscribersUpdatedListener:
+        tags:
+            - { name: kernel.event_listener, event: app.user.subscribers_updated }
+
+
+    # Twig extensions
+    Skobkin\Bundle\PointToolsBundle\Twig\PointUrlExtension:
+        arguments:
+            $pointDomain: '%point_domain%'
+            $pointScheme: '%point_scheme%'
+            $pointBaseUrl: '%point_base_url%'
+
+    # Telegram services
+    # Bot API client
+    unreal4u\TelegramAPI\TgLog:
+        arguments:
+            $client: '@app.http.telegram_client'
+            $botToken: '%telegram_token%'
+    # Logger API client
+    app.telegram.logger_client:
+        class: unreal4u\TelegramAPI\TgLog
+        arguments:
+            $botToken: '%telegram_token%'
+            $logger: null
+            $client: '@app.http.telegram_client'
+
+    # Monolog handler
+    unreal4u\MonologHandler:
+        arguments:
+            $chatId: '%telegram_log_chat_id%'
+            $level: 'error'
+
+    # Private message processor
+    Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor:
+        arguments:
+            $appUserId: '%point_id%'

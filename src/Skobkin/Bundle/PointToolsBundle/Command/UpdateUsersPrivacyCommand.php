@@ -8,12 +8,12 @@ use Skobkin\Bundle\PointToolsBundle\Entity\{Subscription, User};
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\{ForbiddenException, UserNotFoundException};
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpdateUsersPrivacyCommand extends ContainerAwareCommand
+class UpdateUsersPrivacyCommand extends Command
 {
     /** @var EntityManagerInterface */
     private $em;

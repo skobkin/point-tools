@@ -3,26 +3,18 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository;
-use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\UserFactory;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\{CommentRepository, PostRepository};
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\{AbstractFactory, UserFactory};
 
 class CommentFactory extends AbstractFactory
 {
-    /**
-     * @var CommentRepository
-     */
+    /** @var CommentRepository */
     private $commentRepository;
 
-    /**
-     * @var PostRepository
-     */
+    /** @var PostRepository */
     private $postRepository;
 
-    /**
-     * @var UserFactory
-     */
+    /** @var UserFactory */
     private $userFactory;
 
 

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     @ORM\Index(name="idx_rename_log_date", columns={"date"}),
  *     @ORM\Index(name="idx_rename_log_old_login", columns={"old_login"})
  * })
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\UserRenameEventRepository", readOnly=true)
  */
 class UserRenameEvent
 {

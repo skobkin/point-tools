@@ -10,14 +10,10 @@ use unreal4u\TelegramAPI\TgLog;
 
 class InlineQueryProcessor
 {
-    /**
-     * @var UserRepository
-     */
+    /** @var UserRepository */
     private $userRepo;
 
-    /**
-     * @var TgLog
-     */
+    /** @var TgLog */
     private $client;
 
 

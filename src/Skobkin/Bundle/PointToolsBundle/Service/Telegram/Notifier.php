@@ -10,14 +10,10 @@ use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
  */
 class Notifier
 {
-    /**
-     * @var AccountRepository
-     */
+    /** @var AccountRepository */
     private $accountsRepo;
 
-    /**
-     * @var MessageSender
-     */
+    /** @var MessageSender */
     private $messenger;
 
 
