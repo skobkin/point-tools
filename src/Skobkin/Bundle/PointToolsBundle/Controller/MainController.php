@@ -5,13 +5,25 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Skobkin\Bundle\PointToolsBundle\Form\UserSearchType;
 use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, SubscriptionRepository, UserRepository};
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 
-class MainController extends Controller
+class MainController extends AbstractController
 {
     const AJAX_AUTOCOMPLETE_SIZE = 10;
+
+    /** @var int */
+    private $appUserId;
+
+    /** @var string */
+    private $appUserLogin;
+
+    public function __construct(int $appUserId, string $appUserLogin)
+    {
+        $this->appUserId = $appUserId;
+        $this->appUserLogin = $appUserLogin;
+    }
 
     public function indexAction(
         Request $request,
@@ -46,9 +58,9 @@ class MainController extends Controller
             'form' => $form->createView(),
             'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
             'users_count' => $userRepository->getUsersCount(),
-            'subscribers_count' => $subscriptionRepository->getUserSubscribersCountById($this->getParameter('point_id')),
+            'subscribers_count' => $subscriptionRepository->getUserSubscribersCountById($this->appUserId),
             'events_count' => $subscriptionEventRepository->getLastDayEventsCount(),
-            'service_login' => $this->getParameter('point_login'),
+            'service_login' => $this->appUserLogin,
         ]);
     }
 

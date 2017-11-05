@@ -4,10 +4,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Knp\Component\Pager\Paginator;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class PublicFeedController extends Controller
+class PublicFeedController extends AbstractController
 {
     private const POSTS_PER_PAGE = 20;
 

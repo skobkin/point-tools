@@ -6,12 +6,12 @@ use Knp\Component\Pager\Paginator;
 use Skobkin\Bundle\PointToolsBundle\DTO\{DailyEvents, TopUserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, UserRenameEventRepository, UserRepository};
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Translation\TranslatorInterface;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
     /** @var TranslatorInterface */
     private $translator;

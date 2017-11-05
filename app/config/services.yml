@@ -10,11 +10,6 @@ services:
         resource: '../../src/Skobkin/Bundle/PointToolsBundle/*'
         exclude:  '../../src/Skobkin/Bundle/PointToolsBundle/{DataFixtures,DependencyInjection,DQL,DTO,Entity,Exception,Repository,Twig}'
 
-    Skobkin\Bundle\PointToolsBundle\Controller\:
-        resource: '../../src/Skobkin/Bundle/PointToolsBundle/Controller'
-        public: true
-        tags: ['controller.service_arguments']
-
     # HTTP client for Telegram
     app.http.telegram_client:
         class: GuzzleHttp\Client
@@ -47,6 +42,26 @@ services:
         # TODO deal with autowire for EventDispatcherInterface
         tags:
             - { name: monolog.logger, channel: subscribers_update }
+
+    # Controllers
+    Skobkin\Bundle\PointToolsBundle\Controller\:
+        resource: '../../src/Skobkin/Bundle/PointToolsBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Skobkin\Bundle\PointToolsBundle\Controller\MainController:
+        arguments:
+            $appUserId: '%point_id%'
+            $appUserLogin: '%point_login%'
+
+    Skobkin\Bundle\PointToolsBundle\Controller\Api\CrawlerController:
+        arguments:
+            $crawlerToken: '%crawler_token%'
+
+    Skobkin\Bundle\PointToolsBundle\Controller\Telegram\WebHookController:
+        arguments:
+            $telegramToken: '%telegram_token%'
+            $debug: '%kernel.debug%'
 
 
     # Console commands

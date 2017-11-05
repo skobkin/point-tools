@@ -4,11 +4,11 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 
-class PostController extends Controller
+class PostController extends AbstractController
 {
     /**
      * @ParamConverter("post", class="SkobkinPointToolsBundle:Blogs\Post")

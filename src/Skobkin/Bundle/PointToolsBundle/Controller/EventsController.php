@@ -4,10 +4,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Knp\Component\Pager\Paginator;
 use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, Response};
 
-class EventsController extends Controller
+class EventsController extends AbstractController
 {
     public function lastAction(Request $request, SubscriptionEventRepository $eventRepository, Paginator $paginator): Response
     {

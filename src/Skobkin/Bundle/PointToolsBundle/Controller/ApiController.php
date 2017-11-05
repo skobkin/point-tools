@@ -5,10 +5,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Skobkin\Bundle\PointToolsBundle\Entity\{SubscriptionEvent, User};
 use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ApiController extends Controller
+class ApiController
 {
     /**
      * Returns last user subscribers log
@@ -38,6 +38,6 @@ class ApiController extends Controller
             ];
         }
 
-        return $this->json($data);
+        return new JsonResponse($data);
     }
 }
