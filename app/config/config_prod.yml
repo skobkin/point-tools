@@ -30,7 +30,7 @@ monolog:
             time: 600
         telegram:
             type: service
-            id: app.log.telegram_handler
+            id: unreal4u\MonologHandler
             action_level: error
         # for commands
         console:
