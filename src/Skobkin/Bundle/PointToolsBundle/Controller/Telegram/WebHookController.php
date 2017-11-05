@@ -2,8 +2,8 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Telegram;
 
+use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher;
-use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use unreal4u\TelegramAPI\Telegram\Types\Update;
@@ -25,7 +25,7 @@ class WebHookController extends AbstractController
         $this->debug = $debug;
     }
 
-    public function receiveUpdateAction(Request $request, string $token, IncomingUpdateDispatcher $updateDispatcher, Logger $logger): Response
+    public function receiveUpdateAction(Request $request, string $token, IncomingUpdateDispatcher $updateDispatcher, LoggerInterface $logger): Response
     {
         if ($token !== $savedToken = $this->telegramToken) {
             throw $this->createNotFoundException();
