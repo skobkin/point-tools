@@ -3,35 +3,24 @@
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
 use Skobkin\Bundle\PointToolsBundle\Service\Telegram\MessageSender;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TelegramSendMessageCommand extends ContainerAwareCommand
+class TelegramSendMessageCommand extends Command
 {
-    /**
-     * @var MessageSender
-     */
+    /** @var MessageSender */
     private $messenger;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $logChatId;
 
-    public function setMessenger(MessageSender $messenger): void
+    public function __construct(MessageSender $messenger, int $logChatId)
     {
         $this->messenger = $messenger;
-    }
-
-    /**
-     * @param int $logChatId
-     */
-    public function setLogChatId(int $logChatId): void
-    {
         $this->logChatId = $logChatId;
+
+        parent::__construct();
     }
 
     /**

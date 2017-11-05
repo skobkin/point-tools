@@ -2,7 +2,8 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
+use Knp\Component\Pager\Paginator;
+use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -10,13 +11,8 @@ class PublicFeedController extends Controller
 {
     private const POSTS_PER_PAGE = 20;
 
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, PostRepository $postRepository, Paginator $paginator)
     {
-        // @todo autowire
-        $postRepository = $this->getDoctrine()->getRepository(Post::class);
-
-        $paginator = $this->get('knp_paginator');
-
         $postsPagination = $paginator->paginate(
             $postRepository->createPublicFeedPostsQuery(),
             $request->query->getInt('page', 1),

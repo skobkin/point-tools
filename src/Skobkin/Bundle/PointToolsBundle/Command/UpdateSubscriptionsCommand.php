@@ -8,7 +8,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\{Subscription, User};
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\UserNotFoundException;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Service\{SubscriptionsManager, Api\UserApi};
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,51 +16,33 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @todo https://symfony.com/doc/current/console/lockable_trait.html
  */
-class UpdateSubscriptionsCommand extends ContainerAwareCommand
+class UpdateSubscriptionsCommand extends Command
 {
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @var UserRepository
-     */
+    /** @var UserRepository */
     private $userRepo;
 
-    /**
-     * @var InputInterface
-     */
+    /** @var InputInterface */
     private $input;
 
-    /**
-     * @var UserApi
-     */
+    /** @var UserApi */
     private $api;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $apiDelay = 500000;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $appUserId;
 
-    /**
-     * @var SubscriptionsManager
-     */
+    /** @var SubscriptionsManager */
     private $subscriptionManager;
 
-    /**
-     * @var ProgressBar
-     */
+    /** @var ProgressBar */
     private $progress;
 
     public function __construct(

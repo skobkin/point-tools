@@ -9,9 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 
 class TagFactory extends AbstractFactory
 {
-    /**
-     * @var TagRepository
-     */
+    /** @var TagRepository */
     private $tagRepository;
 
 

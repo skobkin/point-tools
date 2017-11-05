@@ -10,9 +10,7 @@ use Skobkin\Bundle\PointToolsBundle\Service\Factory\AbstractFactory;
 
 class FileFactory extends AbstractFactory
 {
-    /**
-     * @var FileRepository
-     */
+    /** @var FileRepository */
     private $fileRepository;
 
 

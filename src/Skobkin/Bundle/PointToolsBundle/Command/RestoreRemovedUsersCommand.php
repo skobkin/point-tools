@@ -14,31 +14,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RestoreRemovedUsersCommand extends Command
 {
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
-    /**
-     * @var EntityManagerInterface
-     */
+
+    /** @var EntityManagerInterface */
     private $em;
 
-    /**
-     * @var UserRepository
-     */
+    /** @var UserRepository */
     private $userRepo;
 
-    /**
-     * @var UserApi
-     */
+    /** @var UserApi */
     private $userApi;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $delay;
 
-    public function __construct(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, int $delay)
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, int $apiDelay)
     {
         parent::__construct();
 
@@ -46,7 +37,7 @@ class RestoreRemovedUsersCommand extends Command
         $this->em = $em;
         $this->userRepo = $userRepo;
         $this->userApi = $userApi;
-        $this->delay = $delay;
+        $this->delay = $apiDelay;
     }
 
     /**

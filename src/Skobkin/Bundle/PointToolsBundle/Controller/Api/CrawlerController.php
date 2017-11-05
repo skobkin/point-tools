@@ -2,13 +2,15 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
+use Doctrine\ORM\EntityManager;
+use JMS\Serializer\Serializer;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 use Symfony\Component\HttpFoundation\{Request, Response};
 
 class CrawlerController extends AbstractApiController
 {
-    public function receiveAllPageAction(Request $request): Response
+    public function receiveAllPageAction(Request $request, Serializer $serializer, PostFactory $postFactory, EntityManager $em): Response
     {
         $remoteToken = $request->request->get('token');
         $localToken = $this->getParameter('crawler_token');
@@ -19,16 +21,11 @@ class CrawlerController extends AbstractApiController
 
         $json = $request->request->get('json');
 
-        $serializer = $this->get('jms_serializer');
-
         $page = $serializer->deserialize($json, PostsPage::class, 'json');
-
-        /** @var PostFactory $factory */
-        $factory = $this->get('app.point.post_factory');
         
-        $continue = $factory->createFromPageDTO($page);
+        $continue = $postFactory->createFromPageDTO($page);
 
-        $this->getDoctrine()->getManager()->flush();
+        $em->flush();
 
         return $this->createSuccessResponse([
             'continue' => $continue,

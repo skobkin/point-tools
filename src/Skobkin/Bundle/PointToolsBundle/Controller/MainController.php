@@ -4,18 +4,21 @@ namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Skobkin\Bundle\PointToolsBundle\Form\UserSearchType;
+use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, SubscriptionRepository, UserRepository};
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 
 class MainController extends Controller
 {
     const AJAX_AUTOCOMPLETE_SIZE = 10;
 
-    public function indexAction(Request $request): Response
-    {
+    public function indexAction(
+        Request $request,
+        UserRepository $userRepository,
+        SubscriptionRepository $subscriptionRepository,
+        SubscriptionEventRepository $subscriptionEventRepository
+    ): Response {
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
@@ -32,7 +35,7 @@ class MainController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $login = $form->get('login')->getData();
 
-            if (null !== $user = $em->getRepository('SkobkinPointToolsBundle:User')->findOneBy(['login' => $login])) {
+            if (null !== $user = $userRepository->findOneBy(['login' => $login])) {
                 return $this->redirectToRoute('user_show', ['login' => $login]);
             }
 
@@ -42,9 +45,9 @@ class MainController extends Controller
         return $this->render('SkobkinPointToolsBundle:Main:index.html.twig', [
             'form' => $form->createView(),
             'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
-            'users_count' => $em->getRepository('SkobkinPointToolsBundle:User')->getUsersCount(),
-            'subscribers_count' => $em->getRepository('SkobkinPointToolsBundle:Subscription')->getUserSubscribersCountById($this->getParameter('point_id')),
-            'events_count' => $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->getLastDayEventsCount(),
+            'users_count' => $userRepository->getUsersCount(),
+            'subscribers_count' => $subscriptionRepository->getUserSubscribersCountById($this->getParameter('point_id')),
+            'events_count' => $subscriptionEventRepository->getLastDayEventsCount(),
             'service_login' => $this->getParameter('point_login'),
         ]);
     }
@@ -56,13 +59,13 @@ class MainController extends Controller
      *
      * @return JsonResponse
      */
-    public function searchUserAjaxAction(string $login): Response
+    public function searchUserAjaxAction(string $login, UserRepository $userRepository): Response
     {
         $em = $this->getDoctrine()->getManager();
 
         $result = [];
 
-        foreach ($em->getRepository('SkobkinPointToolsBundle:User')->findUsersLikeLogin($login, self::AJAX_AUTOCOMPLETE_SIZE) as $user) {
+        foreach ($userRepository->findUsersLikeLogin($login, self::AJAX_AUTOCOMPLETE_SIZE) as $user) {
             $result[] = [
                 'login' => $user->getLogin(),
                 'name' => $user->getName(),

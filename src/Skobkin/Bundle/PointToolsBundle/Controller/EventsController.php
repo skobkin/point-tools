@@ -2,23 +2,17 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
+use Knp\Component\Pager\Paginator;
+use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 class EventsController extends Controller
 {
-    public function lastAction(Request $request): Response
+    public function lastAction(Request $request, SubscriptionEventRepository $eventRepository, Paginator $paginator): Response
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
-        $paginator = $this->get('knp_paginator');
-
         $eventsPagination = $paginator->paginate(
-            $em->getRepository('SkobkinPointToolsBundle:SubscriptionEvent')->createLastSubscriptionEventsQuery(),
+            $eventRepository->createLastSubscriptionEventsQuery(),
             $request->query->getInt('page', 1),
             20
         );

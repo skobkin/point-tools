@@ -2,11 +2,10 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
+use Doctrine\ORM\EntityManager;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface, InputArgument, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -19,8 +18,18 @@ use Symfony\Component\Filesystem\Filesystem;
  *      WHERE u.id <> (-1)
  * ) TO '/tmp/point_users.csv' WITH HEADER DELIMITER '|' CSV;
  */
-class ImportUsersCommand extends ContainerAwareCommand
+class ImportUsersCommand extends Command
 {
+    /** @var EntityManager */
+    private $em;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -48,7 +57,6 @@ class ImportUsersCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $fs = new Filesystem();
 
         $fileName = $input->getArgument('file');
@@ -80,9 +88,9 @@ class ImportUsersCommand extends ContainerAwareCommand
             $user = new User($row[0], $createdAt, $row[1], $row[2]);
 
             if (!$input->getOption('check-only')) {
-                $em->persist($user);
-                $em->flush($user);
-                $em->detach($user);
+                $this->em->persist($user);
+                $this->em->flush($user);
+                $this->em->detach($user);
             }
 
             if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {

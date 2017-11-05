@@ -2,63 +2,43 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use unreal4u\TelegramAPI\Telegram\Methods\DeleteWebhook;
-use unreal4u\TelegramAPI\Telegram\Methods\SetWebhook;
+use unreal4u\TelegramAPI\Telegram\Methods\{DeleteWebhook, SetWebhook};
 use unreal4u\TelegramAPI\TgLog;
 
 /**
  * Sets or deletes Telegram bot Web-Hook
  * @see https://core.telegram.org/bots/api#setwebhook
  */
-class TelegramWebHookCommand extends ContainerAwareCommand
+class TelegramWebHookCommand extends Command
 {
     private const MODE_SET = 'set';
     private const MODE_DELETE = 'delete';
 
-    /**
-     * @var TgLog
-     */
+    /** @var TgLog */
     private $client;
 
-    /**
-     * @var Router
-     */
+    /** @var Router */
     private $router;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $token;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $maxConnections;
 
-    public function setClient(TgLog $client): void
+    public function __construct(TgLog $client, Router $router, string $telegramToken, int $telegramWebhookMaxConnections)
     {
+        parent::__construct();
+
         $this->client = $client;
-    }
-
-    public function setRouter(Router $router): void
-    {
         $this->router = $router;
-    }
-
-    public function setToken(string $token): void
-    {
-        $this->token = $token;
-    }
-
-    public function setMaxConnections(int $maxConnections)
-    {
-        $this->maxConnections = $maxConnections;
+        $this->token = $telegramToken;
+        $this->maxConnections = $telegramWebhookMaxConnections;
     }
 
     /**

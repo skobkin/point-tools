@@ -12,14 +12,10 @@ class IncomingUpdateDispatcher
     const CHAT_TYPE_PRIVATE = 'private';
     const CHAT_TYPE_GROUP = 'group';
 
-    /**
-     * @var InlineQueryProcessor
-     */
+    /** @var InlineQueryProcessor */
     private $inlineQueryProcessor;
 
-    /**
-     * @var PrivateMessageProcessor
-     */
+    /** @var PrivateMessageProcessor */
     private $privateMessageProcessor;
 
 

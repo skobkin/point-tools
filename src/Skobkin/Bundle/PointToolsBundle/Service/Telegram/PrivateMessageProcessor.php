@@ -3,67 +3,41 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Telegram;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account;
-use Skobkin\Bundle\PointToolsBundle\Entity\User;
+use Skobkin\Bundle\PointToolsBundle\Entity\{Telegram\Account, User};
 use Skobkin\Bundle\PointToolsBundle\Exception\Telegram\CommandProcessingException;
-use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository;
-use Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository;
-use Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository;
-use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, SubscriptionRepository, Telegram\AccountRepository, UserRepository};
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Telegram\AccountFactory;
 use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
-use unreal4u\TelegramAPI\Telegram\Types\Message;
-use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardMarkup;
-use unreal4u\TelegramAPI\Telegram\Types\ReplyKeyboardRemove;
+use unreal4u\TelegramAPI\Telegram\Types\{Message, ReplyKeyboardMarkup, ReplyKeyboardRemove};
 
-/**
- * Processes all private messages
- */
+/** Processes all private messages */
 class PrivateMessageProcessor
 {
-    /**
-     * @var MessageSender
-     */
+    /** @var MessageSender */
     private $messenger;
 
-    /**
-     * @var UserApi
-     */
+    /** @var UserApi */
     private $userApi;
 
-    /**
-     * @var AccountFactory
-     */
+    /** @var AccountFactory */
     private $accountFactory;
 
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $em;
 
-    /**
-     * @var UserRepository
-     */
+    /** @var UserRepository */
     private $userRepo;
 
-    /**
-     * @var AccountRepository
-     */
+    /** @var AccountRepository */
     private $accountRepo;
 
-    /**
-     * @var SubscriptionRepository
-     */
+    /** @var SubscriptionRepository */
     private $subscriptionRepo;
 
-    /**
-     * @var SubscriptionEventRepository
-     */
+    /** @var SubscriptionEventRepository */
     private $subscriptionEventRepo;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $pointUserId;
 
 
@@ -75,7 +49,8 @@ class PrivateMessageProcessor
         SubscriptionEventRepository $subscriptionRecordRepository,
         MessageSender $messageSender,
         UserApi $userApi,
-        AccountFactory $accountFactory
+        AccountFactory $accountFactory,
+        int $appUserId
     ) {
         $this->em = $em;
         $this->userRepo = $userRepository;
@@ -85,11 +60,7 @@ class PrivateMessageProcessor
         $this->messenger = $messageSender;
         $this->userApi = $userApi;
         $this->accountFactory = $accountFactory;
-    }
-
-    public function setPointUserId(int $pointUserId)
-    {
-        $this->pointUserId = $pointUserId;
+        $this->pointUserId = $appUserId;
     }
 
     public function process(Message $message): void

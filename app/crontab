@@ -1,10 +1,10 @@
-# Point-Tools
-# Subscriptions
 # Primary subscribers
-*/10 * * * * flock -n /tmp/point_tools_sub_update.lock timeout 300 /usr/bin/php /var/www/point-tools/current/app/console point:update:subscriptions --env=prod
-# App users
-0 0 * * * flock -n /tmp/point_tools_sub_update_all.lock timeout 3600 /usr/bin/php /var/www/point-tools/current/app/console point:update:subscriptions --all-users --env=prod
+*/10 * * * * flock -n /tmp/point_tools_sub_update.lock timeout 300 /usr/bin/php /var/www/point.skobk.in/current/app/console point:update:subscriptions --env=prod
+# All users
+0 0 * * * flock -n /tmp/point_tools_sub_update_all.lock timeout 3600 /usr/bin/php /var/www/point.skobk.in/current/app/console point:update:subscriptions --all-users --env=prod
+# Privacy
+0 1 * * * flock -n /tmp/point_tools_privacy_update_all.lock timeout 3600 /usr/bin/php /var/www/point.skobk.in/current/app/console point:update:privacy --all-users --env=prod
 # Other
 # Restore users deleted by mistake
-0 0 */7 * * flock -n /tmp/point_tools_restore_users.lock timeout 300 /usr/bin/php /var/www/point-tools/current/app/console point:users:restore --env=prod
+0 0 */7 * * flock -n /tmp/point_tools_restore_users.lock timeout 300 /usr/bin/php /var/www/point.skobk.in/current/app/console point:users:restore --env=prod
 

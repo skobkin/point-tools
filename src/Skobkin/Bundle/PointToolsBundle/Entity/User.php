@@ -157,7 +157,7 @@ class User
     /**
      * @return Subscription[]|ArrayCollection
      */
-    public function getSubscribers(): ArrayCollection
+    public function getSubscribers(): iterable
     {
         return $this->subscribers;
     }
@@ -165,7 +165,7 @@ class User
     /**
      * @return Subscription[]|ArrayCollection
      */
-    public function getSubscriptions(): ArrayCollection
+    public function getSubscriptions(): iterable
     {
         return $this->subscriptions;
     }
@@ -180,7 +180,7 @@ class User
     /**
      * @return SubscriptionEvent[]|ArrayCollection
      */
-    public function getNewSubscriberEvents(): ArrayCollection
+    public function getNewSubscriberEvents(): iterable
     {
         return $this->newSubscriberEvents;
     }

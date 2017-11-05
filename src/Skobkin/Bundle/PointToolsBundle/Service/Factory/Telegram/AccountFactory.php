@@ -10,9 +10,7 @@ use unreal4u\TelegramAPI\Telegram\Types\Message;
 
 class AccountFactory extends AbstractFactory
 {
-    /**
-     * @var AccountRepository
-     */
+    /** @var AccountRepository */
     private $accountRepo;
 
 
@@ -30,12 +28,12 @@ class AccountFactory extends AbstractFactory
         }
 
         // Setting/updating account data
-        $account
-            ->setFirstName($message->from->first_name)
-            ->setLastName($message->from->last_name)
-            ->setUsername($message->from->username)
-            ->setChatId($message->chat->id)
-        ;
+        $account->updateFromMessageData(
+            $message->from->first_name,
+            $message->from->last_name,
+            $message->from->username,
+            $message->chat->id
+        );
 
         return $account;
     }

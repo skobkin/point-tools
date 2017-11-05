@@ -17,14 +17,10 @@ class MessageSender
     public const PARSE_MARKDOWN = 'Markdown';
     public const PARSE_HTML5 = 'HTML';
 
-    /**
-     * @var TgLog
-     */
+    /** @var TgLog */
     private $client;
 
-    /**
-     * @var \Twig_Environment
-     */
+    /** @var \Twig_Environment */
     private $twig;
 
     /**

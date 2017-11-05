@@ -142,11 +142,12 @@ class Account
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): Account
+    public function updateFromMessageData(string $firstName, ?string $lastName, ?string $username, int $chatId): void
     {
         $this->firstName = $firstName;
-
-        return $this;
+        $this->lastName = $lastName;
+        $this->username = $username;
+        $this->chatId = $chatId;
     }
 
     public function getLastName(): ?string
@@ -154,30 +155,9 @@ class Account
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName = null): Account
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
     public function getUsername(): string
     {
         return $this->username;
-    }
-
-    public function setUsername(string $username = null): Account
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    public function setChatId(int $chatId): self
-    {
-        $this->chatId = $chatId;
-
-        return $this;
     }
 
     public function getChatId(): int
