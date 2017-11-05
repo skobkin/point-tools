@@ -2,7 +2,6 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +21,7 @@ class TelegramWebHookCommand extends Command
     /** @var TgLog */
     private $client;
 
-    /** @var Router */
+    /** @var UrlGeneratorInterface */
     private $router;
 
     /** @var string */
@@ -31,7 +30,7 @@ class TelegramWebHookCommand extends Command
     /** @var int */
     private $maxConnections;
 
-    public function __construct(TgLog $client, Router $router, string $telegramToken, int $telegramWebhookMaxConnections)
+    public function __construct(TgLog $client, UrlGeneratorInterface $router, string $telegramToken, int $telegramWebhookMaxConnections)
     {
         parent::__construct();
 

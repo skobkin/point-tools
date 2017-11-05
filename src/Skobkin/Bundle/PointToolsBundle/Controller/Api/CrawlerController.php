@@ -2,8 +2,8 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller\Api;
 
-use Doctrine\ORM\EntityManager;
-use JMS\Serializer\Serializer;
+use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializerInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\PostsPage;
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
 use Symfony\Component\HttpFoundation\{Request, Response};
@@ -18,7 +18,7 @@ class CrawlerController extends AbstractApiController
         $this->crawlerToken = $crawlerToken;
     }
 
-    public function receiveAllPageAction(Request $request, Serializer $serializer, PostFactory $postFactory, EntityManager $em): Response
+    public function receiveAllPageAction(Request $request, SerializerInterface $serializer, PostFactory $postFactory, EntityManagerInterface $em): Response
     {
         $remoteToken = $request->request->get('token');
 

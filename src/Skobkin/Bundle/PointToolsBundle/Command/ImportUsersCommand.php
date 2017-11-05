@@ -2,7 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\{EntityManager, EntityManagerInterface};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface, InputArgument, InputOption};
@@ -23,7 +23,7 @@ class ImportUsersCommand extends Command
     /** @var EntityManager */
     private $em;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
 
