@@ -10,6 +10,11 @@ services:
         resource: '../../src/Skobkin/Bundle/PointToolsBundle/*'
         exclude:  '../../src/Skobkin/Bundle/PointToolsBundle/{DataFixtures,DependencyInjection,DQL,DTO,Entity,Exception,Repository,Twig}'
 
+    # HTTP clients
+    # Default
+    GuzzleHttp\ClientInterface:
+        alias: app.http.point_client
+
     # HTTP client for Telegram
     app.http.telegram_client:
         class: GuzzleHttp\Client
@@ -18,9 +23,8 @@ services:
             - { name: csa_guzzle.client }
 
     # HTTP client for Point API
-    GuzzleHttp\Client:
+    app.http.point_client:
         class: GuzzleHttp\Client
-        autowiring_types: GuzzleHttp\ClientInterface
         arguments: [ { base_uri: '%point_base_url%', timeout: 5.0 } ]
         tags:
             - { name: csa_guzzle.client }
@@ -173,7 +177,6 @@ services:
     # Telegram services
     # Bot API client
     unreal4u\TelegramAPI\TgLog:
-        autowiring_types: unreal4u\TelegramAPI\TgLog
         arguments:
             $client: '@app.http.telegram_client'
             $botToken: '%telegram_token%'
