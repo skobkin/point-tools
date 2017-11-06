@@ -117,7 +117,14 @@ class UpdateUsersPrivacyCommand extends Command
             $remoteUser = $this->api->getUserById($user->getId());
 
             if ($remoteUser !== $user) {
-                $this->logger->error('Remote user is not equal with local.', ['user_id' => $user->getId(), 'user_login' => $user->getLogin()]);
+                $this->logger->error('Remote user is not equal with local.', [
+                    'local_user_id' => $user->getId(),
+                    'local_user_login' => $user->getLogin(),
+                    'local_user_name' => $user->getName(),
+                    'remote_user_id' => $remoteUser->getId(),
+                    'remote_user_login' => $remoteUser->getLogin(),
+                    'remote_user_name' => $remoteUser->getName(),
+                ]);
             }
         } catch (UserNotFoundException $e) {
             $this->logger->info('User not found. Marking as removed.', ['user_id' => $user->getId(), 'user_login' => $user->getLogin()]);
