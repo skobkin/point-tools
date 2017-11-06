@@ -94,7 +94,7 @@ class UpdateSubscriptionsCommand extends Command
         $this->progress = new ProgressBar($output);
         $this->progress->setFormat('debug');
 
-        if ($input->getOption('check-only')) { // Beginning transaction for all changes
+        if (!$input->getOption('check-only')) { // Beginning transaction for all changes
             $this->em->beginTransaction();
         }
 
@@ -126,8 +126,8 @@ class UpdateSubscriptionsCommand extends Command
 
         $this->progress->finish();
 
-
-        if ($input->getOption('check-only')) { // Flushing all changes at once to the database
+        // Flushing all changes at once to the database
+        if (!$input->getOption('check-only')) {
             $this->em->flush();
             $this->em->commit();
         }
