@@ -5,9 +5,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="subscriptions", schema="subscriptions", uniqueConstraints={
- *      @ORM\UniqueConstraint(name="subscription_unique", columns={"author_id", "subscriber_id"})}
- * )
+ * @ORM\Table(name="subscriptions", schema="subscriptions")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionRepository", readOnly=true)
  */
 class Subscription
