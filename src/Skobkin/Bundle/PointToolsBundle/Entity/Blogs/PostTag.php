@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="posts_tags", schema="posts")
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostTagRepository")
+ * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostTagRepository", readOnly=true)
  */
 class PostTag
 {
@@ -22,7 +22,7 @@ class PostTag
     /**
      * @var Post
      *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post", inversedBy="postTags")
+     * @ORM\ManyToOne(targetEntity="Post", inversedBy="postTags")
      * @ORM\JoinColumn(name="post_id", onDelete="CASCADE")
      */
     private $post;
@@ -30,10 +30,8 @@ class PostTag
     /**
      * @var Tag
      *
-     * @todo fix SET NULL
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Tag", fetch="EAGER")
-     * @ORM\JoinColumn(name="tag_id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Tag", fetch="EAGER")
+     * @ORM\JoinColumn(name="tag_id")
      */
     private $tag;
 
@@ -45,21 +43,16 @@ class PostTag
     private $text;
 
 
-    public function __construct(Tag $tag)
+    public function __construct(Post $post, Tag $tag, string $text)
     {
+        $this->post = $post;
         $this->tag = $tag;
+        $this->text = $text;
     }
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setText(string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
     }
 
     public function getText(): string
@@ -69,22 +62,7 @@ class PostTag
 
     public function getOriginalTagText(): string
     {
-        return $this->tag ? $this->tag->getText() : '';
-    }
-
-    /**
-     * Set post
-     *
-     * @todo move to constructor
-     *
-     * @param Post $post
-     * @return PostTag
-     */
-    public function setPost(Post $post = null): self
-    {
-        $this->post = $post;
-
-        return $this;
+        return  $this->tag->getText();
     }
 
     public function getPost(): Post

@@ -5,9 +5,7 @@ namespace Skobkin\Bundle\PointToolsBundle\Entity\Blogs;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="tags", schema="posts", indexes={
- *      @ORM\Index(name="idx_tag_text", columns={"text"})
- * })
+ * @ORM\Table(name="tags", schema="posts")
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\TagRepository", readOnly=true)
  */
 class Tag

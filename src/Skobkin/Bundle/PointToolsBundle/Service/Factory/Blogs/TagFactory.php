@@ -16,6 +16,7 @@ class TagFactory extends AbstractFactory
     public function __construct(LoggerInterface $logger, TagRepository $tagRepository)
     {
         parent::__construct($logger);
+
         $this->tagRepository = $tagRepository;
     }
 
@@ -41,7 +42,7 @@ class TagFactory extends AbstractFactory
         return $tags;
     }
 
-    public function createFromString(string $text): Tag
+    private function createFromString(string $text): Tag
     {
         if (null === ($tag = $this->tagRepository->findOneByLowerText($text))) {
             // Creating new tag

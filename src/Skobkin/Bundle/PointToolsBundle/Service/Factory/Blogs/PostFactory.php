@@ -52,8 +52,6 @@ class PostFactory extends AbstractFactory
     /**
      * Creates posts and return status of new insertions
      *
-     * @todo refactor
-     *
      * @throws InvalidResponseException
      */
     public function createFromPageDTO(PostsPage $page): bool
@@ -68,7 +66,7 @@ class PostFactory extends AbstractFactory
                     $hasNew = true;
                 }
 
-                $post = $this->findOrCreateFromDTOWithTagsAndFiles($postData);
+                $post = $this->findOrCreateFromDtoWithContent($postData);
                 $posts[] = $post;
             } catch (\Exception $e) {
                 $this->logger->error('Error while processing post DTO', [
@@ -82,6 +80,7 @@ class PostFactory extends AbstractFactory
         }
 
         foreach ($posts as $post) {
+            // @todo probably refactor?
             if ($this->em->getUnitOfWork()->isScheduledForInsert($post)) {
                 $hasNew = true;
             }
@@ -91,11 +90,13 @@ class PostFactory extends AbstractFactory
     }
 
     /**
-     * @todo Implement full post processing with comments
+     * Create full post with tags, files and comments
+     *
+     * @todo Implement comments
      *
      * @throws InvalidDataException
      */
-    public function findOrCreateFromDTOWithTagsAndFiles(MetaPost $metaPost): Post
+    public function findOrCreateFromDtoWithContent(MetaPost $metaPost): Post
     {
         if (!$metaPost->isValid()) {
             throw new InvalidDataException('Invalid post data');
@@ -179,9 +180,7 @@ class PostFactory extends AbstractFactory
         // Adding missing tags
         foreach ($tags as $tag) {
             if (!array_key_exists(mb_strtolower($tag->getText()), $oldTagsHash)) {
-                $tmpPostTag = (new PostTag($tag))
-                    ->setText($tagStringsHash[mb_strtolower($tag->getText())])
-                ;
+                $tmpPostTag = new PostTag($post, $tag, $tagStringsHash[mb_strtolower($tag->getText())]);
                 $post->addPostTag($tmpPostTag);
             }
         }

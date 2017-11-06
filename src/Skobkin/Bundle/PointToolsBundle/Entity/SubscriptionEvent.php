@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="log", schema="subscriptions", indexes={
- *      @ORM\Index(name="author_idx", columns={"author_id"}),
- *      @ORM\Index(name="subscriber_idx", columns={"subscriber_id"}),
- *      @ORM\Index(name="date_idx", columns={"date"})
+ *      @ORM\Index(name="idx_subscription_author", columns={"author_id"}),
+ *      @ORM\Index(name="idx_subscription_subscriber", columns={"subscriber_id"}),
+ *      @ORM\Index(name="idx_subscription_date", columns={"date"})
  * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\SubscriptionEventRepository", readOnly=true)
  */
