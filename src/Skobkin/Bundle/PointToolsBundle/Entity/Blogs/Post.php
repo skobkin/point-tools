@@ -182,7 +182,6 @@ class Post
 
     public function addPostTag(PostTag $tag): self
     {
-        $tag->setPost($this);
         $this->postTags[] = $tag;
 
         return $this;
