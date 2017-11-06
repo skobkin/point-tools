@@ -16,11 +16,8 @@ class TagRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('t');
         return $qb
-            ->where($qb->expr()->eq(
-                $qb->expr()->lower('t.text'),
-                $qb->expr()->lower(':text')
-            ))
-            ->setParameter('text', $text)
+            ->where('LOWER(t.text) = :text')
+            ->setParameter('text', mb_strtolower($text))
             ->getQuery()->getOneOrNullResult()
         ;
     }
