@@ -4,15 +4,13 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Api;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
-use JMS\Serializer\{
-    DeserializationContext, SerializerInterface
-};
+use JMS\Serializer\{DeserializationContext, SerializerInterface};
 use Psr\Http\Message\{ResponseInterface, StreamInterface};
 use Psr\Log\LoggerInterface;
 use Skobkin\Bundle\PointToolsBundle\Exception\Api\{ForbiddenException, NetworkException, NotFoundException, ServerProblemException, UnauthorizedException};
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class AbstractApi
+abstract class AbstractApi
 {
     /**
      * @var ClientInterface HTTP-client from Guzzle
