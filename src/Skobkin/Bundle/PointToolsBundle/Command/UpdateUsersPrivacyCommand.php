@@ -100,11 +100,6 @@ class UpdateUsersPrivacyCommand extends Command
             $this->logger->info('Processing @'.$user->getLogin());
 
             $this->updateUser($user);
-
-            // Flushing each 10 users
-            if (0 === $idx % 10) {
-                $this->em->flush();
-            }
         }
 
         $this->progress->finish();
