@@ -124,7 +124,7 @@ abstract class AbstractApi
     private function sendRequest(string $method, string $path, array $parameters): ResponseInterface
     {
         try {
-            $response = $this->client->request($method, $path, ['query' => $parameters]);
+            $response = $this->client->request($method, $path, $parameters);
 
             $this->checkResponse($response);
 
