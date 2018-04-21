@@ -67,7 +67,7 @@ class Comment
     private $number;
 
     /**
-     * @var int
+     * @var int|null
      *
      * @ORM\Column(name="to_number", type="integer")
      */
@@ -99,7 +99,7 @@ class Comment
         bool $rec,
         Post $post,
         int $number,
-        int $toNumber,
+        ?int $toNumber,
         User $author,
         array $files
     ) {
@@ -152,6 +152,11 @@ class Comment
     public function getNumber(): int
     {
         return $this->number;
+    }
+
+    public function getToNumber(): ?int
+    {
+        return $this->toNumber;
     }
 
     public function getAuthor(): User

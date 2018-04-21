@@ -11,7 +11,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterface
 {
-    public function load(ObjectManager $om)
+    public function load(ObjectManager $om): void
     {
         /** @var Post $post */
         $post = $this->getReference('test_post_longpost');
@@ -25,29 +25,28 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
             $this->getReference('test_user_99995'),
         ];
 
-        $comments = [];
+        $text = 'Some text with [link to @skobkin-ru site](https://skobk.in/) and `code block`'.PHP_EOL.
+            'and some quotation:'.PHP_EOL.
+            '> test test quote'.PHP_EOL.
+            'and some text after';
 
         foreach (range(1, 10000) as $num) {
-            $comment = (new Comment())
-                ->setNumber($num)
-                ->setDeleted(mt_rand(0, 15) ? false : true)
-                ->setCreatedAt(new \DateTime())
-                ->setAuthor($users[array_rand($users)])
-                ->setRec(false)
-                ->setText(
-                    'Some text with [link to @skobkin-ru site](https://skobk.in/) and `code block`'.PHP_EOL.
-                    'and some quotation:'.PHP_EOL.
-                    '> test test quote'.PHP_EOL.
-                    'and some text after'
-                )
-            ;
+            $comment = new Comment(
+                $text,
+                new \DateTime(),
+                false,
+                $post,
+                $num,
+                ($num > 1 && !random_int(0, 4)) ? random_int(1, $num - 1) : null,
+                $users[array_rand($users)],
+                []
+            );
 
-            if (count($comments) > 0 && mt_rand(0, 1)) {
-                $comment->setParent($comments[mt_rand(0, count($comments) - 1)]);
+            if (!random_int(0, 15)) {
+                $comment->delete();
             }
 
             $post->addComment($comment);
-            $comments[] = $comment;
 
             $om->persist($comment);
         }
