@@ -70,6 +70,13 @@ class Post
     private $deleted = false;
 
     /**
+     * @var bool Status of point-tools subscription to the post (to receive WS updates)
+     *
+     * @ORM\Column(name="is_subscribed", type="boolean")
+     */
+    private $subscribed = false;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
@@ -215,6 +222,25 @@ class Post
     public function isDeleted(): bool
     {
         return $this->deleted;
+    }
+    
+    public function isSubscribed(): bool
+    {
+        return $this->subscribed;
+    }
+
+    public function subscribe(): self
+    {
+        $this->subscribed = true;
+
+        return $this;
+    }
+
+    public function unsubscribe(): self
+    {
+        $this->subscribed = false;
+
+        return $this;
     }
 
     public function setPrivate(bool $private): self

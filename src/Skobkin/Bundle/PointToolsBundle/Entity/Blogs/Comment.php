@@ -62,9 +62,16 @@ class Comment
     /**
      * @var int
      *
-     * @ORM\Column(name="number", type="smallint")
+     * @ORM\Column(name="number", type="integer", unique=true)
      */
     private $number;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="to_number", type="integer")
+     */
+    private $toNumber;
 
     /**
      * @var User
@@ -85,26 +92,36 @@ class Comment
      */
     private $files;
 
-    /**
-     * @var Comment|null
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", nullable=true)
-     */
-    private $parent;
 
-    /**
-     * @var Comment[]|ArrayCollection
-     * 
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", fetch="EXTRA_LAZY", mappedBy="parent")
-     */
-    private $children;
+    public function __construct(
+        string $text,
+        \DateTime $createdAt,
+        bool $rec,
+        Post $post,
+        int $number,
+        int $toNumber,
+        User $author,
+        array $files
+    ) {
+        $this->text = $text;
+        $this->createdAt = $createdAt;
+        $this->rec = $rec;
+        $this->post = $post;
+        $this->number = $number;
+        $this->toNumber = $toNumber;
+        $this->author = $author;
 
-
-    public function __construct()
-    {
         $this->files = new ArrayCollection();
-        $this->children = new ArrayCollection();
+        foreach ($files as $file) {
+            if (!($file instanceof File)) {
+                throw new \RuntimeException(sprintf(
+                    '$files array must contain only \'%s\' objects. %s given.',
+                    \is_object($file) ? \get_class($file) : \gettype($file)
+                ));
+            }
+
+            $this->files->add($file);
+        }
     }
 
     public function getId(): int
@@ -112,23 +129,9 @@ class Comment
         return $this->id;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
-    }
-
-    public function setText(string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
     }
 
     public function getText(): string
@@ -136,19 +139,7 @@ class Comment
         return $this->text;
     }
 
-    public function setRec(bool $rec): self
-    {
-        $this->rec = $rec;
-
-        return $this;
-    }
-
     public function isRec(): bool
-    {
-        return $this->rec;
-    }
-
-    public function getRec(): bool
     {
         return $this->rec;
     }
@@ -156,20 +147,6 @@ class Comment
     public function getPost(): Post
     {
         return $this->post;
-    }
-
-    public function setPost(Post $post): self
-    {
-        $this->post = $post;
-
-        return $this;
-    }
-
-    public function setNumber(int $number): self
-    {
-        $this->number = $number;
-
-        return $this;
     }
 
     public function getNumber(): int
@@ -182,25 +159,6 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(User $author): self
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    public function addFile(File $files): self
-    {
-        $this->files[] = $files;
-
-        return $this;
-    }
-
-    public function removeFile(File $files): void
-    {
-        $this->files->removeElement($files);
-    }
-
     /**
      * @return File[]|ArrayCollection
      */
@@ -209,52 +167,22 @@ class Comment
         return $this->files;
     }
 
-    public function getParent(): ?Comment
+    public function delete(): self
     {
-        return $this->parent;
-    }
-
-    public function setParent(Comment $parent): self
-    {
-        $this->parent = $parent;
+        $this->deleted = true;
 
         return $this;
     }
 
-    public function setDeleted(bool $deleted): self
+    public function restore(): self
     {
-        $this->deleted = $deleted;
+        $this->deleted = false;
 
         return $this;
-    }
-
-    public function getDeleted(): bool
-    {
-        return $this->deleted;
     }
 
     public function isDeleted(): bool
     {
         return $this->deleted;
-    }
-
-    public function addChild(Comment $children): self
-    {
-        $this->children[] = $children;
-
-        return $this;
-    }
-
-    public function removeChild(Comment $children): void
-    {
-        $this->children->removeElement($children);
-    }
-
-    /**
-     * @return Comment[]|ArrayCollection
-     */
-    public function getChildren(): iterable
-    {
-        return $this->children;
     }
 }
