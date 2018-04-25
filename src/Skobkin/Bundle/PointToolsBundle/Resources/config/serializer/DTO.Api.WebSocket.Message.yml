@@ -1,0 +1,52 @@
+Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message:
+    exclusion_policy: none
+    access_type: public_method
+    properties:
+        a:
+            type: string
+            serialized_name: 'a'
+        author:
+            type: string
+            serialized_name: 'author'
+        authorName:
+            type: string
+            serialized_name: 'author_name'
+        commentId:
+            type: int
+            serialized_name: 'comment_id'
+        cut:
+            type: bool
+            serialized_name: 'cut'
+        files:
+            type: array<string>
+            serialized_name: 'files'
+        html:
+            type: string
+            serialized_name: 'html'
+        link:
+            type: string
+            serialized_name: 'link'
+        postId:
+            type: string
+            serialized_name: 'post_id'
+        private:
+            type: bool
+            serialized_name: 'private'
+        tags:
+            type: array<string>
+            serialized_name: 'tags'
+        text:
+            type: string
+            serialized_name: 'text'
+        title:
+            type: string
+            serialized_name: 'title'
+        toCommentId:
+            type: string
+            serialized_name: 'to_comment_id'
+        toText:
+            type: string
+            serialized_name: 'to_text'
+        toUsers:
+            type: array<string>
+            serialized_name: 'to_users'

@@ -6,6 +6,11 @@ parameters:
     database_user:     point
     database_password: ~
 
+    # Message Queue settings
+    beanstalkd_host:   'localhost'
+    beanstalkd_port:   11300
+    beanstalkd_ws_updates_tube:   'point-websocket-updates'
+
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
     mailer_user:       ~

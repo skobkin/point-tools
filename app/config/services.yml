@@ -101,6 +101,12 @@ services:
     # Send message
     Skobkin\Bundle\PointToolsBundle\Command\TelegramSendMessageCommand:
         tags: [{ name: console.command }]
+    # WebSocket MQ processing
+    Skobkin\Bundle\PointToolsBundle\Command\ProcessWebsocketUpdatesCommand:
+        arguments:
+            $bsTubeName: '%beanstalkd_ws_updates_tube%'
+        tags:
+            - { name: console.command }
 
 
     # Entity repositories as services
