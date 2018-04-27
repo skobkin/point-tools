@@ -7,8 +7,8 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
 /**
  * @ORM\Table(name="telegram_accounts", schema="users", indexes={
- *      @ORM\Index(name="subscriber_notification_idx", columns={"subscriber_notification"}, options={"where": "subscriber_notification = TRUE"}),
- *      @ORM\Index(name="rename_notification_idx", columns={"rename_notification"}, options={"where": "rename_notification = TRUE"}),
+ *      @ORM\Index(name="subscriber_notification_idx", columns={"subscriber_notification"}, options={"where": "(subscriber_notification = true)"}),
+ *      @ORM\Index(name="rename_notification_idx", columns={"rename_notification"}, options={"where": "(rename_notification = true)"}),
  * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository")
  * @ORM\HasLifecycleCallbacks()
