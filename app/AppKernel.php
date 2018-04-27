@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\WebServerBundle\WebServerBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
+            new Leezy\PheanstalkBundle\LeezyPheanstalkBundle(),
             new Ob\HighchartsBundle\ObHighchartsBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),

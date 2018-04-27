@@ -33,7 +33,8 @@
         "unreal4u/telegram-api": "^2.2",
         "csa/guzzle-bundle": "^3",
         "symfony/web-server-bundle": "^3.3",
-        "sentry/sentry-symfony": "^2.2"
+        "sentry/sentry-symfony": "^2.2",
+        "leezy/pheanstalk-bundle": "^3.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0",

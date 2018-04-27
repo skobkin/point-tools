@@ -71,6 +71,13 @@ doctrine_migrations:
     table_name: migration_versions
     name: Application Migrations
 
+leezy_pheanstalk:
+    pheanstalks:
+        primary:
+            server: "%beanstalkd_host%"
+            port: "%beanstalkd_port%"
+            default: true
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
