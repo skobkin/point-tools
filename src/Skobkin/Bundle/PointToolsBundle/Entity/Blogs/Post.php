@@ -72,7 +72,7 @@ class Post
     /**
      * @var bool Status of point-tools subscription to the post (to receive WS updates)
      *
-     * @ORM\Column(name="is_subscribed", type="boolean")
+     * @ORM\Column(name="is_subscribed", type="boolean", options={"default": false})
      */
     private $subscribed = false;
 
