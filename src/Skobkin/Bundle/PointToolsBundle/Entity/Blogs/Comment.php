@@ -69,7 +69,7 @@ class Comment
     /**
      * @var int|null
      *
-     * @ORM\Column(name="to_number", type="integer")
+     * @ORM\Column(name="to_number", type="integer", nullable=true)
      */
     private $toNumber;
 
