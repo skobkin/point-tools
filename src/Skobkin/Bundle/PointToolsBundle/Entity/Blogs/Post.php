@@ -263,7 +263,6 @@ class Post
     public function addComment(Comment $comment): self
     {
         $this->comments[] = $comment;
-        $comment->setPost($this);
 
         return $this;
     }
