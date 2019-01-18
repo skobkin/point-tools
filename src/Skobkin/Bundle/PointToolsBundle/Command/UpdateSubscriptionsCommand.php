@@ -192,16 +192,19 @@ class UpdateSubscriptionsCommand extends Command
             try {
                 $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->appUserId);
             } catch (\Exception $e) {
-                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $appUserId]);
+                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $this->appUserId]);
 
                 throw $e;
             }
 
             if (!$serviceUser) {
-                $this->logger->critical('Service user not found or marked as removed');
-                // @todo Retrieving user
+                $this->logger->warning('Service user not found or marked as removed. Falling back to API.');
 
-                throw new \RuntimeException('Service user not found in the database');
+                try {
+                    $serviceUser = $this->api->getUserById($this->appUserId);
+                } catch (UserNotFoundException $e) {
+                    throw new \RuntimeException('Service user not found in the database and could not be retrieved from API.');
+                }
             }
 
             $this->logger->info('Getting service subscribers');

@@ -164,9 +164,13 @@ class UpdateUsersPrivacyCommand extends Command
         }
 
         if (!$serviceUser) {
-            $this->logger->critical('Service user not found or marked as removed');
+            $this->logger->warning('Service user not found or marked as removed. Falling back to API.');
 
-            throw new \RuntimeException('Service user not found in the database');
+            try {
+                $serviceUser = $this->api->getUserById($this->appUserId);
+            } catch (UserNotFoundException $e) {
+                throw new \RuntimeException('Service user not found in the database and could not be retrieved from API.');
+            }
         }
 
         $this->logger->info('Getting service subscribers');
