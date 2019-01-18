@@ -2,7 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Controller;
 
-use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Skobkin\Bundle\PointToolsBundle\DTO\{DailyEvents, TopUserDTO};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Repository\{SubscriptionEventRepository, UserRenameEventRepository, UserRepository};
@@ -30,7 +30,7 @@ class UserController extends AbstractController
         SubscriptionEventRepository $subscriptionEventRepository,
         UserRepository $userRepository,
         UserRenameEventRepository $renameEventRepository,
-        Paginator $paginator
+        PaginatorInterface $paginator
     ): Response {
         /** @var User $user */
         $user = $userRepository->findUserByLogin($login);
