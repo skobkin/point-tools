@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Ob\HighchartsBundle\ObHighchartsBundle(),
             new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+            new Sentry\SentryBundle\SentryBundle(),
             new Skobkin\Bundle\PointToolsBundle\SkobkinPointToolsBundle(),
         ];
 
