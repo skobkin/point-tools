@@ -79,9 +79,6 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-jms_serializer:
-    enable_short_alias: false
-
 knp_markdown:
     parser:
         service: app.point.markdown_parser
