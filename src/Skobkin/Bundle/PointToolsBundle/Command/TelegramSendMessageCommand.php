@@ -12,13 +12,9 @@ class TelegramSendMessageCommand extends Command
     /** @var MessageSender */
     private $messenger;
 
-    /** @var int */
-    private $logChatId;
-
-    public function __construct(MessageSender $messenger, int $logChatId)
+    public function __construct(MessageSender $messenger)
     {
         $this->messenger = $messenger;
-        $this->logChatId = $logChatId;
 
         parent::__construct();
     }
@@ -61,7 +57,7 @@ class TelegramSendMessageCommand extends Command
 
         try {
             $this->messenger->sendMessageToChat(
-                (int) $input->getOption('chat-id') ?: $this->logChatId,
+                (int) $input->getOption('chat-id'),
                 $message
             );
         } catch (\Exception $e) {
