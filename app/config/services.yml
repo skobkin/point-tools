@@ -104,6 +104,7 @@ services:
     # WebSocket MQ processing
     Skobkin\Bundle\PointToolsBundle\Command\ProcessWebsocketUpdatesCommand:
         arguments:
+            $bsClient: '@leezy.pheanstalk.primary'
             $bsTubeName: '%beanstalkd_ws_updates_tube%'
         tags:
             - { name: console.command }

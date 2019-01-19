@@ -12,30 +12,55 @@ class Message implements ValidableInterface
 {
     public const TYPE_COMMENT = 'comment';
     public const TYPE_POST = 'post';
-    public const TYPE_RECOMMENDATION = 'ok';
+    public const TYPE_POST_RECOMMENDATION = 'rec';
+    public const TYPE_COMMENT_RECOMMENDATION = 'ok';
 
-    /** @var string */
+    /**
+     * Event type. @see Message::TYPE_* constants
+     *
+     * @var string
+     */
     private $a;
 
-    /** @var string */
+    /**
+     * Login of the user
+     *
+     * @var string
+     */
     private $author;
 
     /** @var string|null */
     private $authorName;
 
-    /** @var int|null */
+    /**
+     * Number of the comment in the thread
+     *
+     * @var int|null
+     */
     private $commentId;
 
-    /** @var bool|null */
+    /**
+     * ???
+     *
+     * @var bool|null
+     */
     private $cut;
 
-    /** @var string[]|null */
+    /**
+     * Array of file paths
+     *
+     * @var string[]|null
+     */
     private $files;
 
     /** @var string|null */
     private $html;
 
-    /** @var string|null */
+    /**
+     * @deprecated Link in the Post::type=feed posts
+     *
+     * @var string|null
+     */
     private $link;
 
     /** @var string */
@@ -44,22 +69,49 @@ class Message implements ValidableInterface
     /** @var bool|null */
     private $private;
 
-    /** @var string[]|null */
+    /**
+     * Number of the comment in the thread for recommendation with text
+     *
+     * @var int|null
+     */
+    private $rcid;
+
+    /**
+     * Array of tags
+     *
+     * @var string[]|null
+     */
     private $tags;
 
     /** @var string */
     private $text;
 
-    /** @var string|null */
+    /**
+     * @deprecated ???
+     *
+     * @var string|null
+     */
     private $title;
 
-    /** @var string|null */
+    /**
+     * Number of the comment to which this comment is answering
+     *
+     * @var string|null
+     */
     private $toCommentId;
 
-    /** @var string|null */
+    /**
+     * Text quotation of the comment to which this comment is answering
+     *
+     * @var string|null
+     */
     private $toText;
 
-    /** @var string[]|null */
+    /**
+     * Array of logins of users to which post is addressed
+     *
+     * @var string[]|null
+     */
     private $toUsers;
 
     public function isPost(): bool
@@ -72,9 +124,14 @@ class Message implements ValidableInterface
         return self::TYPE_COMMENT === $this->a;
     }
 
-    public function isRecommendation(): bool
+    public function isCommentRecommendation(): bool
     {
-        return self::TYPE_RECOMMENDATION === $this->a;
+        return self::TYPE_COMMENT_RECOMMENDATION === $this->a;
+    }
+
+    public function isPostRecommendation(): bool
+    {
+        return self::TYPE_POST_RECOMMENDATION === $this->a;
     }
 
     /**
@@ -108,7 +165,7 @@ class Message implements ValidableInterface
                 }
                 break;
 
-            case self::TYPE_RECOMMENDATION;
+            case self::TYPE_COMMENT_RECOMMENDATION;
                 if (
                     null !== $this->author &&
                     null !== $this->postId
@@ -226,6 +283,16 @@ class Message implements ValidableInterface
     public function setPrivate(?bool $private): void
     {
         $this->private = $private;
+    }
+
+    public function getRcid(): ?int
+    {
+        return $this->rcid;
+    }
+
+    public function setRcid(?int $rcid): void
+    {
+        $this->rcid = $rcid;
     }
 
     public function getTags(): ?array

@@ -3,6 +3,8 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Psr\Log\LoggerInterface;
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
+use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment;
 use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\{CommentRepository, PostRepository};
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\{AbstractFactory, UserFactory};
 
@@ -24,5 +26,21 @@ class CommentFactory extends AbstractFactory
         $this->userFactory = $userFactory;
         $this->commentRepository = $commentRepository;
         $this->postRepository = $postRepository;
+    }
+
+    public function findOrCreateFromWebsocketMessage(Message $message): Comment
+    {
+        if ($message->isValid()) {
+            throw new \InvalidArgumentException('Comment is invalid');
+        }
+        if ($message->isComment()) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid Message object provided. %s expected, %s given',
+                Message::TYPE_COMMENT,
+                $message->getA()
+            ));
+        }
+
+
     }
 }

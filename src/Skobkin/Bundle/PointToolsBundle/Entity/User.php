@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="users", schema="users", indexes={
+ *      @ORM\Index(name="idx_user_login", columns={"login"}),
  *      @ORM\Index(name="idx_user_public", columns={"public"}),
  *      @ORM\Index(name="idx_user_removed", columns={"is_removed"})
  * })

@@ -38,7 +38,7 @@ class WebSocketMessageProcessor
                 return $this->processComment($message);
                 break;
 
-            case $message->isRecommendation():
+            case $message->isCommentRecommendation():
                 return $this->processRecommendation($message);
                 break;
         }

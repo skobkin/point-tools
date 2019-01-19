@@ -3,6 +3,8 @@
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
 use JMS\Serializer\Serializer;
+use Leezy\PheanstalkBundle\Proxy\PheanstalkProxy;
+use Pheanstalk\Job;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
 use Skobkin\Bundle\PointToolsBundle\Service\WebSocket\WebSocketMessageProcessor;
 use Symfony\Component\Console\Command\Command;
@@ -14,6 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProcessWebsocketUpdatesCommand extends Command
 {
+    /** @var PheanstalkProxy */
+    private $bsClient;
+
     /** @var string */
     private $bsTubeName;
 
@@ -24,12 +29,14 @@ class ProcessWebsocketUpdatesCommand extends Command
     private $messageProcessor;
 
     public function __construct(
+        PheanstalkProxy $bsClient,
+        string $bsTubeName,
         Serializer $serializer,
-        WebSocketMessageProcessor $processor,
-        string $bsTubeName
+        WebSocketMessageProcessor $processor
     ) {
         $this->serializer = $serializer;
         $this->messageProcessor = $processor;
+        $this->bsClient = $bsClient;
         $this->bsTubeName = $bsTubeName;
 
         parent::__construct();
@@ -48,9 +55,19 @@ class ProcessWebsocketUpdatesCommand extends Command
     /** {@inheritdoc} */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var Job $job */
+        while ($job = $this->bsClient->reserveFromTube($this->bsTubeName, 0)) {
+            try {
+                $message = $this->serializer->deserialize($job->getData(), Message::class, 'json');
+            } catch (\Exception $e) {
+                $output->writeln(sprintf(
+                    'Error while deserializing #%d data: \'%s\'',
+                    $job->getId(),
+                    $job->getData()
+                ));
 
-        foreach ($updates as $update) {
-            $message = $this->serializer->deserialize($update, Message::class, 'json');
+                continue;
+            }
 
             if ($this->messageProcessor->processMessage($message)) {
                 // BS delete item

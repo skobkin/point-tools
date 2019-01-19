@@ -7,6 +7,7 @@ use Skobkin\Bundle\PointToolsBundle\DTO\Api\User as UserDTO;
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 use Skobkin\Bundle\PointToolsBundle\Repository\UserRepository;
 use Skobkin\Bundle\PointToolsBundle\Exception\Factory\InvalidUserDataException;
+use Skobkin\Bundle\PointToolsBundle\Service\Api\UserApi;
 
 class UserFactory extends AbstractFactory
 {
@@ -15,11 +16,29 @@ class UserFactory extends AbstractFactory
     /** @var UserRepository */
     private $userRepository;
 
+    /** @var UserApi */
+    private $userApi;
 
-    public function __construct(LoggerInterface $logger, UserRepository $userRepository)
+    public function __construct(LoggerInterface $logger, UserRepository $userRepository, UserApi $userApi)
     {
         parent::__construct($logger);
         $this->userRepository = $userRepository;
+        $this->userApi = $userApi;
+    }
+
+    public function findOrCreateByLogin(string $login, bool $retrieveMissingFromApi = true): User
+    {
+        /** @var User $user */
+        if (null === $user = $this->userRepository->findBy(['login' => $login])) {
+            if ($retrieveMissingFromApi) {
+                $user = $this->userApi->getUserByLogin($login);
+            } else {
+                // TODO neen more specific exception
+                throw new \RuntimeException(sprintf('User \'%s\' not found in the database. Api retrieval disabled.', $login));
+            }
+        }
+
+        return $user;
     }
 
     /**
