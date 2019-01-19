@@ -228,7 +228,7 @@ class UpdateSubscriptionsCommand extends Command
                 );
 
                 /** @var Subscription $subscription */
-                foreach ((array) $serviceUser->getSubscribers() as $subscription) {
+                foreach ($serviceUser->getSubscribers() as $subscription) {
                     $usersForUpdate[] = $subscription->getSubscriber();
                 }
             }
