@@ -92,3 +92,6 @@ knp_paginator:
 
 csa_guzzle:
     profiler: '%kernel.debug%'
+
+sentry:
+    dsn: "%sentry_dsn%"
