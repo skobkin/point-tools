@@ -58,7 +58,10 @@
         ]
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "platform": {
+            "php": "7.1.23"
+        }
     },
     "extra": {
         "symfony-app-dir": "app",
