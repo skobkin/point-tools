@@ -2,7 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Skobkin\Bundle\PointToolsBundle\Entity\Subscription;
@@ -12,7 +12,7 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 /**
  * Load user subscriptions
  */
-class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInterface
+class LoadSubscribersData extends Fixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $om)
     {

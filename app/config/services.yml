@@ -10,6 +10,10 @@ services:
         resource: '../../src/Skobkin/Bundle/PointToolsBundle/*'
         exclude:  '../../src/Skobkin/Bundle/PointToolsBundle/{DataFixtures,DependencyInjection,DQL,DTO,Entity,Exception,Repository,Twig}'
 
+    Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM\:
+        resource: '../../src/Skobkin/Bundle/PointToolsBundle/DataFixtures/ORM/*'
+        tags: ['doctrine.fixture.orm']
+
     # HTTP clients
     # Default
     GuzzleHttp\ClientInterface:

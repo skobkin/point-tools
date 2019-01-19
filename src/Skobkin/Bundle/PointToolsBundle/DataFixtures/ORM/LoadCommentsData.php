@@ -2,14 +2,13 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment;
-use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post;
+use Skobkin\Bundle\PointToolsBundle\Entity\Blogs\{Comment, Post};
 use Skobkin\Bundle\PointToolsBundle\Entity\User;
 
-class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterface
+class LoadCommentsData extends Fixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $om)
     {
