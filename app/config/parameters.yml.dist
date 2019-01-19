@@ -35,8 +35,6 @@ parameters:
     # Telegram bot
     telegram_token:    "123456:some-token"
     telegram_max_connections: 2
-    # Telegram monolog handler
-    telegram_log_chat_id: ~
 
     # Sentry
     sentry_dsn: ~

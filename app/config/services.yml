@@ -100,8 +100,6 @@ services:
         tags: [{ name: console.command }]
     # Send message
     Skobkin\Bundle\PointToolsBundle\Command\TelegramSendMessageCommand:
-        arguments:
-            $logChatId: '%telegram_log_chat_id%'
         tags: [{ name: console.command }]
 
 
@@ -187,12 +185,6 @@ services:
             $botToken: '%telegram_token%'
             $logger: null
             $client: '@app.http.telegram_client'
-
-    # Monolog handler
-    unreal4u\MonologHandler:
-        arguments:
-            $chatId: '%telegram_log_chat_id%'
-            $level: 'error'
 
     # Private message processor
     Skobkin\Bundle\PointToolsBundle\Service\Telegram\PrivateMessageProcessor:
