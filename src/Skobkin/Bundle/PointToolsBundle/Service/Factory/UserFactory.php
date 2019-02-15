@@ -10,9 +10,9 @@ use Skobkin\Bundle\PointToolsBundle\Exception\Factory\InvalidUserDataException;
 
 class UserFactory extends AbstractFactory
 {
-    /**
-     * @var UserRepository
-     */
+    public const DATE_FORMAT = 'Y-m-d_H:i:s';
+
+    /** @var UserRepository */
     private $userRepository;
 
 
@@ -55,6 +55,9 @@ class UserFactory extends AbstractFactory
         return $user;
     }
 
+    /**
+     * @return User[]
+     */
     public function findOrCreateFromDTOArray(array $usersData): array
     {
         // @todo LOG
