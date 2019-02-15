@@ -4,13 +4,10 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory;
 
 use Psr\Log\LoggerInterface;
 
-class AbstractFactory
+abstract class AbstractFactory
 {
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     protected $logger;
-
 
     public function __construct(LoggerInterface $logger)
     {
