@@ -32,6 +32,9 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message:
         private:
             type: bool
             serialized_name: 'private'
+        rcid:
+            type: int
+            serialized_name: 'rcid'
         tags:
             type: array<string>
             serialized_name: 'tags'
