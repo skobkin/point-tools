@@ -9,6 +9,7 @@ use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
 use Skobkin\Bundle\PointToolsBundle\Service\WebSocket\WebSocketMessageProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -49,12 +50,15 @@ class ProcessWebsocketUpdatesCommand extends Command
         $this
             ->setName('point:update:websocket-messages')
             ->setDescription('Reads and processes updates from Beanstalkd queue pipe')
+            ->addOption('keep-jobs', 'k', InputOption::VALUE_NONE, 'Don\'t delete jobs from queue after processing')
         ;
     }
 
     /** {@inheritdoc} */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $keepJobs = (bool) $input->getOption('keep-jobs');
+
         /** @var Job $job */
         while ($job = $this->bsClient->reserveFromTube($this->bsTubeName, 0)) {
             try {
@@ -69,8 +73,14 @@ class ProcessWebsocketUpdatesCommand extends Command
                 continue;
             }
 
+            $output->writeln('Processing job #'.$job->getId());
+
             if ($this->messageProcessor->processMessage($message)) {
-                // BS delete item
+                if ($keepJobs) {
+                    $this->bsClient->release($job);
+                } else {
+                    $this->bsClient->delete($job);
+                }
             } else {
                 // BS return to queue
             }
