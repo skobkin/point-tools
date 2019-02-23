@@ -1,6 +1,5 @@
 Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message:
     exclusion_policy: none
-    access_type: public_method
     properties:
         a:
             type: string
@@ -8,6 +7,9 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message:
         author:
             type: string
             serialized_name: 'author'
+        authorId:
+            type: int
+            serialized_name: 'author_id'
         authorName:
             type: string
             serialized_name: 'author_name'

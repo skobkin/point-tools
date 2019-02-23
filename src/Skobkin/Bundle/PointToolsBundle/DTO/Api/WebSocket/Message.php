@@ -29,6 +29,11 @@ class Message implements ValidableInterface
      */
     private $author;
 
+    /**
+     * @var int
+     */
+    private $authorId;
+
     /** @var string|null */
     private $authorName;
 
@@ -144,6 +149,7 @@ class Message implements ValidableInterface
             case self::TYPE_POST:
                 if (
                     null !== $this->author &&
+                    null !== $this->authorId &&
                     null !== $this->html &&
                     null !== $this->postId &&
                     null !== $this->private &&
@@ -156,6 +162,7 @@ class Message implements ValidableInterface
             case self::TYPE_COMMENT;
                 if (
                     null !== $this->author &&
+                    null !== $this->authorId &&
                     null !== $this->commentId &&
                     null !== $this->html &&
                     null !== $this->postId &&
@@ -168,6 +175,7 @@ class Message implements ValidableInterface
             case self::TYPE_COMMENT_RECOMMENDATION;
                 if (
                     null !== $this->author &&
+                    null !== $this->authorId &&
                     null !== $this->postId
                 ) {
                     return true;
@@ -190,19 +198,14 @@ class Message implements ValidableInterface
         return $this->a;
     }
 
-    public function setA(string $a): void
-    {
-        $this->a = $a;
-    }
-
     public function getAuthor(): string
     {
         return $this->author;
     }
 
-    public function setAuthor(string $author): void
+    public function getAuthorId(): int
     {
-        $this->author = $author;
+        return $this->authorId;
     }
 
     public function getAuthorName(): ?string
@@ -210,19 +213,9 @@ class Message implements ValidableInterface
         return $this->authorName;
     }
 
-    public function setAuthorName(?string $authorName): void
-    {
-        $this->authorName = $authorName;
-    }
-
     public function getCommentId(): ?int
     {
         return $this->commentId;
-    }
-
-    public function setCommentId(?int $commentId): void
-    {
-        $this->commentId = $commentId;
     }
 
     public function getCut(): ?bool
@@ -230,19 +223,9 @@ class Message implements ValidableInterface
         return $this->cut;
     }
 
-    public function setCut(?bool $cut): void
-    {
-        $this->cut = $cut;
-    }
-
     public function getFiles(): ?array
     {
         return $this->files;
-    }
-
-    public function setFiles(?array $files): void
-    {
-        $this->files = $files;
     }
 
     public function getHtml(): ?string
@@ -250,19 +233,9 @@ class Message implements ValidableInterface
         return $this->html;
     }
 
-    public function setHtml(?string $html): void
-    {
-        $this->html = $html;
-    }
-
     public function getLink(): ?string
     {
         return $this->link;
-    }
-
-    public function setLink(?string $link): void
-    {
-        $this->link = $link;
     }
 
     public function getPostId(): string
@@ -270,19 +243,9 @@ class Message implements ValidableInterface
         return $this->postId;
     }
 
-    public function setPostId(string $postId): void
-    {
-        $this->postId = $postId;
-    }
-
     public function getPrivate(): ?bool
     {
         return $this->private;
-    }
-
-    public function setPrivate(?bool $private): void
-    {
-        $this->private = $private;
     }
 
     public function getRcid(): ?int
@@ -290,19 +253,9 @@ class Message implements ValidableInterface
         return $this->rcid;
     }
 
-    public function setRcid(?int $rcid): void
-    {
-        $this->rcid = $rcid;
-    }
-
     public function getTags(): ?array
     {
         return $this->tags;
-    }
-
-    public function setTags(?array $tags): void
-    {
-        $this->tags = $tags;
     }
 
     public function getText(): string
@@ -310,19 +263,9 @@ class Message implements ValidableInterface
         return $this->text;
     }
 
-    public function setText(string $text): void
-    {
-        $this->text = $text;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
-    }
-
-    public function setTitle(?string $title): void
-    {
-        $this->title = $title;
     }
 
     public function getToCommentId(): ?string
@@ -330,28 +273,13 @@ class Message implements ValidableInterface
         return $this->toCommentId;
     }
 
-    public function setToCommentId(?string $toCommentId): void
-    {
-        $this->toCommentId = $toCommentId;
-    }
-
     public function getToText(): ?string
     {
         return $this->toText;
     }
 
-    public function setToText(?string $toText): void
-    {
-        $this->toText = $toText;
-    }
-
     public function getToUsers(): ?array
     {
         return $this->toUsers;
-    }
-
-    public function setToUsers(?array $toUsers): void
-    {
-        $this->toUsers = $toUsers;
     }
 }
