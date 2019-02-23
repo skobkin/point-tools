@@ -10,8 +10,6 @@ use Skobkin\Bundle\PointToolsBundle\Exception\Factory\InvalidUserDataException;
 
 class UserFactory extends AbstractFactory
 {
-    public const DATE_FORMAT = 'Y-m-d_H:i:s';
-
     /** @var UserRepository */
     private $userRepository;
 

@@ -3,8 +3,7 @@
 namespace Skobkin\Bundle\PointToolsBundle\Service\WebSocket;
 
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\CommentFactory;
-use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\PostFactory;
+use Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\{CommentFactory, PostFactory};
 
 class WebSocketMessageProcessor
 {

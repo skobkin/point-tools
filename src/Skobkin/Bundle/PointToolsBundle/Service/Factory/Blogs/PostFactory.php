@@ -4,10 +4,11 @@ namespace Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Skobkin\Bundle\PointToolsBundle\DTO\Api\{MetaPost, Post as PostDTO, PostsPage};
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\{MetaPost, Post as ApiPost, PostsPage};
+use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message as WebsocketMessage;
 use Skobkin\Bundle\PointToolsBundle\Entity\{Blogs\Post, Blogs\PostTag, User};
 use Skobkin\Bundle\PointToolsBundle\Exception\{Api\InvalidResponseException, Factory\Blog\InvalidDataException};
-use Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository;
+use Skobkin\Bundle\PointToolsBundle\Repository\{Blogs\PostRepository, UserRepository};
 use Skobkin\Bundle\PointToolsBundle\Service\Factory\{AbstractFactory, UserFactory};
 
 class PostFactory extends AbstractFactory
@@ -17,6 +18,9 @@ class PostFactory extends AbstractFactory
 
     /** @var PostRepository */
     private $postRepository;
+
+    /** @var UserRepository */
+    private $userRepository;
 
     /** @var UserFactory */
     private $userFactory;
@@ -35,6 +39,7 @@ class PostFactory extends AbstractFactory
         LoggerInterface $logger,
         EntityManagerInterface $em,
         PostRepository $postRepository,
+        UserRepository $userRepository,
         UserFactory $userFactory,
         FileFactory $fileFactory,
         CommentFactory $commentFactory,
@@ -43,6 +48,7 @@ class PostFactory extends AbstractFactory
         parent::__construct($logger);
         $this->em = $em;
         $this->postRepository = $postRepository;
+        $this->userRepository = $userRepository;
         $this->userFactory = $userFactory;
         $this->fileFactory = $fileFactory;
         $this->commentFactory = $commentFactory;
@@ -111,7 +117,7 @@ class PostFactory extends AbstractFactory
             throw $e;
         }
 
-        $post = $this->findOrCreateFromDto($postData, $author);
+        $post = $this->findOrCreateFromApiDto($postData, $author);
 
         try {
             $this->updatePostTags($post, $postData->getTags() ?: []);
@@ -130,7 +136,37 @@ class PostFactory extends AbstractFactory
         return $post;
     }
 
-    private function findOrCreateFromDto(PostDTO $postData, User $author): Post
+    public function findOrCreateFromWebsocketDto(WebsocketMessage $message): Post
+    {
+        if (!$message->isValid()) {
+            throw new InvalidDataException('Invalid post data');
+        }
+        if (!$message->isPost()) {
+            throw new \LogicException(sprintf(
+                'Incorrect message type received. \'post\' expected \'%s\' given',
+                $message->getA()
+            ));
+        }
+
+        if (null === $post = $this->postRepository->find($message->getPostId())) {
+            /** @var User $author */
+            if (null === $author = $this->userRepository->find($message->getAuthorId())) {
+                // @todo create user
+            }
+
+            $post = new Post(
+                $message->getPostId(),
+                $author,
+                new \DateTime(),
+                Post::TYPE_POST
+            );
+            $this->postRepository->add($post);
+        }
+
+        $post->setText($message->getText());
+    }
+
+    private function findOrCreateFromApiDto(ApiPost $postData, User $author): Post
     {
         if (null === ($post = $this->postRepository->find($postData->getId()))) {
             // Creating new post
