@@ -12,7 +12,7 @@ class Message implements ValidableInterface
 {
     public const TYPE_COMMENT = 'comment';
     public const TYPE_POST = 'post';
-    public const TYPE_POST_RECOMMENDATION = 'rec';
+    public const TYPE_POST_COMMENT_RECOMMENDATION = 'rec';
     public const TYPE_COMMENT_RECOMMENDATION = 'ok';
 
     /**
@@ -182,6 +182,17 @@ class Message implements ValidableInterface
                     null !== $this->author &&
                     null !== $this->authorId &&
                     null !== $this->postId
+                ) {
+                    return true;
+                }
+                break;
+
+            case self::TYPE_POST_COMMENT_RECOMMENDATION;
+                if (
+                    null !== $this->author &&
+                    null !== $this->authorId &&
+                    null !== $this->postId &&
+                    null !== $this->postAuthorId
                 ) {
                     return true;
                 }
