@@ -31,6 +31,9 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message:
         postId:
             type: string
             serialized_name: 'post_id'
+        postAuthorId:
+            type: int
+            serialized_name: 'post_author_id'
         private:
             type: bool
             serialized_name: 'private'

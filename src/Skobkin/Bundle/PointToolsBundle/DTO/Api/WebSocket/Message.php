@@ -68,6 +68,11 @@ class Message implements ValidableInterface
      */
     private $link;
 
+    /**
+     * @var int|null
+     */
+    private $postAuthorId;
+
     /** @var string */
     private $postId;
 
@@ -136,7 +141,7 @@ class Message implements ValidableInterface
 
     public function isPostRecommendation(): bool
     {
-        return self::TYPE_POST_RECOMMENDATION === $this->a;
+        return self::TYPE_POST_COMMENT_RECOMMENDATION === $this->a;
     }
 
     /**
@@ -241,6 +246,11 @@ class Message implements ValidableInterface
     public function getPostId(): string
     {
         return $this->postId;
+    }
+
+    public function getPostAuthorId(): ?int
+    {
+        return $this->postAuthorId;
     }
 
     public function getPrivate(): ?bool
