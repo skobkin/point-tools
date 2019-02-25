@@ -8,8 +8,7 @@ use Pheanstalk\Job;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
 use Skobkin\Bundle\PointToolsBundle\Service\WebSocket\WebSocketMessageProcessor;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -82,7 +81,7 @@ class ProcessWebsocketUpdatesCommand extends Command
                     $this->bsClient->delete($job);
                 }
             } else {
-                // BS return to queue
+                $this->bsClient->release($job);
             }
         }
     }
