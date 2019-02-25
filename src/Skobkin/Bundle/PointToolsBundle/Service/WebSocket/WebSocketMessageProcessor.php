@@ -47,16 +47,16 @@ class WebSocketMessageProcessor
 
     private function processPost(Message $postData): bool
     {
-        // @todo implement
+        return false;
     }
 
     private function processComment(Message $commentData): bool
     {
-        // @todo implement
+        return false;
     }
 
     private function processRecommendation(Message $recommendData): bool
     {
-        // @todo implement
+        return false;
     }
 }

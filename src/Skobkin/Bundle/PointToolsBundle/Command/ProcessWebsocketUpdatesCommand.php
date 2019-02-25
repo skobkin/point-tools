@@ -6,6 +6,7 @@ use JMS\Serializer\Serializer;
 use Leezy\PheanstalkBundle\Proxy\PheanstalkProxy;
 use Pheanstalk\Job;
 use Skobkin\Bundle\PointToolsBundle\DTO\Api\WebSocket\Message;
+use Skobkin\Bundle\PointToolsBundle\Exception\WebSocket\UnsupportedTypeException;
 use Skobkin\Bundle\PointToolsBundle\Service\WebSocket\WebSocketMessageProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputInterface, InputOption};
@@ -28,12 +29,17 @@ class ProcessWebsocketUpdatesCommand extends Command
     /** @var WebSocketMessageProcessor */
     private $messageProcessor;
 
+    /** @var \Raven_Client */
+    private $sentryClient;
+
     public function __construct(
+        \Raven_Client $raven,
         PheanstalkProxy $bsClient,
         string $bsTubeName,
         Serializer $serializer,
         WebSocketMessageProcessor $processor
     ) {
+        $this->sentryClient = $raven;
         $this->serializer = $serializer;
         $this->messageProcessor = $processor;
         $this->bsClient = $bsClient;
@@ -61,6 +67,7 @@ class ProcessWebsocketUpdatesCommand extends Command
         /** @var Job $job */
         while ($job = $this->bsClient->reserveFromTube($this->bsTubeName, 0)) {
             try {
+                /** @var Message $message */
                 $message = $this->serializer->deserialize($job->getData(), Message::class, 'json');
             } catch (\Exception $e) {
                 $output->writeln(sprintf(
@@ -68,20 +75,33 @@ class ProcessWebsocketUpdatesCommand extends Command
                     $job->getId(),
                     $job->getData()
                 ));
+                $this->sentryClient->captureException($e);
 
                 continue;
             }
 
-            $output->writeln('Processing job #'.$job->getId());
+            $output->writeln('Processing job #'.$job->getId().' ('.$message->getA().')');
 
-            if ($this->messageProcessor->processMessage($message)) {
-                if ($keepJobs) {
-                    $this->bsClient->release($job);
+            try {
+                if ($this->messageProcessor->processMessage($message)) {
+                    if ($keepJobs) {
+
+                    } else {
+                        $this->bsClient->delete($job);
+                    }
                 } else {
-                    $this->bsClient->delete($job);
+
                 }
-            } else {
-                $this->bsClient->release($job);
+            } catch (UnsupportedTypeException $e) {
+                $output->writeln('Unsupported message type: '.$message->getA());
+                $this->sentryClient->captureException($e);
+
+                continue;
+            } catch (\Exception $e) {
+                $output->writeln('Message processing error: '.$e->getMessage());
+                $this->sentryClient->captureException($e);
+
+                continue;
             }
         }
     }
