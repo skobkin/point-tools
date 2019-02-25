@@ -11,9 +11,11 @@ use Skobkin\Bundle\PointToolsBundle\Exception\WebSocket\UnsupportedTypeException
 class Message implements ValidableInterface
 {
     public const TYPE_COMMENT = 'comment';
+    public const TYPE_COMMENT_EDITED = 'comment_edited';
     public const TYPE_POST = 'post';
+    public const TYPE_POST_EDITED = 'post_edited';
     public const TYPE_POST_COMMENT_RECOMMENDATION = 'rec';
-    public const TYPE_COMMENT_RECOMMENDATION = 'ok';
+    public const TYPE_RECOMMENDATION_WITH_COMMENT = 'ok';
 
     /**
      * Event type. @see Message::TYPE_* constants
@@ -136,7 +138,7 @@ class Message implements ValidableInterface
 
     public function isCommentRecommendation(): bool
     {
-        return self::TYPE_COMMENT_RECOMMENDATION === $this->a;
+        return self::TYPE_RECOMMENDATION_WITH_COMMENT === $this->a;
     }
 
     public function isPostRecommendation(): bool
@@ -152,50 +154,27 @@ class Message implements ValidableInterface
     {
         switch ($this->a) {
             case self::TYPE_POST:
-                if (
-                    null !== $this->author &&
-                    null !== $this->authorId &&
-                    null !== $this->html &&
-                    null !== $this->postId &&
-                    null !== $this->private &&
-                    null !== $this->tags
-                ) {
-                    return true;
-                }
+                return $this->isValidPost();
+                break;
+
+            case self::TYPE_POST_EDITED:
+                return $this->isValidPostEdited();
                 break;
 
             case self::TYPE_COMMENT;
-                if (
-                    null !== $this->author &&
-                    null !== $this->authorId &&
-                    null !== $this->commentId &&
-                    null !== $this->html &&
-                    null !== $this->postId &&
-                    null !== $this->text
-                ) {
-                    return true;
-                }
+                return $this->isValidComment();
                 break;
 
-            case self::TYPE_COMMENT_RECOMMENDATION;
-                if (
-                    null !== $this->author &&
-                    null !== $this->authorId &&
-                    null !== $this->postId
-                ) {
-                    return true;
-                }
+            case self::TYPE_COMMENT_EDITED;
+                return $this->isValidCommentEdited();
+                break;
+
+            case self::TYPE_RECOMMENDATION_WITH_COMMENT;
+                return $this->isValidRecommendationWithComment();
                 break;
 
             case self::TYPE_POST_COMMENT_RECOMMENDATION;
-                if (
-                    null !== $this->author &&
-                    null !== $this->authorId &&
-                    null !== $this->postId &&
-                    null !== $this->postAuthorId
-                ) {
-                    return true;
-                }
+                return $this->isValidPostCommentRecommendation();
                 break;
 
             case null:
@@ -205,8 +184,6 @@ class Message implements ValidableInterface
             default:
                 throw new UnsupportedTypeException(sprintf('Type \'%s\' is not supported.', $this->a));
         }
-
-        return false;
     }
 
     public function getA(): string
@@ -302,5 +279,53 @@ class Message implements ValidableInterface
     public function getToUsers(): ?array
     {
         return $this->toUsers;
+    }
+
+    private function hasCommonMandatoryData(): bool
+    {
+        return (
+            null !== $this->author &&
+            null !== $this->authorId &&
+            null !== $this->postId
+        );
+    }
+
+    private function isValidPost(): bool
+    {
+        return $this->hasCommonMandatoryData() && (
+                // Text can be empty ("") though
+                null !== $this->text &&
+                null !== $this->private &&
+                null !== $this->tags
+            );
+    }
+
+    private function isValidPostEdited(): bool
+    {
+        return $this->isValidPost();
+    }
+
+    private function isValidComment(): bool
+    {
+        return $this->hasCommonMandatoryData() && (
+                null !== $this->commentId &&
+                null !== $this->html &&
+                null !== $this->text
+            );
+    }
+
+    private function isValidCommentEdited(): bool
+    {
+        return $this->hasCommonMandatoryData() && (null !== $this->commentId);
+    }
+
+    private function isValidRecommendationWithComment(): bool
+    {
+        return $this->hasCommonMandatoryData();
+    }
+
+    private function isValidPostCommentRecommendation(): bool
+    {
+        return $this->hasCommonMandatoryData() && (null !== $this->postAuthorId);
     }
 }
