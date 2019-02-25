@@ -84,13 +84,9 @@ class ProcessWebsocketUpdatesCommand extends Command
 
             try {
                 if ($this->messageProcessor->processMessage($message)) {
-                    if ($keepJobs) {
-
-                    } else {
+                    if (!$keepJobs) {
                         $this->bsClient->delete($job);
                     }
-                } else {
-
                 }
             } catch (UnsupportedTypeException $e) {
                 $output->writeln('Unsupported message type: '.$message->getA());
