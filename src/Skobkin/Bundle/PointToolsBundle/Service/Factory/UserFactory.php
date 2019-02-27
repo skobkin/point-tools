@@ -20,33 +20,42 @@ class UserFactory extends AbstractFactory
     }
 
     /**
-     * @param UserDTO $userData
-     *
-     * @return User
-     *
      * @throws InvalidUserDataException
      */
     public function findOrCreateFromDTO(UserDTO $userData): User
     {
-        // @todo LOG
-
         if (!$userData->isValid()) {
             throw new InvalidUserDataException('Invalid user data', $userData);
         }
+
+        $createdAt = \DateTime::createFromFormat(self::DATE_FORMAT, $userData->getCreated()) ?: new \DateTime();
 
         /** @var User $user */
         if (null === ($user = $this->userRepository->find($userData->getId()))) {
             $user = new User(
                 $userData->getId(),
-                \DateTime::createFromFormat(self::DATE_FORMAT, $userData->getCreated()) ?: new \DateTime()
+                $createdAt
             );
             $this->userRepository->add($user);
+        } else {
+            $user->updateCreatedAt($createdAt);
         }
 
         $user->updateLoginAndName($userData->getLogin(), $userData->getName());
 
         if (null !== $userData->getDenyAnonymous() && null !== $userData->getPrivate()) {
             $user->updatePrivacy(!$userData->getDenyAnonymous(), $userData->getPrivate());
+        }
+
+        return $user;
+    }
+
+    public function findOrCreateFromIdLoginAndName(int $id, string $login, ?string $name): User
+    {
+        if (null === $user = $this->userRepository->find($id)) {
+            // We're using current date now but next time when we'll be updating user from API it'll be fixed
+            $user = new User($id, new \DateTime(), $login, $name);
+            $this->userRepository->add($user);
         }
 
         return $user;

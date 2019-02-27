@@ -110,7 +110,7 @@ class Post
     private $comments;
 
 
-    public function __construct(string $id, User $author, \DateTime $createdAt, string $type)
+    public function __construct(string $id, User $author, \DateTime $createdAt, string $type = self::TYPE_POST)
     {
         $this->id = $id;
         $this->author = $author;

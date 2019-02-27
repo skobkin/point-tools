@@ -2,6 +2,7 @@
 
 namespace Skobkin\Bundle\PointToolsBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Serializer;
 use Leezy\PheanstalkBundle\Proxy\PheanstalkProxy;
 use Pheanstalk\Job;
@@ -17,6 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProcessWebsocketUpdatesCommand extends Command
 {
+    /** @var EntityManagerInterface */
+    private $em;
+
     /** @var PheanstalkProxy */
     private $bsClient;
 
@@ -33,12 +37,14 @@ class ProcessWebsocketUpdatesCommand extends Command
     private $sentryClient;
 
     public function __construct(
+        EntityManagerInterface $em,
         \Raven_Client $raven,
         PheanstalkProxy $bsClient,
         string $bsTubeName,
         Serializer $serializer,
         WebSocketMessageProcessor $processor
     ) {
+        $this->em = $em;
         $this->sentryClient = $raven;
         $this->serializer = $serializer;
         $this->messageProcessor = $processor;
@@ -84,17 +90,19 @@ class ProcessWebsocketUpdatesCommand extends Command
 
             try {
                 if ($this->messageProcessor->processMessage($message)) {
+                    $this->em->flush();
+
                     if (!$keepJobs) {
                         $this->bsClient->delete($job);
                     }
                 }
             } catch (UnsupportedTypeException $e) {
-                $output->writeln('Unsupported message type: '.$message->getA());
+                $output->writeln('  Unsupported message type: '.$message->getA());
                 $this->sentryClient->captureException($e);
 
                 continue;
             } catch (\Exception $e) {
-                $output->writeln('Message processing error: '.$e->getMessage());
+                $output->writeln('  Message processing error: '.$e->getMessage());
                 $this->sentryClient->captureException($e);
 
                 continue;

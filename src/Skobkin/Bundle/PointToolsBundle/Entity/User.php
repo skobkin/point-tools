@@ -191,15 +191,24 @@ class User
         return $this->createdAt;
     }
 
+    public function updateCreatedAt(\DateTime $date): self
+    {
+        $this->createdAt = $date;
+
+        return $this;
+    }
+
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
 
-    public function updatePrivacy(?bool $public, ?bool $whitelistOnly): void
+    public function updatePrivacy(bool $public, bool $whitelistOnly): self
     {
         $this->public = $public;
         $this->whitelistOnly = $whitelistOnly;
+
+        return $this;
     }
 
     public function isPublic(): ?bool

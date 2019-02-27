@@ -47,7 +47,9 @@ class WebSocketMessageProcessor
 
     private function processPost(Message $postData): bool
     {
-        return false;
+        $this->postFactory->findOrCreateFromWebsocketDto($postData);
+
+        return true;
     }
 
     private function processComment(Message $commentData): bool

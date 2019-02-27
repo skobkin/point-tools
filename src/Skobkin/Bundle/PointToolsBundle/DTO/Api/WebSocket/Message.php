@@ -295,7 +295,6 @@ class Message implements ValidableInterface
         return $this->hasCommonMandatoryData() && (
                 // Text can be empty ("") though
                 null !== $this->text &&
-                null !== $this->private &&
                 null !== $this->tags
             );
     }

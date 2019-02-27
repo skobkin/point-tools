@@ -151,7 +151,11 @@ class PostFactory extends AbstractFactory
         if (null === $post = $this->postRepository->find($message->getPostId())) {
             /** @var User $author */
             if (null === $author = $this->userRepository->find($message->getAuthorId())) {
-                // @todo create user
+                $author = $this->userFactory->findOrCreateFromIdLoginAndName(
+                    $message->getAuthorId(),
+                    $message->getAuthor(),
+                    $message->getAuthorName()
+                );
             }
 
             $post = new Post(
@@ -163,7 +167,26 @@ class PostFactory extends AbstractFactory
             $this->postRepository->add($post);
         }
 
-        $post->setText($message->getText());
+        $post
+            ->setText($message->getText())
+            ->setPrivate((bool) $message->getPrivate())
+        ;
+
+        try {
+            $this->updatePostTags($post, $message->getTags() ?: []);
+        } catch (\Exception $e) {
+            $this->logger->error('Error while updating post tags');
+            throw $e;
+        }
+
+        try {
+            $this->updatePostFiles($post, $message->getFiles() ?: []);
+        } catch (\Exception $e) {
+            $this->logger->error('Error while updating post files');
+            throw $e;
+        }
+
+        return $post;
     }
 
     private function findOrCreateFromApiDto(ApiPost $postData, User $author): Post
@@ -181,7 +204,7 @@ class PostFactory extends AbstractFactory
 
         $post
             ->setText($postData->getText())
-            ->setPrivate($postData->getPrivate())
+            ->setPrivate((bool) $postData->getPrivate())
         ;
 
         return $post;
