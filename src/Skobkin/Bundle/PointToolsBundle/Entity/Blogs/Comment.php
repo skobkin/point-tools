@@ -9,6 +9,8 @@ use Skobkin\Bundle\PointToolsBundle\Entity\User;
 /**
  * @ORM\Table(name="comments", schema="posts", indexes={
  *      @ORM\Index(name="idx_comment_created_at", columns={"created_at"})
+ * }, uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_post_id_comment_number", columns={"post_id", "number"})
  * })
  * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository")
  */
