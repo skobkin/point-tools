@@ -98,8 +98,6 @@ class PostFactory extends AbstractFactory
     /**
      * Create full post with tags, files and comments
      *
-     * @todo Implement comments
-     *
      * @throws InvalidDataException
      */
     public function findOrCreateFromDtoWithContent(MetaPost $metaPost): Post
@@ -133,6 +131,8 @@ class PostFactory extends AbstractFactory
             throw $e;
         }
 
+        // @TODO implement comments
+
         return $post;
     }
 
@@ -149,14 +149,11 @@ class PostFactory extends AbstractFactory
         }
 
         if (null === $post = $this->postRepository->find($message->getPostId())) {
-            /** @var User $author */
-            if (null === $author = $this->userRepository->find($message->getAuthorId())) {
-                $author = $this->userFactory->findOrCreateFromIdLoginAndName(
-                    $message->getAuthorId(),
-                    $message->getAuthor(),
-                    $message->getAuthorName()
-                );
-            }
+            $author = $this->userFactory->findOrCreateFromIdLoginAndName(
+                $message->getAuthorId(),
+                $message->getAuthor(),
+                $message->getAuthorName()
+            );
 
             $post = new Post(
                 $message->getPostId(),

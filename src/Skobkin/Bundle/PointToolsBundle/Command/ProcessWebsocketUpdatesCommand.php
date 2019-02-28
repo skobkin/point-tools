@@ -95,6 +95,8 @@ class ProcessWebsocketUpdatesCommand extends Command
                     if (!$keepJobs) {
                         $this->bsClient->delete($job);
                     }
+
+                    // todo cleaning IdentityMap
                 }
             } catch (UnsupportedTypeException $e) {
                 $output->writeln('  Unsupported message type: '.$message->getA());

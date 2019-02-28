@@ -54,7 +54,12 @@ class WebSocketMessageProcessor
 
     private function processComment(Message $commentData): bool
     {
+        // Not done yet
         return false;
+
+        $this->commentFactory->findOrCreateFromWebsocketMessage($commentData);
+
+        return true;
     }
 
     private function processRecommendation(Message $recommendData): bool

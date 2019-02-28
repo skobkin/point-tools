@@ -52,10 +52,14 @@ class UserFactory extends AbstractFactory
 
     public function findOrCreateFromIdLoginAndName(int $id, string $login, ?string $name): User
     {
+        /** @var User $user */
         if (null === $user = $this->userRepository->find($id)) {
             // We're using current date now but next time when we'll be updating user from API it'll be fixed
             $user = new User($id, new \DateTime(), $login, $name);
             $this->userRepository->add($user);
+        } else {
+            // @todo update login?
+            // Probably don't because no name in the WS message (or maybe after PR to point?)
         }
 
         return $user;

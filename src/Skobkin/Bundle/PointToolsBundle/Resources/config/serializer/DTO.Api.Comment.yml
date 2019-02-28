@@ -2,10 +2,6 @@ Skobkin\Bundle\PointToolsBundle\DTO\Api\Comment:
     exclusion_policy: none
     access_type: public_method
     properties:
-        postId:
-            serialized_name: 'post_id'
-            type: 'Skobkin\Bundle\PointToolsBundle\DTO\Api\Post'
-            max_depth: 2
         number:
             serialized_name: 'id'
             type: integer

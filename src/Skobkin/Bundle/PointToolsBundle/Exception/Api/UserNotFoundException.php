@@ -4,16 +4,11 @@ namespace Skobkin\Bundle\PointToolsBundle\Exception\Api;
 
 class UserNotFoundException extends NotFoundException
 {
-    /**
-     * @var int
-     */
-    protected $userId;
+    /** @var int */
+    private $userId;
 
-    /**
-     * @var string
-     */
-    protected $login;
-
+    /** @var string */
+    private $login;
 
     /**
      * {@inheritdoc}

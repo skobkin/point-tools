@@ -4,39 +4,22 @@ namespace Skobkin\Bundle\PointToolsBundle\DTO\Api;
 
 class Comment implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
-    private $postId;
-
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     private $number;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     private $toCommentId;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $created;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $text;
 
-    /**
-     * @var User|null
-     */
+    /** @var User|null */
     private $author;
 
-    /**
-     * @var bool|null
-     */
+    /** @var bool|null */
     private $isRec;
 
 
