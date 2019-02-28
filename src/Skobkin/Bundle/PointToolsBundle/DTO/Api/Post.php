@@ -4,44 +4,28 @@ namespace Skobkin\Bundle\PointToolsBundle\DTO\Api;
 
 class Post implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $id;
 
-    /**
-     * @var string[]|null
-     */
+    /** @var string[]|null */
     private $tags;
 
-    /**
-     * @var string[]|null
-     */
+    /** @var string[]|null */
     private $files;
 
-    /**
-     * @var User|null
-     */
+    /** @var User|null */
     private $author;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $text;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $created;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     private $type;
 
-    /**
-     * @var bool|null
-     */
+    /** @var bool|null */
     private $private;
 
 
