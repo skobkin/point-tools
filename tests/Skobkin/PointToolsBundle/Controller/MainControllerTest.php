@@ -144,8 +144,7 @@ class MainControllerTest extends WebTestCase
     {
         $this->assertTrue(array_key_exists('login', $user), 'Result has \'login\' field');
         $this->assertTrue(array_key_exists('name', $user), 'Result has \'name\' field');
-        $this->assertInternalType('string', $user['name'], 'User name is string');
-        $this->assertEquals('', $user['name'], 'User name is empty string');
+        $this->assertEquals(true, ('' === $user['name'] || null === $user['name']), 'User name is empty string or null');
     }
 
     public function testAjaxUserAutoCompleteIsEmptyForNonExistingUser(): void
