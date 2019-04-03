@@ -18,7 +18,7 @@ class PostController extends AbstractController
     public function showAction(Post $post, PostRepository $postRepository): Response
     {
         if ((!$post->getAuthor()->isPublic()) || $post->getAuthor()->isWhitelistOnly()) {
-            throw $this->createNotFoundException('Author\'s blog is private.');
+            throw $this->createAccessDeniedException('Author\'s blog is private.');
         }
 
         return $this->render('SkobkinPointToolsBundle:Post:show.html.twig', [
