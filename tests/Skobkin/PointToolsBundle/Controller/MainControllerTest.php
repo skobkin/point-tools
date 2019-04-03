@@ -2,13 +2,12 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Controller;
 
-use Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM\LoadUserData;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MainControllerTest extends WebTestCase
 {
-    public function testUserSearch()
+    public function testUserSearch(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
@@ -21,7 +20,7 @@ class MainControllerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect('/user/testuser'), 'Redirect to testuser\'s page didn\'t happen');
     }
 
-    public function testNonExistingUserSearch()
+    public function testNonExistingUserSearch(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
@@ -51,7 +50,7 @@ class MainControllerTest extends WebTestCase
         $this->assertEquals(' Login not found', $firstError->text(), 'Incorrect error text');
     }
 
-    public function testUserStats()
+    public function testUserStats(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
@@ -104,7 +103,7 @@ class MainControllerTest extends WebTestCase
     /**
      * @depends testAjaxUserAutoCompleteHasOptions
      */
-    public function testAjaxUserAutoCompleteHasValidUserObjects(array $users)
+    public function testAjaxUserAutoCompleteHasValidUserObjects(array $users): void
     {
         foreach ($users as $key => $user) {
             $this->assertTrue(array_key_exists('login', $user), sprintf('%d row of result has \'login\' field', $key));
@@ -132,7 +131,7 @@ class MainControllerTest extends WebTestCase
         $data = json_decode($json, true);
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
-        $this->assertTrue(is_array($data), 'JSON data is array');
+        $this->assertInternalType('array', $data, 'JSON data is array');
         $this->assertCount(1, $data, 'Array has 1 elements');
 
         return reset($data);
@@ -141,7 +140,7 @@ class MainControllerTest extends WebTestCase
     /**
      * @depends testAjaxUserAutoCompleteHasOptionsForUnnamedUser
      */
-    public function testAjaxUserAutoCompleteHasValidUserObjectsForUnnamedUser(array $user)
+    public function testAjaxUserAutoCompleteHasValidUserObjectsForUnnamedUser(array $user): void
     {
         $this->assertTrue(array_key_exists('login', $user), 'Result has \'login\' field');
         $this->assertTrue(array_key_exists('name', $user), 'Result has \'name\' field');
@@ -149,7 +148,7 @@ class MainControllerTest extends WebTestCase
         $this->assertEquals('', $user['name'], 'User name is empty string');
     }
 
-    public function testAjaxUserAutoCompleteIsEmptyForNonExistingUser()
+    public function testAjaxUserAutoCompleteIsEmptyForNonExistingUser(): void
     {
         $client = static::createClient();
         $client->request('GET', '/ajax/users/search/aksdjhaskdjhqwhdgqkjwhdgkjah');
@@ -159,8 +158,8 @@ class MainControllerTest extends WebTestCase
         $data = json_decode($client->getResponse()->getContent());
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
-        $this->assertTrue(is_array($data), 'JSON data is array');
-        $this->assertEquals(0, count($data), 'Array has no elements');
+        $this->assertInternalType('array', $data, 'JSON data is array');
+        $this->assertCount(0, $data, 'Array has no elements');
     }
 
     private function createClientForAjaxUserSearchByLogin(string $login): Client
