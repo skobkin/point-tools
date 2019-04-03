@@ -2,6 +2,8 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Controller;
 
+use Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM\LoadUserData;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MainControllerTest extends WebTestCase
@@ -75,14 +77,10 @@ class MainControllerTest extends WebTestCase
 
     /**
      * Tests AJAX user search autocomplete and returns JSON response string
-     *
-     * @return string
      */
-    public function testAjaxUserAutoComplete()
+    public function testAjaxUserAutoComplete(): string
     {
-        $client = static::createClient();
-        // We need to search all test user with 'testuser5' included which will test the code against null-string problem in User#getName()
-        $client->request('GET', '/ajax/users/search/testuser');
+        $client = $this->createClientForAjaxUserSearchByLogin('testuser');
 
         $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
 
@@ -91,24 +89,20 @@ class MainControllerTest extends WebTestCase
 
     /**
      * @depends testAjaxUserAutoComplete
-     *
-     * @param $json
      */
-    public function testAjaxUserAutoCompleteHasOptions($json)
+    public function testAjaxUserAutoCompleteHasOptions(string $json): array
     {
         $data = json_decode($json);
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
         $this->assertTrue(is_array($data), 'JSON data is array');
-        $this->assertCount(5, $data, 'Array has 5 elements');
+        $this->assertCount(2, $data, 'Array has 2 elements');
 
         return $data;
     }
 
     /**
      * @depends testAjaxUserAutoCompleteHasOptions
-     *
-     * @param array $users
      */
     public function testAjaxUserAutoCompleteHasValidUserObjects(array $users)
     {
@@ -118,7 +112,44 @@ class MainControllerTest extends WebTestCase
         }
     }
 
-    public function testAjaxUserAutoCompleteForNonExistingUser()
+    /**
+     * Tests AJAX user search autocomplete for unnamed user and returns JSON response string
+     */
+    public function testAjaxUserAutoCompleteForUnnamedUser(): string
+    {
+        $client = $this->createClientForAjaxUserSearchByLogin('unnamed_user');
+
+        $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'), 'Response has "Content-Type" = "application/json"');
+
+        return $client->getResponse()->getContent();
+    }
+
+    /**
+     * @depends testAjaxUserAutoComplete
+     */
+    public function testAjaxUserAutoCompleteHasOptionsForUnnamedUser(string $json): array
+    {
+        $data = json_decode($json);
+
+        $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
+        $this->assertTrue(is_array($data), 'JSON data is array');
+        $this->assertCount(1, $data, 'Array has 1 elements');
+
+        return reset($data);
+    }
+
+    /**
+     * @depends testAjaxUserAutoCompleteHasOptions
+     */
+    public function testAjaxUserAutoCompleteHasValidUserObjectsForUnnamedUser(array $user)
+    {
+        $this->assertTrue(array_key_exists('login', $user), 'Result has \'login\' field');
+        $this->assertTrue(array_key_exists('name', $user), 'Result has \'name\' field');
+        $this->assertInternalType('string', $user['name'], 'User name is string');
+        $this->assertEquals('', $user['name'], 'User name is empty string');
+    }
+
+    public function testAjaxUserAutoCompleteIsEmptyForNonExistingUser()
     {
         $client = static::createClient();
         $client->request('GET', '/ajax/users/search/aksdjhaskdjhqwhdgqkjwhdgkjah');
@@ -130,5 +161,13 @@ class MainControllerTest extends WebTestCase
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
         $this->assertTrue(is_array($data), 'JSON data is array');
         $this->assertEquals(0, count($data), 'Array has no elements');
+    }
+
+    private function createClientForAjaxUserSearchByLogin(string $login): Client
+    {
+        $client = static::createClient();
+        $client->request('GET', '/ajax/users/search/'.$login);
+
+        return $client;
     }
 }
