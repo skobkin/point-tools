@@ -2,15 +2,15 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Skobkin\Bundle\PointToolsBundle\DataFixtures\ORM\LoadPostData;
+use Symfony\Bundle\FrameworkBundle\{Client, Test\WebTestCase};
 use Symfony\Component\DomCrawler\Crawler;
 
 class PostControllerTest extends WebTestCase
 {
     public function testNonExistingPostPage()
     {
-        $client = static::createClient();
-        $client->request('GET', '/nonexistingpost');
+        $client = $this->createClientForPostId('nonexistingpost');
 
         $this->assertTrue($client->getResponse()->isNotFound(), '404 response code for non-existing post');
     }
@@ -20,12 +20,11 @@ class PostControllerTest extends WebTestCase
      */
     public function testShortPostPageIsOk()
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/shortpost');
+        $client = $this->createClientForPostId(LoadPostData::POST_ID_SHORT);
 
         $this->assertTrue($client->getResponse()->isOk(), '200 response code for existing post');
 
-        return $crawler;
+        return $client->getCrawler();
     }
 
     /**
@@ -57,5 +56,34 @@ class PostControllerTest extends WebTestCase
         $p = $postText->filter('p');
         $this->assertEquals(1, $p->count(), '.post-text has zero or more than one paragraphs');
         $this->assertEquals('Test short post', $p->text(), '.post-text has no correct post text');
+    }
+
+    public function testPrivateUserPostForbidden()
+    {
+        $client = $this->createClientForPostId(LoadPostData::POST_ID_PR_USER);
+
+        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for private user\'s post');
+    }
+
+    public function testWhitelistOnlyUserPostForbidden()
+    {
+        $client = $this->createClientForPostId(LoadPostData::POST_ID_WL_USER);
+
+        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for whitelist-only user\'s post');
+    }
+
+    public function testPrivateWhitelistOnlyUserPostForbidden()
+    {
+        $client = $this->createClientForPostId(LoadPostData::POST_ID_PR_WL_USER);
+
+        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for private whitelist-only user\'s post');
+    }
+
+    private function createClientForPostId(string $id): Client
+    {
+        $client = static::createClient();
+        $client->request('GET', '/'.$id);
+
+        return $client;
     }
 }

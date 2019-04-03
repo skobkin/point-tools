@@ -8,6 +8,12 @@ use Skobkin\Bundle\PointToolsBundle\Entity\{Blogs\Post, User};
 
 class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
 {
+    public const POST_ID_LONG = 'longpost';
+    public const POST_ID_SHORT = 'shortpost';
+    public const POST_ID_PR_USER = 'prusrpst';
+    public const POST_ID_WL_USER = 'wlusrpst';
+    public const POST_ID_PR_WL_USER = 'prwlusrpst';
+
     public function load(ObjectManager $om)
     {
         /** @var User $mainUser */
@@ -19,31 +25,31 @@ class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
         /** @var User $prWlUser */
         $prWlUser = $this->getReference('test_user_'.LoadUserData::USER_PRWL_ID);
 
-        $longPost = (new Post('longpost', $mainUser, new \DateTime(), Post::TYPE_POST))
+        $longPost = (new Post(self::POST_ID_LONG, $mainUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Test post with many comments')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $shortPost = (new Post('shortpost', $mainUser, new \DateTime(), Post::TYPE_POST))
+        $shortPost = (new Post(self::POST_ID_SHORT, $mainUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Test short post')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $privateUserPost = (new Post('prusrpst', $privateUser, new \DateTime(), Post::TYPE_POST))
+        $privateUserPost = (new Post(self::POST_ID_PR_USER, $privateUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Post from private user. Should not be visible in the public feed.')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $wlUserPost = (new Post('wlusrpst', $wlUser, new \DateTime(), Post::TYPE_POST))
+        $wlUserPost = (new Post(self::POST_ID_WL_USER, $wlUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Post from whitelist-only user. Should only be visible for whitelisted users.')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $privateWlUserPost = (new Post('prwlusrpst', $prWlUser, new \DateTime(), Post::TYPE_POST))
+        $privateWlUserPost = (new Post(self::POST_ID_PR_WL_USER, $prWlUser, new \DateTime(), Post::TYPE_POST))
             ->setText('Post from private AND whitelist-only user. Should not be visible in the public feed.')
             ->setPrivate(false)
             ->setDeleted(false)
