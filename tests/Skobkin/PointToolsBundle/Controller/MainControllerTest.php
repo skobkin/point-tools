@@ -92,7 +92,7 @@ class MainControllerTest extends WebTestCase
      */
     public function testAjaxUserAutoCompleteHasOptions(string $json): array
     {
-        $data = json_decode($json);
+        $data = json_decode($json, true);
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
         $this->assertTrue(is_array($data), 'JSON data is array');
@@ -129,7 +129,7 @@ class MainControllerTest extends WebTestCase
      */
     public function testAjaxUserAutoCompleteHasOptionsForUnnamedUser(string $json): array
     {
-        $data = json_decode($json);
+        $data = json_decode($json, true);
 
         $this->assertNotNull($data, 'JSON data successfully decoded and not empty');
         $this->assertTrue(is_array($data), 'JSON data is array');
