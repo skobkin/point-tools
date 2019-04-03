@@ -12,8 +12,6 @@ class PostController extends AbstractController
 {
     /**
      * @ParamConverter("post", class="SkobkinPointToolsBundle:Blogs\Post")
-     *
-     * @return Response
      */
     public function showAction(Post $post, PostRepository $postRepository): Response
     {
