@@ -125,7 +125,7 @@ class MainControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testAjaxUserAutoComplete
+     * @depends testAjaxUserAutoCompleteForUnnamedUser
      */
     public function testAjaxUserAutoCompleteHasOptionsForUnnamedUser(string $json): array
     {
@@ -139,7 +139,7 @@ class MainControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testAjaxUserAutoCompleteHasOptions
+     * @depends testAjaxUserAutoCompleteHasOptionsForUnnamedUser
      */
     public function testAjaxUserAutoCompleteHasValidUserObjectsForUnnamedUser(array $user)
     {
