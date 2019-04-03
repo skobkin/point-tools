@@ -62,21 +62,21 @@ class PostControllerTest extends WebTestCase
     {
         $client = $this->createClientForPostId(LoadPostData::POST_ID_PR_USER);
 
-        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for private user\'s post');
+        $this->assertTrue($client->getResponse()->isNotFound(), '404 response code for private user\'s post');
     }
 
     public function testWhitelistOnlyUserPostForbidden()
     {
         $client = $this->createClientForPostId(LoadPostData::POST_ID_WL_USER);
 
-        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for whitelist-only user\'s post');
+        $this->assertTrue($client->getResponse()->isNotFound(), '404 response code for whitelist-only user\'s post');
     }
 
     public function testPrivateWhitelistOnlyUserPostForbidden()
     {
         $client = $this->createClientForPostId(LoadPostData::POST_ID_PR_WL_USER);
 
-        $this->assertTrue($client->getResponse()->isForbidden(), '403 response code for private whitelist-only user\'s post');
+        $this->assertTrue($client->getResponse()->isNotFound(), '404 response code for private whitelist-only user\'s post');
     }
 
     private function createClientForPostId(string $id): Client

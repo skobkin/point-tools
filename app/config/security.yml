@@ -9,11 +9,4 @@ security:
             security: false
 
         default:
-            # Needs to be changed if authentication is added
-            # Also it needs to be carefully checked that after enabling security here
-            # \Symfony\Component\Security\Http\Firewall\ExceptionListener::handleAccessDeniedException() doesn't start to replace 403 by 401 exceptions
-            # for all users
-            # For example \Skobkin\Bundle\PointToolsBundle\Controller\PostController::showAction() can return AccessDeniedException and this logic must be saved
-            # After enabling authentication
-            security: false
-            #anonymous: true
+            anonymous: true

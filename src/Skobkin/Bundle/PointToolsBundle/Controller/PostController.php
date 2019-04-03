@@ -16,7 +16,13 @@ class PostController extends AbstractController
     public function showAction(Post $post, PostRepository $postRepository): Response
     {
         if ((!$post->getAuthor()->isPublic()) || $post->getAuthor()->isWhitelistOnly()) {
-            throw $this->createAccessDeniedException('Author\'s blog is private.');
+            /**
+             * Throwing 404 instead of 403 because of
+             * @see \Symfony\Component\Security\Http\Firewall\ExceptionListener::handleAccessDeniedException()
+             * starts to replace 403 by 401 exceptions for anonymous users and tries to authenticate them.
+             */
+            throw $this->createNotFoundException('Author\'s blog is private.');
+            //throw $this->createAccessDeniedException('Author\'s blog is private.');
         }
 
         return $this->render('SkobkinPointToolsBundle:Post:show.html.twig', [
