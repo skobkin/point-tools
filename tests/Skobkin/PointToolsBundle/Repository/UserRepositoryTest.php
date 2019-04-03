@@ -32,7 +32,7 @@ class UserRepositoryTest extends KernelTestCase
     {
         $users = $this->userRepo->findAll();
 
-        $this->assertCount(5, $users, 'Not exactly 5 users in the databas');
+        $this->assertCount(6, $users, 'Not exactly 6 users in the databas');
     }
 
     public function testFindOneByLogin()
@@ -58,14 +58,14 @@ class UserRepositoryTest extends KernelTestCase
         // Searching LIKE %stus% (testuserX)
         $users = $this->userRepo->findUsersLikeLogin('stus');
 
-        $this->assertCount(5, $users, 'Repository found not exactly 5 users');
+        $this->assertCount(2, $users, 'Repository found not exactly 5 users');
     }
 
     public function testGetUsersCount()
     {
         $count = $this->userRepo->getUsersCount();
 
-        $this->assertEquals(5, $count, 'Counted not exactly 5 users');
+        $this->assertEquals(6, $count, 'Counted not exactly 5 users');
     }
 
     public function testFindUserSubscribersById()
