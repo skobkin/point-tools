@@ -1,0 +1,14 @@
+<?php
+
+namespace src\PointToolsBundle\Repository\Blogs;
+
+use Doctrine\ORM\EntityRepository;
+use src\PointToolsBundle\Entity\Blogs\Comment;
+
+class CommentRepository extends EntityRepository
+{
+    public function add(Comment $entity): void
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+}
