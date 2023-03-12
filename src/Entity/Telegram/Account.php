@@ -1,106 +1,58 @@
 <?php
 
-namespace src\PointToolsBundle\Entity\Telegram;
+declare(strict_types=1);
 
+namespace App\Entity\Telegram;
+
+use App\Entity\User;
+use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
-use src\PointToolsBundle\Entity\User;
 
-/**
- * @ORM\Table(name="telegram_accounts", schema="users", indexes={
- *      @ORM\Index(name="subscriber_notification_idx", columns={"subscriber_notification"}, options={"where": "subscriber_notification = TRUE"}),
- *      @ORM\Index(name="rename_notification_idx", columns={"rename_notification"}, options={"where": "rename_notification = TRUE"}),
- * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Telegram\AccountRepository")
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity(repositoryClass: AccountRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'telegram_accounts', schema: 'users')]
+#[ORM\Index(columns: ['subscriber_notification'], name: 'subscriber_notification_idx', options: [
+    'where' => 'subscriber_notification = TRUE',
+])]
+#[ORM\Index(columns: ['rename_notification'], name: 'rename_notification_idx', options: [
+    'where' => 'rename_notification = TRUE',
+])]
 class Account
 {
-    /**
-     * Telegram user ID
-     *
-     * @var int
-     *
-     * @ORM\Id()
-     * @ORM\Column(name="account_id", type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'account_id', type: 'integer')]
+    private int $id;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(name: '', type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
+    private ?\DateTime $updatedAt;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="linked_at", type="datetime", nullable=true)
-     */
-    private $linkedAt;
+    #[ORM\Column(name: 'linked_at', type: 'datetime', nullable: true)]
+    private ?\DateTime $linkedAt;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="first_name", type="text")
-     */
-    private $firstName;
+    #[ORM\Column(name: 'first_name', type: 'text')]
+    private string $firstName;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="last_name", type="text", nullable=true)
-     */
-    private $lastName;
+    #[ORM\Column(name: 'last_name', type: 'text', nullable: true)]
+    private ?string $lastName;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="username", type="text", nullable=true)
-     */
-    private $username;
+    #[ORM\Column(name: 'username', type: 'text', nullable: true)]
+    private ?string $username;
 
-    /**
-     * ID of private chat with user
-     *
-     * @var int
-     *
-     * @ORM\Column(name="private_chat_id", type="bigint", nullable=true)
-     */
-    private $chatId;
+    #[ORM\Column(name: 'private_chat_id', type: 'bigint', nullable: true)]
+    private ?int $chatId;
 
-    /**
-     * @var User
-     *
-     * @ORM\OneToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_id", nullable=true, onDelete="CASCADE")
-     */
-    private $user;
+    #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', nullable: true, onDelete: 'CASCADE')]
+    private ?User $user;
 
-    /**
-     * Notifications about new subscribers
-     *
-     * @var bool
-     *
-     * @ORM\Column(name="subscriber_notification", type="boolean")
-     */
-    private $subscriberNotification = false;
+    #[ORM\Column(name: 'subscriber_notification', type: 'boolean')]
+    private bool $subscriberNotification = false;
 
-    /**
-     * Notifications about user renaming
-     *
-     * @var bool
-     *
-     * @ORM\Column(name="rename_notification", type="boolean")
-     */
-    private $renameNotification = false;
+    #[ORM\Column(name: 'rename_notification', type: 'boolean')]
+    private bool $renameNotification = false;
 
 
     public function __construct(int $id)
@@ -109,9 +61,7 @@ class Account
         $this->createdAt = new \DateTime();
     }
 
-    /**
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PreUpdate]
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
@@ -170,9 +120,9 @@ class Account
         return $this->user;
     }
 
-    public function setUser(User $user): Account
+    public function setUser(User $user): self
     {
-        if (!$this->user && $user) {
+        if ($this->user !== $user) {
             $this->linkedAt = new \DateTime();
         }
 
