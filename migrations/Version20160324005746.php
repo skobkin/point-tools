@@ -1,21 +1,16 @@
 <?php
 
-namespace Application\Migrations;
+declare(strict_types=1);
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+namespace DoctrineMigrations;
+
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-class Version20160324005746 extends AbstractMigration
+final class Version20160324005746 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE SCHEMA IF NOT EXISTS posts');
@@ -45,12 +40,8 @@ class Version20160324005746 extends AbstractMigration
         $this->addSql('ALTER TABLE posts.posts_tags ADD CONSTRAINT FK_7870CC82BAD26311 FOREIGN KEY (tag_id) REFERENCES posts.tags (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE posts.comments DROP CONSTRAINT FK_62899975727ACA70');

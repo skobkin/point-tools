@@ -1,21 +1,16 @@
 <?php
 
-namespace Application\Migrations;
+declare(strict_types=1);
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+namespace DoctrineMigrations;
+
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-class Version20160325001415 extends AbstractMigration
+final class Version20160325001415 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE SEQUENCE posts.files_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
@@ -33,12 +28,8 @@ class Version20160325001415 extends AbstractMigration
         $this->addSql('ALTER TABLE posts.posts_files ADD CONSTRAINT FK_D799EBF093CB796C FOREIGN KEY (file_id) REFERENCES posts.files (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE posts.comments_files DROP CONSTRAINT FK_D0F6932993CB796C');

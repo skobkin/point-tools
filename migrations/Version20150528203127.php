@@ -1,19 +1,23 @@
 <?php
 
-namespace Application\Migrations;
+declare(strict_types=1);
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+namespace DoctrineMigrations;
+
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * PostgreSQL database initialization
  */
-class Version20150528203127 extends AbstractMigration
+final class Version20150528203127 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
-    public function up(Schema $schema)
+    public function getDescription(): string
+    {
+        return 'Initial migration';
+    }
+
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
@@ -37,10 +41,7 @@ class Version20150528203127 extends AbstractMigration
         $this->addSql('ALTER TABLE subscriptions.log ADD CONSTRAINT FK_22DA64DD7808B1AD FOREIGN KEY (subscriber_id) REFERENCES users.users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
