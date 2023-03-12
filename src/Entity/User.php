@@ -9,10 +9,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'users', schema: 'users')]
 #[ORM\Index(columns: ['public'], name: 'idx_user_public')]
 #[ORM\Index(columns: ['is_removed'], name: 'idx_user_removed')]
-#[ORM\HasLifecycleCallbacks]
 class User
 {
     public const AVATAR_SIZE_SMALL = '24';
