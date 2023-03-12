@@ -1,22 +1,39 @@
 <?php
 
-namespace src\PointToolsBundle\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
+namespace App\Repository;
+
+use App\Entity\SubscriptionEvent;
+use App\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use src\PointToolsBundle\Entity\SubscriptionEvent;
-use src\PointToolsBundle\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 
-class SubscriptionEventRepository extends EntityRepository
+/**
+ * @extends ServiceEntityRepository<SubscriptionEvent>
+ *
+ * @method SubscriptionEvent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SubscriptionEvent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SubscriptionEvent[]    findAll()
+ * @method SubscriptionEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class SubscriptionEventRepository extends ServiceEntityRepository
 {
-    public function add(SubscriptionEvent $entity): void
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->getEntityManager()->persist($entity);
+        parent::__construct($registry, SubscriptionEvent::class);
     }
 
-    /**
-     * @return int
-     */
+    public function save(SubscriptionEvent $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function getLastDayEventsCount(): int
     {
         $qb = $this->createQueryBuilder('se');
@@ -31,13 +48,7 @@ class SubscriptionEventRepository extends EntityRepository
         ;
     }
 
-    /**
-     * Creates QueryBuilder object for pagination of user subscribers events
-     *
-     * @param User $user
-     *
-     * @return QueryBuilder
-     */
+    /** Creates QueryBuilder object for pagination of user subscribers events */
     public function createUserLastSubscribersEventsQuery(User $user): QueryBuilder
     {
         $qb = $this->createQueryBuilder('se');
@@ -54,9 +65,6 @@ class SubscriptionEventRepository extends EntityRepository
     /**
      * Get last user subscriber events
      *
-     * @param User $user
-     * @param int $limit
-     *
      * @return SubscriptionEvent[]
      */
     public function getUserLastSubscribersEvents(User $user, int $limit = 20): array
@@ -67,11 +75,7 @@ class SubscriptionEventRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * Get last global subscriptions QueryBuilder for pagination
-     *
-     * @return QueryBuilder
-     */
+    /** Get last global subscriptions QueryBuilder for pagination */
     public function createLastSubscriptionEventsQuery(): QueryBuilder
     {
         $qb = $this->createQueryBuilder('se');
@@ -87,8 +91,6 @@ class SubscriptionEventRepository extends EntityRepository
     /**
      * Get last global subscription events
      *
-     * @param int $limit
-     *
      * @return SubscriptionEvent[]
      */
     public function getLastSubscriptionEvents(int $limit = 20): array
@@ -99,9 +101,7 @@ class SubscriptionEventRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @return SubscriptionEvent[]
-     */
+    /** @return SubscriptionEvent[] */
     public function getLastEventsByDay(int $days = 30): array
     {
         $qb = $this->createQueryBuilder('se');
