@@ -1,12 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Command;
+namespace App\Command;
 
-use Doctrine\ORM\{EntityManager, EntityManagerInterface};
-use src\PointToolsBundle\Entity\User;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface, InputArgument, InputOption};
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -18,23 +23,17 @@ use Symfony\Component\Filesystem\Filesystem;
  *      WHERE u.id <> (-1)
  * ) TO '/tmp/point_users.csv' WITH HEADER DELIMITER '|' CSV;
  */
+#[AsCommand(name: 'app:import:users', description: 'Import users from CSV file')]
 class ImportUsersCommand extends Command
 {
-    /** @var EntityManager */
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
-
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('point:import:users')
-            ->setDescription('Import users from CSV file')
             ->addArgument(
                 'file',
                 InputArgument::REQUIRED,
@@ -55,20 +54,24 @@ class ImportUsersCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $fs = new Filesystem();
 
         $fileName = $input->getArgument('file');
 
-        if (!($fs->exists($fileName) && is_readable($fileName))) {
-            $output->writeln('File does not exists or not readable.');
-            return 1;
+        if (!($fs->exists($fileName) && \is_readable($fileName))) {
+            $io->error('File does not exists or not readable.');
+
+            return Command::FAILURE;
         }
 
-        if (false === ($file = fopen($fileName, 'r'))) {
-            $output->writeln('fopen() error');
-            return 1;
+        if (false === ($file = fopen($fileName, 'rb'))) {
+            $io->error('fopen() error');
+
+            return Command::FAILURE;
         }
 
         if (!$input->getOption('no-skip-first')) {
@@ -79,7 +82,7 @@ class ImportUsersCommand extends Command
         $count = 0;
 
         while (false !== ($row = fgetcsv($file, 1000, '|'))) {
-            if (count($row) !== 4) {
+            if (\count($row) !== 4) {
                 continue;
             }
 
@@ -93,15 +96,15 @@ class ImportUsersCommand extends Command
                 $this->em->detach($user);
             }
 
-            if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
-                $output->writeln('@' . $row[1] . ' added');
+            if (OutputInterface::VERBOSITY_VERBOSE === $io->getVerbosity()) {
+                $io->info('@' . $row[1] . ' added');
             }
 
             $count++;
         }
 
-        $output->writeln($count . ' users imported.');
+        $io->success($count . ' users imported.');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
