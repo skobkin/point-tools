@@ -1,109 +1,60 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Entity\Blogs;
+namespace App\Entity\Blog;
 
+use App\Entity\User;
+use App\Repository\Blog\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use src\PointToolsBundle\Entity\Blogs\File;
-use src\PointToolsBundle\Entity\Blogs\PostTag;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Entity\Blogs\Comment;
 
-/**
- * @ORM\Table(name="posts", schema="posts", indexes={
- *      @ORM\Index(name="idx_post_created_at", columns={"created_at"}),
- *      @ORM\Index(name="idx_post_private", columns={"private"}),
- * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\PostRepository")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: 'tags', schema: 'posts')]
 class Post
 {
     public const TYPE_POST = 'post';
     public const TYPE_FEED = 'feed';
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="id", type="text")
-     * @ORM\Id
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: 'text')]
+    private string $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text")
-     */
-    private $text;
+    #[ORM\Column(name: 'text', type: 'text')]
+    private string $text;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
+    private ?\DateTime $updatedAt;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=6)
-     */
-    private $type = self::TYPE_POST;
+    #[ORM\Column(name: 'type', type: 'string', length: 6)]
+    private string $type = self::TYPE_POST;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="private", type="boolean", nullable=true)
-     */
-    private $private;
+    #[ORM\Column(name: 'private', type: 'boolean', nullable: true)]
+    private bool $private;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_deleted", type="boolean")
-     */
-    private $deleted = false;
+    #[ORM\Column(name: 'is_deleted', type: 'boolean')]
+    private bool $deleted = false;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User")
-     * @ORM\JoinColumn(name="author")
-     */
-    private $author;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'author')]
+    private User $author;
 
-    /**
-     * @var File[]|ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
-     * @ORM\JoinTable(name="posts_files", schema="posts",
-     *     joinColumns={@ORM\JoinColumn(name="post_id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
-     * )
-     */
+    /** @var ArrayCollection|File[] */
+    #[ORM\ManyToMany(targetEntity: File::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinTable(name: 'posts_files', schema: 'posts')]
+    #[ORM\JoinColumn(name: 'post_id')]
+    #[ORM\InverseJoinColumn(name: 'file_id')]
     private $files;
 
-    /**
-     * @var PostTag[]|ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\PostTag", mappedBy="post", fetch="EXTRA_LAZY", cascade={"persist"}, orphanRemoval=true)
-     */
-    private $postTags;
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private ArrayCollection $postTags;
 
-    /**
-     * @var Comment[]|ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", mappedBy="post", cascade={"persist"})
-     */
-    private $comments;
+    /** @var ArrayCollection|Comment[] */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', cascade: ['persist'], )]
+    private ArrayCollection $comments;
 
 
     public function __construct(string $id, User $author, \DateTime $createdAt, string $type)
@@ -118,9 +69,7 @@ class Post
         $this->comments = new ArrayCollection();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
@@ -175,9 +124,7 @@ class Post
         $this->files->removeElement($files);
     }
 
-    /**
-     * @return File[]|ArrayCollection
-     */
+    /** @return File[]|ArrayCollection */
     public function getFiles(): iterable
     {
         return $this->files;
@@ -195,9 +142,7 @@ class Post
         $this->postTags->removeElement($tag);
     }
 
-    /**
-     * @return PostTag[]|ArrayCollection
-     */
+    /** @return PostTag[]|ArrayCollection */
     public function getPostTags(): iterable
     {
         return $this->postTags;
@@ -250,9 +195,7 @@ class Post
         $this->comments->removeElement($comment);
     }
 
-    /**
-     * @return Comment[]|ArrayCollection
-     */
+    /** @return Comment[]|ArrayCollection */
     public function getComments(): iterable
     {
         return $this->comments;

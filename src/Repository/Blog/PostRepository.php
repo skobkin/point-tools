@@ -1,21 +1,39 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Repository\Blogs;
+namespace App\Repository\Blog;
 
-use Doctrine\ORM\EntityRepository;
+use App\Entity\Blog\Post;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use src\PointToolsBundle\Entity\Blogs\Post;
+use Doctrine\Persistence\ManagerRegistry;
 
-class PostRepository extends EntityRepository
+/**
+ * @extends ServiceEntityRepository<Post>
+ *
+ * @method Post|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Post|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Post[]    findAll()
+ * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class PostRepository extends ServiceEntityRepository
 {
-    public function add(Post $entity): void
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Post::class);
+    }
+
+    public function save(Post $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function getPostWithComments(string $postId): ?Post
     {
-        /** @var QueryBuilder $qb */
         $qb = $this->createQueryBuilder('p');
 
         return $qb
@@ -27,7 +45,7 @@ class PostRepository extends EntityRepository
             ->orderBy('c.number', 'asc')
             ->setParameter('post_id', $postId)
             ->getQuery()->getOneOrNullResult()
-        ;
+            ;
     }
 
     public function createPublicFeedPostsQuery(): QueryBuilder
@@ -43,6 +61,6 @@ class PostRepository extends EntityRepository
             ->where('p.private = FALSE')
             ->andWhere('pa.public = TRUE')
             ->orderBy('p.createdAt', 'desc')
-        ;
+            ;
     }
 }
