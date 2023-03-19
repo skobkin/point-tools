@@ -1,106 +1,62 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Entity\Blogs;
+namespace App\Entity\Blog;
 
+use App\Entity\Blog\File;
+use App\Entity\Blog\Post;
+use App\Entity\User;
+use App\Repository\Blog\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use src\PointToolsBundle\Entity\Blogs\File;
-use src\PointToolsBundle\Entity\Blogs\Post;
-use src\PointToolsBundle\Entity\User;
 
-/**
- * @ORM\Table(name="comments", schema="posts", indexes={
- *      @ORM\Index(name="idx_comment_created_at", columns={"created_at"})
- * })
- * @ORM\Entity(repositoryClass="Skobkin\Bundle\PointToolsBundle\Repository\Blogs\CommentRepository")
- */
+#[ORM\Entity(repositoryClass: CommentRepository::class)]
+#[ORM\Table(name: 'comments', schema: 'posts')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_comment_created_at')]
 class Comment
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'id', type: 'integer')]
+    private ?int $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text")
-     */
-    private $text;
+    #[ORM\Column(name: 'text', type: 'text')]
+    private string $text;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
+    private \DateTime $createdAt;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_rec", type="boolean")
-     */
-    private $rec;
+    #[ORM\Column(name: 'is_rec', type: 'boolean')]
+    private bool $rec = false;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_deleted", type="boolean")
-     */
-    private $deleted = false;
+    #[ORM\Column(name: 'is_deleted', type: 'boolean')]
+    private bool $deleted = false;
 
-    /**
-     * @var Post
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Post", inversedBy="comments")
-     * @ORM\JoinColumn(name="post_id")
-     */
-    private $post;
+    #[ORM\ManyToOne(targetEntity: Post::class, inversedBy: 'comments')]
+    #[ORM\JoinColumn(name: 'post_id')]
+    private Post $post;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="number", type="smallint")
-     */
-    private $number;
+    #[ORM\Column(name: 'number', type: 'smallint')]
+    private int $number;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\User", fetch="EAGER")
-     * @ORM\JoinColumn(name="author_id")
-     */
-    private $author;
+    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EAGER')]
+    #[ORM\JoinColumn(name: 'author_id')]
+    private User $author;
 
-    /**
-     * @var File[]|ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\File", fetch="EXTRA_LAZY", cascade={"persist"})
-     * @ORM\JoinTable(name="comments_files", schema="posts",
-     *     joinColumns={@ORM\JoinColumn(name="comment_id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id")}
-     * )
-     */
-    private $files;
+    /** @var ArrayCollection|File[] */
+    #[ORM\ManyToMany(targetEntity: File::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinTable(name: 'comments_files', schema: 'posts')]
+    #[ORM\JoinColumn(name: 'comment_id')]
+    #[ORM\InverseJoinColumn(name: 'file_id')]
+    private ArrayCollection $files;
 
-    /**
-     * @var Comment|null
-     *
-     * @ORM\ManyToOne(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", nullable=true)
-     */
-    private $parent;
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent_id', nullable: true)]
+    private ?self $parent;
 
-    /**
-     * @var Comment[]|ArrayCollection
-     * 
-     * @ORM\OneToMany(targetEntity="Skobkin\Bundle\PointToolsBundle\Entity\Blogs\Comment", fetch="EXTRA_LAZY", mappedBy="parent")
-     */
-    private $children;
+    /** @var ArrayCollection|self[] */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, fetch: 'EXTRA_LAZY')]
+    private ArrayCollection $children;
 
 
     public function __construct()
@@ -252,9 +208,7 @@ class Comment
         $this->children->removeElement($children);
     }
 
-    /**
-     * @return Comment[]|ArrayCollection
-     */
+    /** @return ArrayCollection|self[] */
     public function getChildren(): iterable
     {
         return $this->children;
