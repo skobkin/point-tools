@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /** Dispatched when one or more users were renamed */
 class UsersRenamedEvent extends Event
 {
-    const NAME = 'app.users.renamed';
+    public const NAME = 'app.users.renamed';
 
     /** @param UserRenameEvent[] $renames */
     public function __construct(

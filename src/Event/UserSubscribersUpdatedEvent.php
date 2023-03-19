@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /** Dispatched when user subscribers list was changed */
 class UserSubscribersUpdatedEvent extends Event
 {
-    const NAME = 'app.user.subscribers_updated';
+    public const NAME = 'app.user.subscribers_updated';
 
     /**
      * @param User $user
