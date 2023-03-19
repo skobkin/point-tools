@@ -1,67 +1,40 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Command;
+namespace App\Command;
 
+use App\Exception\Api\UserNotFoundException;
+use App\Repository\UserRepository;
+use App\Service\Api\UserApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Exception\Api\UserNotFoundException;
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Service\Api\UserApi;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'app:users:restore', description: 'Check removed users status and restore if user was deleted by error.')]
 class RestoreRemovedUsersCommand extends Command
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var UserRepository */
-    private $userRepo;
-
-    /** @var UserApi */
-    private $userApi;
-
-    /** @var int */
-    private $delay;
-
-    public function __construct(LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepo, UserApi $userApi, int $apiDelay)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $em,
+        private readonly UserRepository $userRepo,
+        private readonly UserApi $userApi,
+        private readonly int $apiDelay,
+    ) {
         parent::__construct();
-
-        $this->logger = $logger;
-        $this->em = $em;
-        $this->userRepo = $userRepo;
-        $this->userApi = $userApi;
-        $this->delay = $apiDelay;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this
-            ->setName('point:users:restore')
-            ->setDescription('Check removed users status and restore if user was deleted by error.')
-        ;
-    }
+        $io = new SymfonyStyle($input, $output);
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        /** @var User $removedUser */
         foreach ($this->userRepo->findBy(['removed' => true]) as $removedUser) {
-            usleep($this->delay);
+            \usleep($this->apiDelay);
 
             try {
-                /** @var User $remoteUser */
                 $remoteUser = $this->userApi->getUserById($removedUser->getId());
 
                 if ($remoteUser->getId() === $removedUser->getId()) {
@@ -70,7 +43,6 @@ class RestoreRemovedUsersCommand extends Command
                         'login' => $removedUser->getLogin(),
                     ]);
                     $removedUser->restore();
-
                     $this->em->flush();
                 }
             } catch (UserNotFoundException $e) {
@@ -93,5 +65,7 @@ class RestoreRemovedUsersCommand extends Command
         }
 
         $this->em->flush();
+
+        return Command::SUCCESS;
     }
 }

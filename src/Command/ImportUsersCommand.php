@@ -57,7 +57,6 @@ class ImportUsersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
         $fs = new Filesystem();
 
         $fileName = $input->getArgument('file');
