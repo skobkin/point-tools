@@ -1,66 +1,40 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Command;
+namespace App\Command;
 
+use App\Entity\User;
+use App\Exception\Api\ForbiddenException;
+use App\Exception\Api\UserNotFoundException;
+use App\Repository\UserRepository;
+use App\Service\Api\UserApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Exception\Api\ForbiddenException;
-use src\PointToolsBundle\Entity\{Subscription};
-use src\PointToolsBundle\Exception\Api\{UserNotFoundException};
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Service\Api\UserApi;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\{InputInterface, InputOption};
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'app:privacy:update', description: 'Check removed users status and restore if user was deleted by error.')]
 class UpdateUsersPrivacyCommand extends Command
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var UserRepository */
-    private $userRepo;
-
-    /** @var InputInterface */
-    private $input;
-
-    /** @var UserApi */
-    private $api;
-
-    /** @var int */
-    private $apiDelay = 500000;
-
-    /** @var int */
-    private $appUserId;
-
-    /** @var ProgressBar */
-    private $progress;
-
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, UserRepository $userRepo, UserApi $api, int $apiDelay, int $appUserId)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger,
+        private readonly UserRepository $userRepo,
+        private readonly UserApi $api,
+        private readonly int $apiDelay,
+        private readonly int $appUserId,
+    ) {
         parent::__construct();
-
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->userRepo = $userRepo;
-        $this->api = $api;
-        $this->apiDelay = $apiDelay;
-        $this->appUserId = $appUserId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this
-            ->setName('point:update:privacy')
-            ->setDescription('Update users privacy')
             ->addOption(
                 'all-users',
                 null,
@@ -70,47 +44,43 @@ class UpdateUsersPrivacyCommand extends Command
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->input = $input;
+        $io = new SymfonyStyle($input, $output);
 
         $this->logger->debug(static::class.' started.');
 
-        $this->progress = new ProgressBar($output);
-        $this->progress->setFormat('debug');
+        $progress = $io->createProgressBar();
+        $progress->setFormat(ProgressBar::FORMAT_DEBUG);
 
         try {
-            /** @var User[] $usersForUpdate */
-            $usersForUpdate = $this->getUsersForUpdate();
+            $usersForUpdate = $this->getUsersForUpdate($input);
         } catch (\Exception $e) {
             $this->logger->error('Error while getting service subscribers', ['exception' => get_class($e), 'message' => $e->getMessage()]);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $this->logger->info('Processing users privacy.');
 
-        $this->progress->start(count($usersForUpdate));
+        $progress->start(count($usersForUpdate));
 
-        foreach ($usersForUpdate as $idx => $user) {
+        foreach ($usersForUpdate as $user) {
             usleep($this->apiDelay);
 
-            $this->progress->advance();
+            $progress->advance();
             $this->logger->info('Processing @'.$user->getLogin());
 
             $this->updateUser($user);
         }
 
-        $this->progress->finish();
+        $progress->finish();
 
         $this->em->flush();
 
         $this->logger->debug('Finished');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function updateUser(User $user): void
@@ -150,9 +120,10 @@ class UpdateUsersPrivacyCommand extends Command
         }
     }
 
-    private function getUsersForUpdate(): array
+    /** @return User[] */
+    private function getUsersForUpdate(InputInterface $input): array
     {
-        if ($this->input->getOption('all-users')) {
+        if ($input->getOption('all-users')) {
             return $this->userRepo->findBy(['removed' => false]);
         }
 
@@ -197,7 +168,6 @@ class UpdateUsersPrivacyCommand extends Command
 
             $localSubscribers = [];
 
-            /** @var Subscription $subscription */
             foreach ($serviceUser->getSubscribers() as $subscription) {
                 $localSubscribers[] = $subscription->getSubscriber();
             }
