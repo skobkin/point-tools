@@ -1,77 +1,40 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Command;
+namespace App\Command;
 
+use App\Repository\UserRepository;
+use App\Entity\{Subscription, User};
+use App\Exception\Api\UserNotFoundException;
+use App\Service\Api\UserApi;
+use App\Service\SubscriptionsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Service\SubscriptionsManager;
-use src\PointToolsBundle\Entity\{Subscription};
-use src\PointToolsBundle\Exception\Api\UserNotFoundException;
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Service\{Api\UserApi};
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\{InputInterface, InputOption};
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @todo https://symfony.com/doc/current/console/lockable_trait.html
- */
+#[AsCommand(name: 'app:subscriptions:update', description: 'Update subscriptions of users subscribed to service')]
 class UpdateSubscriptionsCommand extends Command
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var UserRepository */
-    private $userRepo;
-
-    /** @var InputInterface */
-    private $input;
-
-    /** @var UserApi */
-    private $api;
-
-    /** @var int */
-    private $apiDelay = 500000;
-
-    /** @var int */
-    private $appUserId;
-
-    /** @var SubscriptionsManager */
-    private $subscriptionManager;
-
-    /** @var ProgressBar */
-    private $progress;
-
     public function __construct(
-        EntityManagerInterface $em,
-        LoggerInterface $logger,
-        UserRepository $userRepo,
-        UserApi $api,
-        SubscriptionsManager $subscriptionManager,
-        int $apiDelay,
-        int $appUserId
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface $logger,
+        private readonly UserRepository $userRepo,
+        private readonly UserApi $api,
+        private readonly SubscriptionsManager $subscriptionManager,
+        private readonly int $apiDelay,
+        private readonly int $appUserId
     ) {
         parent::__construct();
-
-        $this->em = $em;
-        $this->logger = $logger;
-        $this->userRepo = $userRepo;
-        $this->api = $api;
-        $this->subscriptionManager = $subscriptionManager;
-        $this->apiDelay = $apiDelay;
-        $this->appUserId = $appUserId;
     }
 
     protected function configure()
     {
         $this
-            ->setName('point:update:subscriptions')
-            ->setDescription('Update subscriptions of users subscribed to service')
             ->addOption(
                 'all-users',
                 null,
@@ -87,46 +50,46 @@ class UpdateSubscriptionsCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->input = $input;
+        $io = new SymfonyStyle($input, $output);
 
         $this->logger->debug('UpdateSubscriptionsCommand started.');
 
-        $this->progress = new ProgressBar($output);
-        $this->progress->setFormat('debug');
+        $progress = $io->createProgressBar();
+        $progress->setFormat(ProgressBar::FORMAT_DEBUG);
 
         if (!$input->getOption('check-only')) { // Beginning transaction for all changes
             $this->em->beginTransaction();
         }
 
         try {
-            $usersForUpdate = $this->getUsersForUpdate();
+            $usersForUpdate = $this->getUsersForUpdate($input);
         } catch (\Exception $e) {
             $this->logger->error('Error while getting service subscribers', ['exception' => get_class($e), 'message' => $e->getMessage()]);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if (0 === count($usersForUpdate)) {
             $this->logger->info('No local subscribers. Finishing.');
 
-            return 0;
+            return Command::SUCCESS;
         }
 
         $this->logger->info('Processing users subscribers');
-        $this->progress->start(count($usersForUpdate));
+        $progress->start(count($usersForUpdate));
 
         foreach ($usersForUpdate as $user) {
             usleep($this->apiDelay);
 
-            $this->progress->advance();
+            $progress->advance();
             $this->logger->info('Processing @'.$user->getLogin());
 
             $this->updateUser($user);
         }
 
-        $this->progress->finish();
+        $progress->finish();
 
         // Flushing all changes at once to the database
         if (!$input->getOption('check-only')) {
@@ -136,7 +99,7 @@ class UpdateSubscriptionsCommand extends Command
 
         $this->logger->debug('Finished');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function updateUser(User $user): void
@@ -183,11 +146,11 @@ class UpdateSubscriptionsCommand extends Command
         }
     }
 
-    private function getUsersForUpdate(): array
+    private function getUsersForUpdate(InputInterface $input): array
     {
         $usersForUpdate = [];
 
-        if ($this->input->getOption('all-users')) {
+        if ($input->getOption('all-users')) {
             $usersForUpdate = $this->userRepo->findBy(['removed' => false]);
         } else {
             /** @var User $serviceUser */
