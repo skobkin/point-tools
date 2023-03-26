@@ -13,7 +13,7 @@ use unreal4u\Telegram\Methods\SetWebhook;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use unreal4u\TgLog;
 
-#[AsCommand(name: 'telegram:webhook', description: 'Set webhook')]
+#[AsCommand(name: 'app:telegram:webhook', description: 'Set webhook')]
 class TelegramWebhookCommand extends Command
 {
     private const MODE_SET = 'set';

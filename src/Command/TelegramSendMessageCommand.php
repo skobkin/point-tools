@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'telegram:send-message', description: 'Send message via Telegram')]
+#[AsCommand(name: 'app:telegram:message', description: 'Send message via Telegram')]
 class TelegramSendMessageCommand extends Command
 {
     public function __construct(
