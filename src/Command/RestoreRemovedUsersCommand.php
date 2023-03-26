@@ -18,11 +18,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RestoreRemovedUsersCommand extends Command
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface        $logger,
         private readonly EntityManagerInterface $em,
-        private readonly UserRepository $userRepo,
-        private readonly UserApi $userApi,
-        private readonly int $apiDelay,
+        private readonly UserRepository         $userRepo,
+        private readonly UserApi                $userApi,
+        private readonly int                    $pointApiDelay,
     ) {
         parent::__construct();
     }
@@ -32,7 +32,7 @@ class RestoreRemovedUsersCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         foreach ($this->userRepo->findBy(['removed' => true]) as $removedUser) {
-            \usleep($this->apiDelay);
+            \usleep($this->pointApiDelay);
 
             try {
                 $remoteUser = $this->userApi->getUserById($removedUser->getId());

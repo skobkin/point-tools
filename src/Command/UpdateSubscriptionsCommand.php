@@ -22,12 +22,12 @@ class UpdateSubscriptionsCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
-        private readonly UserRepository $userRepo,
-        private readonly UserApi $api,
-        private readonly SubscriptionsManager $subscriptionManager,
-        private readonly int $apiDelay,
-        private readonly int $appUserId
+        private readonly LoggerInterface        $logger,
+        private readonly UserRepository         $userRepo,
+        private readonly UserApi                $api,
+        private readonly SubscriptionsManager   $subscriptionManager,
+        private readonly int                    $pointApiDelay,
+        private readonly int                    $pointAppUserId,
     ) {
         parent::__construct();
     }
@@ -81,7 +81,7 @@ class UpdateSubscriptionsCommand extends Command
         $progress->start(count($usersForUpdate));
 
         foreach ($usersForUpdate as $user) {
-            usleep($this->apiDelay);
+            usleep($this->pointApiDelay);
 
             $progress->advance();
             $this->logger->info('Processing @'.$user->getLogin());
@@ -155,9 +155,9 @@ class UpdateSubscriptionsCommand extends Command
         } else {
             /** @var User $serviceUser */
             try {
-                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->appUserId);
+                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->pointAppUserId);
             } catch (\Exception $e) {
-                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $this->appUserId]);
+                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $this->pointAppUserId]);
 
                 throw $e;
             }
@@ -166,7 +166,7 @@ class UpdateSubscriptionsCommand extends Command
                 $this->logger->warning('Service user not found or marked as removed. Falling back to API.');
 
                 try {
-                    $serviceUser = $this->api->getUserById($this->appUserId);
+                    $serviceUser = $this->api->getUserById($this->pointAppUserId);
                 } catch (UserNotFoundException $e) {
                     throw new \RuntimeException('Service user not found in the database and could not be retrieved from API.');
                 }
@@ -175,7 +175,7 @@ class UpdateSubscriptionsCommand extends Command
             $this->logger->info('Getting service subscribers');
 
             try {
-                $usersForUpdate = $this->api->getUserSubscribersById($this->appUserId);
+                $usersForUpdate = $this->api->getUserSubscribersById($this->pointAppUserId);
             } catch (UserNotFoundException $e) {
                 $this->logger->critical('Service user deleted or API response is invalid');
 
