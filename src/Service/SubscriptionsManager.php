@@ -1,48 +1,26 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Service;
+namespace App\Service;
 
+use App\Entity\{Subscription, SubscriptionEvent, User};
+use App\Event\UserSubscribersUpdatedEvent;
+use App\Repository\{SubscriptionEventRepository, SubscriptionRepository};
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\SubscriptionEvent;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Repository\SubscriptionRepository;
-use src\PointToolsBundle\Entity\{Subscription};
-use src\PointToolsBundle\Event\UserSubscribersUpdatedEvent;
-use src\PointToolsBundle\Repository\{SubscriptionEventRepository};
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SubscriptionsManager
 {
-    /** @var SubscriptionRepository */
-    private $subscriptionRepo;
-
-    /** @var SubscriptionEventRepository */
-    private $subscriptionRecordRepo;
-
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        LoggerInterface $logger,
-        SubscriptionRepository $subscriptionRepo,
-        SubscriptionEventRepository $subscriptionRecordRepo
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly LoggerInterface $logger,
+        private readonly SubscriptionRepository $subscriptionRepo,
+        private readonly SubscriptionEventRepository $subscriptionRecordRepo
     ) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $logger;
-        $this->subscriptionRepo = $subscriptionRepo;
-        $this->subscriptionRecordRepo = $subscriptionRecordRepo;
     }
 
-    /**
-     * @param User $user
-     * @param User[] $newSubscribersList
-     */
-    public function updateUserSubscribers(User $user, $newSubscribersList = []): void
+    /** @param User[] $newSubscribersList */
+    public function updateUserSubscribers(User $user, array $newSubscribersList = []): void
     {
         // @todo optimize
         $tmpOldSubscribers = $user->getSubscribers();
@@ -86,7 +64,7 @@ class SubscriptionsManager
             $hash2[$user->getId()] = $user;
         }
 
-        return array_diff_key($hash1, $hash2);
+        return \array_diff_key($hash1, $hash2);
     }
 
     /**
@@ -101,10 +79,10 @@ class SubscriptionsManager
             $subscription = new Subscription($user, $subscriber);
 
             $user->addSubscriber($subscription);
-            $this->subscriptionRepo->add($subscription);
+            $this->subscriptionRepo->save($subscription);
 
             $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_SUBSCRIBE);
-            $this->subscriptionRecordRepo->add($logEvent);
+            $this->subscriptionRecordRepo->save($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
         }
@@ -120,7 +98,7 @@ class SubscriptionsManager
 
         foreach ($subscribers as $subscriber) {
             $logEvent = new SubscriptionEvent($user, $subscriber, SubscriptionEvent::ACTION_UNSUBSCRIBE);
-            $this->subscriptionRecordRepo->add($logEvent);
+            $this->subscriptionRecordRepo->save($logEvent);
 
             $user->addNewSubscriberEvent($logEvent);
         }
@@ -131,7 +109,6 @@ class SubscriptionsManager
     }
 
     /**
-     * @param User $user
      * @param User[] $subscribed
      * @param User[] $unsubscribed
      */
@@ -140,7 +117,7 @@ class SubscriptionsManager
         if (0 !== count($subscribed) || 0 !== count($unsubscribed)) {
             // Dispatching event
             $subscribersUpdatedEvent = new UserSubscribersUpdatedEvent($user, $subscribed, $unsubscribed);
-            $this->eventDispatcher->dispatch(UserSubscribersUpdatedEvent::NAME, $subscribersUpdatedEvent);
+            $this->eventDispatcher->dispatch($subscribersUpdatedEvent, UserSubscribersUpdatedEvent::NAME);
         }
     }
 }
