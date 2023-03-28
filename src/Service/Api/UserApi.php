@@ -10,7 +10,7 @@ use App\Exception\Api\{ForbiddenException,
     NotFoundException,
     UserNotFoundException
 };
-use App\Service\Factory\UserFactory;
+use App\Factory\UserFactory;
 use JMS\Serializer\{DeserializationContext, SerializerInterface};
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

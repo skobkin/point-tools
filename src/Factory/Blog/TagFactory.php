@@ -1,23 +1,20 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Service\Factory\Blogs;
+namespace App\Factory\Blog;
 
+use App\Factory\AbstractFactory;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\Blogs\Tag;
-use src\PointToolsBundle\Repository\Blogs\TagRepository;
-use src\PointToolsBundle\Service\Factory\AbstractFactory;
+use App\Entity\Blog\Tag;
+use App\Repository\Blog\TagRepository;
 
 class TagFactory extends AbstractFactory
 {
-    /** @var TagRepository */
-    private $tagRepository;
-
-
-    public function __construct(LoggerInterface $logger, TagRepository $tagRepository)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        private readonly TagRepository $tagRepository,
+    ) {
         parent::__construct($logger);
-
-        $this->tagRepository = $tagRepository;
     }
 
     /**
@@ -47,7 +44,7 @@ class TagFactory extends AbstractFactory
         if (null === ($tag = $this->tagRepository->findOneByLowerText($text))) {
             // Creating new tag
             $tag = new Tag($text);
-            $this->tagRepository->add($tag);
+            $this->tagRepository->save($tag);
         }
 
         return $tag;

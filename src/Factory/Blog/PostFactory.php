@@ -1,60 +1,31 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Service\Factory\Blogs;
+namespace App\Factory\Blog;
 
+use App\Factory\AbstractFactory;
+use App\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\DTO\Api\{PostsPage};
-use src\PointToolsBundle\Entity\{Blogs\PostTag};
-use src\PointToolsBundle\Exception\{Api\InvalidResponseException};
-use src\PointToolsBundle\Repository\Blogs\PostRepository;
-use src\PointToolsBundle\Service\Factory\{AbstractFactory, Blogs\CommentFactory, Blogs\TagFactory};
-use src\PointToolsBundle\DTO\Api\MetaPost;
-use src\PointToolsBundle\DTO\Api\Post as PostDTO;
-use src\PointToolsBundle\Entity\Blogs\Post;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Exception\Factory\Blog\InvalidDataException;
-use src\PointToolsBundle\Service\Factory\Blogs\FileFactory;
-use src\PointToolsBundle\Service\Factory\UserFactory;
-use function Skobkin\Bundle\PointToolsBundle\Service\Factory\Blogs\mb_strtolower;
+use App\DTO\Api\{MetaPost, PostsPage, Post as PostDTO};
+use App\Entity\Blog\{PostTag, Post};
+use App\Entity\User;
+use App\Exception\{Api\InvalidResponseException};
+use App\Exception\Factory\Blog\InvalidDataException;
+use App\Repository\Blog\PostRepository;
 
 class PostFactory extends AbstractFactory
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var PostRepository */
-    private $postRepository;
-
-    /** @var UserFactory */
-    private $userFactory;
-
-    /** @var FileFactory */
-    private $fileFactory;
-
-    /** @var CommentFactory */
-    private $commentFactory;
-
-    /** @var TagFactory */
-    private $tagFactory;
-
-
-    public function __construct(
+     public function __construct(
         LoggerInterface $logger,
-        EntityManagerInterface $em,
-        PostRepository $postRepository,
-        UserFactory $userFactory,
-        FileFactory $fileFactory,
-        CommentFactory $commentFactory,
-        TagFactory $tagFactory
+        private readonly EntityManagerInterface $em,
+        private readonly PostRepository $postRepository,
+        private readonly UserFactory $userFactory,
+        private readonly FileFactory $fileFactory,
+        private readonly CommentFactory $commentFactory,
+        private readonly TagFactory $tagFactory,
     ) {
         parent::__construct($logger);
-        $this->em = $em;
-        $this->postRepository = $postRepository;
-        $this->userFactory = $userFactory;
-        $this->fileFactory = $fileFactory;
-        $this->commentFactory = $commentFactory;
-        $this->tagFactory = $tagFactory;
     }
 
     /**
@@ -148,7 +119,7 @@ class PostFactory extends AbstractFactory
                 new \DateTime($postData->getCreated()),
                 $postData->getType() ?: Post::TYPE_POST
             );
-            $this->postRepository->add($post);
+            $this->postRepository->save($post);
         }
 
         $post
@@ -159,10 +130,7 @@ class PostFactory extends AbstractFactory
         return $post;
     }
 
-    /**
-     * @param Post $post
-     * @param string[] $tagsStrings
-     */
+    /** @param string[] $tagsStrings */
     private function updatePostTags(Post $post, array $tagsStrings): void
     {
         $tags = $this->tagFactory->createFromStringsArray($tagsStrings);
@@ -170,41 +138,37 @@ class PostFactory extends AbstractFactory
         // Hashing tags strings
         $tagStringsHash = [];
         foreach ($tagsStrings as $tagsString) {
-            $tagStringsHash[mb_strtolower($tagsString)] = $tagsString;
+            $tagStringsHash[\mb_strtolower($tagsString)] = $tagsString;
         }
 
         // Hashing current post tags
         $newTagsHash = [];
         foreach ($tags as $tag) {
-            $newTagsHash[mb_strtolower($tag->getText())] = $tag;
+            $newTagsHash[\mb_strtolower($tag->getText())] = $tag;
         }
 
         // Hashing old post tags (from DB)
         $oldTagsHash = [];
         foreach ($post->getPostTags() as $postTag) {
-            $oldTagsHash[mb_strtolower($postTag->getOriginalTagText())] = $postTag;
+            $oldTagsHash[\mb_strtolower($postTag->getOriginalTagText())] = $postTag;
         }
 
         // Adding missing tags
         foreach ($tags as $tag) {
-            if (!array_key_exists(mb_strtolower($tag->getText()), $oldTagsHash)) {
-                $tmpPostTag = new PostTag($post, $tag, $tagStringsHash[mb_strtolower($tag->getText())]);
+            if (!array_key_exists(\mb_strtolower($tag->getText()), $oldTagsHash)) {
+                $tmpPostTag = new PostTag($post, $tag, $tagStringsHash[\mb_strtolower($tag->getText())]);
                 $post->addPostTag($tmpPostTag);
             }
         }
 
         // Removing deleted tags
         foreach ($post->getPostTags() as $postTag) {
-            if (!array_key_exists(mb_strtolower($postTag->getOriginalTagText()), $newTagsHash)) {
+            if (!array_key_exists(\mb_strtolower($postTag->getOriginalTagText()), $newTagsHash)) {
                 $post->removePostTag($postTag);
             }
         }
     }
 
-    /**
-     * @param Post $post
-     * @param array $urls
-     */
     private function updatePostFiles(Post $post, array $urls): void
     {
         $files = $this->fileFactory->createFromUrlsArray($urls);
