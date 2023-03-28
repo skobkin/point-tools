@@ -15,6 +15,8 @@ services:
             # Telegram Bot API
             $telegramToken: ''
             # Point API
+            $pointDomain: 'point.im'
+            $pointScheme: 'https'
             $pointApiDelay: ''
             $pointAppUserId: ''
             $pointApiClient: '@app.point.http_client'
