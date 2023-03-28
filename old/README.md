@@ -1,7 +1,5 @@
-[ ![Codeship Status for skobkin/point-tools](https://app.codeship.com/projects/bb9fe730-a175-0134-5572-12490b0b4938/status?branch=master)](https://app.codeship.com/projects/189850)
+[![Build Status](https://ci.skobk.in/api/badges/skobkin/point-tools/status.svg)](https://ci.skobk.in/skobkin/point-tools)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/skobkin/point-tools/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/b/skobkin/point-tools/?branch=master)
-[![codecov](https://codecov.io/bb/skobkin/point-tools/branch/master/graph/badge.svg)](https://codecov.io/bb/skobkin/point-tools)
-[![Total Downloads](https://poser.pugx.org/skobkin/point-tools/downloads)](https://packagist.org/packages/skobkin/point-tools)
 [![License](https://poser.pugx.org/skobkin/point-tools/license)](https://packagist.org/packages/skobkin/point-tools)
 
 # Point Tools
