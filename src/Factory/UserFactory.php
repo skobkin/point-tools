@@ -1,35 +1,25 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Service\Factory;
+namespace App\Factory;
 
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\DTO\Api\User as UserDTO;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Exception\Factory\InvalidUserDataException;
-use src\PointToolsBundle\Service\Factory\AbstractFactory;
+use App\DTO\Api\User as UserDTO;
+use App\Entity\User;
+use App\Exception\Factory\InvalidUserDataException;
+use App\Repository\UserRepository;
 
 class UserFactory extends AbstractFactory
 {
     public const DATE_FORMAT = 'Y-m-d_H:i:s';
 
-    /** @var UserRepository */
-    private $userRepository;
-
-
-    public function __construct(LoggerInterface $logger, UserRepository $userRepository)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        private readonly UserRepository $userRepository,
+    ) {
         parent::__construct($logger);
-        $this->userRepository = $userRepository;
     }
 
-    /**
-     * @param UserDTO $userData
-     *
-     * @return User
-     *
-     * @throws InvalidUserDataException
-     */
     public function findOrCreateFromDTO(UserDTO $userData): User
     {
         // @todo LOG
@@ -56,9 +46,7 @@ class UserFactory extends AbstractFactory
         return $user;
     }
 
-    /**
-     * @return User[]
-     */
+    /** @return User[] */
     public function findOrCreateFromDTOArray(array $usersData): array
     {
         // @todo LOG
