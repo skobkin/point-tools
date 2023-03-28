@@ -1,52 +1,21 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DTO\Api;
+namespace App\DTO\Api;
 
-use src\PointToolsBundle\DTO\Api\User;
-use src\PointToolsBundle\DTO\Api\ValidableInterface;
-
+/** TODO: Refactor to public readonly */
 class Post implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
-    private $id;
-
-    /**
-     * @var string[]|null
-     */
-    private $tags;
-
-    /**
-     * @var string[]|null
-     */
-    private $files;
-
-    /**
-     * @var User|null
-     */
-    private $author;
-
-    /**
-     * @var string|null
-     */
-    private $text;
-
-    /**
-     * @var string|null
-     */
-    private $created;
-
-    /**
-     * @var string|null
-     */
-    private $type;
-
-    /**
-     * @var bool|null
-     */
-    private $private;
-
+    private ?string $id;
+    /** @var string[]|null */
+    private ?array $tags;
+    /** @var string[]|null */
+    private ?array $files;
+    private ?User $author;
+    private ?string $text;
+    private ?string $created;
+    private ?string $type;
+    private ?bool $private;
 
     public function getId(): ?string
     {
@@ -58,9 +27,7 @@ class Post implements ValidableInterface
         $this->id = $id;
     }
 
-    /**
-     * @return string[]|null
-     */
+    /** @return string[]|null */
     public function getTags(): ?array
     {
         return $this->tags;
@@ -71,9 +38,7 @@ class Post implements ValidableInterface
         $this->tags = $tags;
     }
 
-    /**
-     * @return string[]|null
-     */
+    /** @return string[]|null */
     public function getFiles(): ?array
     {
         return $this->files;
@@ -144,18 +109,13 @@ class Post implements ValidableInterface
 
     public function isValid(): bool
     {
-        if (
-            null !== $this->id &&
+        return null !== $this->id &&
             null !== $this->author &&
             $this->author->isValid() &&
             null !== $this->text &&
-            null !== $this->created// &&
+            null !== $this->created
             // @todo check type existence in incoming data
             //null !== $this->type
-        ) {
-            return true;
-        }
-
-        return false;
+        ;
     }
 }

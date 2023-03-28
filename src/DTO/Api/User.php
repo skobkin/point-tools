@@ -1,81 +1,25 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DTO\Api;
+namespace App\DTO\Api;
 
-use src\PointToolsBundle\DTO\Api\ValidableInterface;
-
+/** TODO: Refactor to public readonly */
 class User implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
-    private $id;
-
-    /**
-     * @var string|null
-     */
-    private $login;
-
-    /**
-     * @var string|null
-     */
-    private $name;
-
-    /**
-     * @var string|null
-     */
-    private $about;
-
-    /**
-     * @var string|null
-     */
-    private $xmpp;
-
-    /**
-     * @var string|null
-     */
-    private $created;
-
-    /**
-     * @var bool|null
-     */
-    private $gender;
-
-    /**
-     * @var bool|null
-     */
-    private $denyAnonymous;
-
-    /**
-     * @var bool|null
-     */
-    private $private;
-
-    /**
-     * @var string|null
-     */
-    private $birthDate;
-
-    /**
-     * @var string|null
-     */
-    private $homepage;
-
-    /**
-     * @var string|null
-     */
-    private $email;
-
-    /**
-     * @var string|null
-     */
-    private $location;
-
-    /**
-     * @var string|null
-     */
-    private $error;
-
+    private ?string $id;
+    private ?string $login;
+    private ?string $name;
+    private ?string $about;
+    private ?string $xmpp;
+    private ?string $created;
+    private ?bool $gender;
+    private ?bool $denyAnonymous;
+    private ?bool $private;
+    private ?string $birthDate;
+    private ?string $homepage;
+    private ?string $email;
+    private ?string $location;
+    private ?string $error;
 
     public function getId(): ?string
     {
@@ -219,10 +163,6 @@ class User implements ValidableInterface
 
     public function isValid(): bool
     {
-        if (null === $this->error && null !== $this->id && null !== $this->login) {
-            return true;
-        }
-
-        return false;
+        return null === $this->error && null !== $this->id && null !== $this->login;
     }
 }

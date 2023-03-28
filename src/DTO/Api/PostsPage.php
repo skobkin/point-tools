@@ -1,33 +1,22 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DTO\Api;
+namespace App\DTO\Api;
 
-use src\PointToolsBundle\DTO\Api\MetaPost;
-use src\PointToolsBundle\DTO\Api\ValidableInterface;
-
+/** TODO: Refactor to public readonly */
 class PostsPage implements ValidableInterface
 {
-    /**
-     * @var MetaPost[]|null
-     */
-    private $posts;
+    /** @var MetaPost[]|null */
+    private ?array $posts;
+    private ?bool $hasNext;
 
-    /**
-     * @var bool|null
-     */
-    private $hasNext;
-
-    /**
-     * @return MetaPost[]|null
-     */
+    /** @return MetaPost[]|null */
     public function getPosts(): ?array
     {
         return $this->posts;
     }
 
-    /**
-     * @param MetaPost[]|null $posts
-     */
+    /** @param MetaPost[]|null $posts */
     public function setPosts(?array $posts): void
     {
         $this->posts = $posts;
@@ -45,10 +34,6 @@ class PostsPage implements ValidableInterface
 
     public function isValid(): bool
     {
-        if (null !== $this->posts) {
-            return true;
-        }
-
-        return false;
+        return null !== $this->posts;
     }
 }

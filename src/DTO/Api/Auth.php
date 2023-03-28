@@ -1,26 +1,14 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DTO\Api;
+namespace App\DTO\Api;
 
-use src\PointToolsBundle\DTO\Api\ValidableInterface;
-
+/** TODO: Refactor to public readonly */
 class Auth implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
-    private $token;
-
-    /**
-     * @var string|null
-     */
-    private $csRfToken;
-
-    /**
-     * @var string|null
-     */
-    private $error;
-
+    private ?string $token;
+    private ?string $csRfToken;
+    private ?string $error;
 
     public function getToken(): ?string
     {
@@ -54,10 +42,6 @@ class Auth implements ValidableInterface
 
     public function isValid(): bool
     {
-        if (null !== $this->token && null !== $this->csRfToken && null === $this->error) {
-            return true;
-        }
-
-        return false;
+        return null !== $this->token && null !== $this->csRfToken && null === $this->error;
     }
 }

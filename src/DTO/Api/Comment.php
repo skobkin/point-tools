@@ -1,46 +1,18 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DTO\Api;
+namespace App\DTO\Api;
 
-use src\PointToolsBundle\DTO\Api\User;
-use src\PointToolsBundle\DTO\Api\ValidableInterface;
-
+/** TODO: Refactor to public readonly */
 class Comment implements ValidableInterface
 {
-    /**
-     * @var string|null
-     */
-    private $postId;
-
-    /**
-     * @var int|null
-     */
-    private $number;
-
-    /**
-     * @var int|null
-     */
-    private $toCommentId;
-
-    /**
-     * @var string|null
-     */
-    private $created;
-
-    /**
-     * @var string|null
-     */
-    private $text;
-
-    /**
-     * @var User|null
-     */
-    private $author;
-
-    /**
-     * @var bool|null
-     */
-    private $isRec;
+    private ?string $postId;
+    private ?int $number;
+    private ?int $toCommentId;
+    private ?string $created;
+    private ?string $text;
+    private ?User $author;
+    private ?bool $isRec;
 
 
     public function getPostId(): ?string
@@ -120,10 +92,6 @@ class Comment implements ValidableInterface
 
     public function isValid(): bool
     {
-        if (null !== $this->postId && null !== $this->number && null !== $this->author && null !== $this->text) {
-            return true;
-        }
-
-        return false;
+        return null !== $this->postId && null !== $this->number && null !== $this->author && null !== $this->text;
     }
 }
