@@ -83,10 +83,6 @@ knp_markdown:
     parser:
         service: app.point.markdown_parser
 
-knp_paginator:
-    template:
-        pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
-
 csa_guzzle:
     profiler: '%kernel.debug%'
 

@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
 use Knp\Component\Pager\PaginatorInterface;
-use src\PointToolsBundle\Repository\SubscriptionEventRepository;
+use App\Repository\SubscriptionEventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, Response};
 
