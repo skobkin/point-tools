@@ -27,7 +27,7 @@ class UpdateSubscriptionsCommand extends Command
         private readonly UserApi                $api,
         private readonly SubscriptionsManager   $subscriptionManager,
         private readonly int                    $pointApiDelay,
-        private readonly int                    $pointAppUserId,
+        private readonly int                    $appUserId,
     ) {
         parent::__construct();
     }
@@ -155,9 +155,9 @@ class UpdateSubscriptionsCommand extends Command
         } else {
             /** @var User $serviceUser */
             try {
-                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->pointAppUserId);
+                $serviceUser = $this->userRepo->findActiveUserWithSubscribers($this->appUserId);
             } catch (\Exception $e) {
-                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $this->pointAppUserId]);
+                $this->logger->error('Error while getting active user with subscribers', ['app_user_id' => $this->appUserId]);
 
                 throw $e;
             }
@@ -166,7 +166,7 @@ class UpdateSubscriptionsCommand extends Command
                 $this->logger->warning('Service user not found or marked as removed. Falling back to API.');
 
                 try {
-                    $serviceUser = $this->api->getUserById($this->pointAppUserId);
+                    $serviceUser = $this->api->getUserById($this->appUserId);
                 } catch (UserNotFoundException $e) {
                     throw new \RuntimeException('Service user not found in the database and could not be retrieved from API.');
                 }
@@ -175,7 +175,7 @@ class UpdateSubscriptionsCommand extends Command
             $this->logger->info('Getting service subscribers');
 
             try {
-                $usersForUpdate = $this->api->getUserSubscribersById($this->pointAppUserId);
+                $usersForUpdate = $this->api->getUserSubscribersById($this->appUserId);
             } catch (UserNotFoundException $e) {
                 $this->logger->critical('Service user deleted or API response is invalid');
 

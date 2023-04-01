@@ -11,21 +11,19 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            # TODO: fix retrieval
             # Point Tools
-            $appUserId: 435
-            $appUserLogin: 'point-tools'
+            $appUserId: '%env(int:APP_USER_ID)%'
+            $appUserLogin: 'env(string:APP_USER_LOGIN)'
             # Telegram Bot API
-            $telegramToken: ''
+            $telegramToken: 'env(string:TELEGRAM_BOT_TOKEN)'
             $debugEnabled: '%kernel.debug%'
             # Point API
-            $pointDomain: 'point.im'
-            $pointScheme: 'https'
-            $pointApiDelay: 5000
-            $pointAppUserId: ''
+            $pointDomain: 'env(string:APP_POINT_DOMAIN)'
+            $pointScheme: 'env(string:APP_POINT_SCHEME)'
+            $pointApiDelay: '%env(int:APP_POINT_API_DELAY)%'
             $pointApiClient: '@app.point.http_client'
             # Crawler API
-            $crawlerToken: ''
+            $crawlerSecret: 'env(string:APP_CRAWLER_SECRET)'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

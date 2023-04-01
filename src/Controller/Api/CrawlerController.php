@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\{Request, Response};
 class CrawlerController extends AbstractApiController
 {
     public function __construct(
-        private readonly string $crawlerToken,
+        private readonly string $crawlerSecret,
     ) {
     }
 
@@ -20,7 +20,7 @@ class CrawlerController extends AbstractApiController
     {
         $remoteToken = $request->request->get('token');
 
-        if (!$this->crawlerToken || ($this->crawlerToken !== $remoteToken)) {
+        if (!$this->crawlerSecret || ($this->crawlerSecret !== $remoteToken)) {
             return $this->createErrorResponse(
                 'Token error. Please check it in crawler and API parameters.',
                 Response::HTTP_FORBIDDEN,
