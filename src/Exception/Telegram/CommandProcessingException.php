@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Exception\Telegram;
-
+namespace App\Exception\Telegram;
 
 class CommandProcessingException extends \Exception
 {
