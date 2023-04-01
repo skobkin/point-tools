@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\DailyEventsDTO;
 use App\Entity\SubscriptionEvent;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -101,14 +102,14 @@ class SubscriptionEventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /** @return SubscriptionEvent[] */
+    /** @return DailyEventsDTO[] */
     public function getLastEventsByDay(int $days = 30): array
     {
         $qb = $this->createQueryBuilder('se');
 
         $rows =  $qb
             ->select([
-                'NEW Skobkin\Bundle\PointToolsBundle\DTO\DailyEvents(DAY(se.date), COUNT(se))',
+                'NEW App\DTO\DailyEventsDTO(DAY(se.date), COUNT(se))',
                 'DAY(se.date) as day',
             ])
             ->groupBy('day')

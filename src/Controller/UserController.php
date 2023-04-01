@@ -1,32 +1,24 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
+use App\DTO\{TopUserDTO, DailyEventsDTO};
 use Knp\Component\Pager\PaginatorInterface;
-use src\PointToolsBundle\DTO\{TopUserDTO};
-use src\PointToolsBundle\DTO\DailyEvents;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Repository\UserRenameEventRepository;
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Repository\{SubscriptionEventRepository};
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Ob\HighchartsBundle\Highcharts\Highchart;
+use App\Entity\User;
+use App\Repository\{SubscriptionEventRepository, UserRenameEventRepository, UserRepository};
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, Response};
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
-    /** @var TranslatorInterface */
-    private $translator;
-
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
-    /**
-     * @param string $login
-     */
     public function showAction(
         Request $request,
         string $login,
@@ -68,16 +60,16 @@ class UserController extends AbstractController
     }
 
     /**
-     * @todo move to the service
+     * @param DailyEventsDTO[] $eventsByDay
+     *@todo move to the service
      *
-     * @param DailyEvents[] $eventsByDay
      */
     private function createEventsDynamicChart(array $eventsByDay = []): Highchart
     {
         $data = [];
 
         foreach ($eventsByDay as $dailyEvents) {
-            $data[$dailyEvents->getDate()->format('d.m')] = $dailyEvents->getEventsCount();
+            $data[$dailyEvents->date->format('d.m')] = $dailyEvents->eventsCount;
         }
 
         return $this->createChart('eventschart', 'line', $data, 'Events by day', 'amount');
@@ -93,7 +85,7 @@ class UserController extends AbstractController
         $data = [];
 
         foreach ($topUsers as $topUser) {
-            $data[$topUser->getLogin()] = $topUser->getSubscribersCount();
+            $data[$topUser->login] = $topUser->subscribersCount;
         }
 
         return $this->createChart('topchart', 'bar', $data, 'Top users', 'amount');

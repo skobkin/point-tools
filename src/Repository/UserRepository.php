@@ -1,9 +1,10 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\TopUserDTO;
+use App\Entity\Subscription;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -114,11 +115,11 @@ class UserRepository extends ServiceEntityRepository
      */
     public function getTopUsers(int $limit = 30): array
     {
-        $qb = $this->getEntityManager()->getRepository('SkobkinPointToolsBundle:Subscription')->createQueryBuilder('s');
+        $qb = $this->getEntityManager()->getRepository(Subscription::class)->createQueryBuilder('s');
 
         $rows = $qb
             ->select([
-                'NEW Skobkin\Bundle\PointToolsBundle\DTO\TopUserDTO(a.login, COUNT(s.subscriber))',
+                'NEW App\DTO\TopUserDTO(a.login, COUNT(s.subscriber))',
                 'COUNT(s.subscriber) as subscribers_count'
             ])
             ->innerJoin('s.author', 'a')
