@@ -56,15 +56,6 @@ doctrine:
         password: "%database_password%"
         charset:  UTF8
 
-    orm:
-        auto_generate_proxy_classes: "%kernel.debug%"
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
-        dql:
-            string_functions:
-                # TODO fix to receive correct DateTime instead of string
-                DAY: Skobkin\Bundle\PointToolsBundle\DQL\Day
-
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
