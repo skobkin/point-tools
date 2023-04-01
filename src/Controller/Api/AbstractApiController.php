@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,6 @@ class AbstractApiController extends AbstractController
         ], $code);
     }
 
-    /**
-     *
-     */
     protected function createErrorResponse(string $message, int $code = 400): Response
     {
         return $this->json([

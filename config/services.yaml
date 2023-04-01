@@ -20,6 +20,8 @@ services:
             $pointApiDelay: 5000
             $pointAppUserId: ''
             $pointApiClient: '@app.point.http_client'
+            # Crawler API
+            $crawlerToken: ''
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
