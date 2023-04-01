@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
-use src\PointToolsBundle\Entity\Blogs\Post;
-use src\PointToolsBundle\Repository\Blogs\PostRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use App\Entity\Blog\Post;
+use App\Repository\Blog\PostRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends AbstractController
@@ -29,5 +30,4 @@ class PostController extends AbstractController
             'post' => $postRepository->getPostWithComments($post->getId()),
         ]);
     }
-
 }
