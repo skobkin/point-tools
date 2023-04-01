@@ -65,12 +65,6 @@ doctrine:
                 # TODO fix to receive correct DateTime instead of string
                 DAY: Skobkin\Bundle\PointToolsBundle\DQL\Day
 
-doctrine_migrations:
-    dir_name: "%kernel.project_dir%/app/DoctrineMigrations"
-    namespace: Application\Migrations
-    table_name: migration_versions
-    name: Application Migrations
-
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
