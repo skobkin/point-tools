@@ -1,17 +1,18 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
 use Knp\Component\Pager\PaginatorInterface;
-use src\PointToolsBundle\Repository\Blogs\PostRepository;
+use App\Repository\Blog\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\{Request, Response};
 
 class PublicFeedController extends AbstractController
 {
     private const POSTS_PER_PAGE = 20;
 
-    public function indexAction(Request $request, PostRepository $postRepository, PaginatorInterface $paginator)
+    public function indexAction(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
     {
         $postsPagination = $paginator->paginate(
             $postRepository->createPublicFeedPostsQuery(),
