@@ -25,7 +25,7 @@ class UserFactory extends AbstractFactory
         // @todo LOG
 
         if (!$userData->isValid()) {
-            throw new InvalidUserDataException('Invalid user data', $userData);
+            throw new InvalidUserDataException($userData);
         }
 
         /** @var User $user */
