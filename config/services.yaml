@@ -31,8 +31,8 @@ services:
             - '../src/Kernel.php'
 
     # HTTP client for Point API
-    Symfony\Component\HttpClient\HttpClient:
-        alias: 'app.point.http_client'
+    app.point.http_client:
+        class: Symfony\Component\HttpClient\HttpClient
         factory: [null, 'create']
         arguments:
             base_uri: '%point_base_url%'
