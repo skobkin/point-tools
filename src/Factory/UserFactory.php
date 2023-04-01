@@ -31,7 +31,7 @@ class UserFactory extends AbstractFactory
         /** @var User $user */
         if (null === ($user = $this->userRepository->find($userData->getId()))) {
             $user = new User(
-                $userData->getId(),
+                (int) $userData->getId(),
                 \DateTime::createFromFormat('Y-m-d_H:i:s', $userData->getCreated()) ?: new \DateTime()
             );
             $this->userRepository->add($user);
