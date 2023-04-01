@@ -1,30 +1,22 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
-use Doctrine\ORM\EntityManager;
-use src\PointToolsBundle\Form\UserSearchType;
-use src\PointToolsBundle\Repository\SubscriptionRepository;
-use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Repository\{SubscriptionEventRepository};
+use App\Form\UserSearchType;
+use App\Repository\{SubscriptionEventRepository, SubscriptionRepository, UserRepository};
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 
 class MainController extends AbstractController
 {
-    const AJAX_AUTOCOMPLETE_SIZE = 10;
+    private const AJAX_AUTOCOMPLETE_SIZE = 10;
 
-    /** @var int */
-    private $appUserId;
-
-    /** @var string */
-    private $appUserLogin;
-
-    public function __construct(int $appUserId, string $appUserLogin)
-    {
-        $this->appUserId = $appUserId;
-        $this->appUserLogin = $appUserLogin;
+    public function __construct(
+        private readonly int $appUserId,
+        private readonly string $appUserLogin,
+    ) {
     }
 
     public function indexAction(
@@ -33,9 +25,6 @@ class MainController extends AbstractController
         SubscriptionRepository $subscriptionRepository,
         SubscriptionEventRepository $subscriptionEventRepository
     ): Response {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         $form = $this->createForm(
             UserSearchType::class,
             null,
@@ -66,17 +55,9 @@ class MainController extends AbstractController
         ]);
     }
 
-    /**
-     * Returns user search autocomplete data in JSON
-     *
-     * @param string $login
-     *
-     * @return JsonResponse
-     */
-    public function searchUserAjaxAction(string $login, UserRepository $userRepository): Response
+    /** Returns user search autocomplete data in JSON */
+    public function searchUserAjaxAction(string $login, UserRepository $userRepository): JsonResponse
     {
-        $em = $this->getDoctrine()->getManager();
-
         $result = [];
 
         foreach ($userRepository->findUsersLikeLogin($login, self::AJAX_AUTOCOMPLETE_SIZE) as $user) {

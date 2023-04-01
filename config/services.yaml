@@ -12,6 +12,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             # TODO: fix retrieval
+            # Point Tools
+            $appUserId: 435
+            $appUserLogin: 'point-tools'
             # Telegram Bot API
             $telegramToken: ''
             $debugEnabled: '%kernel.debug%'
