@@ -14,6 +14,7 @@ services:
             # TODO: fix retrieval
             # Telegram Bot API
             $telegramToken: ''
+            $debugEnabled: '%kernel.debug%'
             # Point API
             $pointDomain: 'point.im'
             $pointScheme: 'https'

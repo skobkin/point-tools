@@ -1,28 +1,20 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller\Telegram;
+namespace App\Controller\Telegram;
 
 use Psr\Log\LoggerInterface;
 use src\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
-use unreal4u\TelegramAPI\Telegram\Types\Update;
+use unreal4u\Telegram\Types\Update;
 
-/**
- * {@inheritdoc}
- */
 class WebHookController extends AbstractController
 {
-    /** @var string */
-    private $telegramToken;
-
-    /** @var bool */
-    private $debug;
-
-    public function __construct(string $telegramToken, bool $debug)
-    {
-        $this->telegramToken = $telegramToken;
-        $this->debug = $debug;
+    public function __construct(
+        private readonly string $telegramToken,
+        private readonly bool $debugEnabled,
+    ) {
     }
 
     public function receiveUpdateAction(Request $request, string $token, IncomingUpdateDispatcher $updateDispatcher, LoggerInterface $logger): Response
@@ -31,21 +23,20 @@ class WebHookController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $content = json_decode($request->getContent(), true);
+        $content = \json_decode($request->getContent(), flags: JSON_THROW_ON_ERROR);
 
         $update = new Update(
             $content,
-            $logger
         );
 
         try {
             $updateDispatcher->process($update);
         } catch (\Exception $e) {
-            if ($this->debug) {
+            if ($this->debugEnabled) {
                 throw $e;
             }
 
-            $logger->addError('Telegram bot error', [
+            $logger->error('Telegram bot error', [
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
