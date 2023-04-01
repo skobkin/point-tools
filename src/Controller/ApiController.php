@@ -1,13 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Controller;
+namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Entity\{SubscriptionEvent};
-use src\PointToolsBundle\Repository\SubscriptionEventRepository;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use App\Entity\{SubscriptionEvent, User};
+use App\Repository\SubscriptionEventRepository;
+use Symfony\Component\HttpFoundation\{JsonResponse, Response};
 
 class ApiController
 {
