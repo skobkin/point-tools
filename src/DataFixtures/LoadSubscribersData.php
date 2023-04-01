@@ -1,18 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DataFixtures\ORM;
+namespace App\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use src\PointToolsBundle\Entity\Subscription;
-use src\PointToolsBundle\Entity\SubscriptionEvent;
-use src\PointToolsBundle\Entity\User;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\{Subscription, SubscriptionEvent, User};
 
 /**
  * Load user subscriptions
  */
-class LoadSubscribersData extends AbstractFixture implements OrderedFixtureInterface
+class LoadSubscribersData extends Fixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $om)
     {

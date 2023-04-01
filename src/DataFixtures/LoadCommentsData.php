@@ -1,17 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DataFixtures\ORM;
+namespace App\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use src\PointToolsBundle\Entity\Blogs\Comment;
-use src\PointToolsBundle\Entity\Blogs\Post;
-use src\PointToolsBundle\Entity\User;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\Blog\{Comment, Post};
+use App\Entity\User;
 
-class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterface
+class LoadCommentsData extends Fixture implements OrderedFixtureInterface
 {
-    public function load(ObjectManager $om)
+    public function load(ObjectManager $om): void
     {
         /** @var Post $post */
         $post = $this->getReference('test_post_longpost');
@@ -30,7 +30,7 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
         foreach (range(1, 10000) as $num) {
             $comment = (new Comment())
                 ->setNumber($num)
-                ->setDeleted(mt_rand(0, 15) ? false : true)
+                ->setDeleted(\random_int(0, 15) ? false : true)
                 ->setCreatedAt(new \DateTime())
                 ->setAuthor($users[array_rand($users)])
                 ->setRec(false)
@@ -42,8 +42,8 @@ class LoadCommentsData extends AbstractFixture implements OrderedFixtureInterfac
                 )
             ;
 
-            if (count($comments) > 0 && mt_rand(0, 1)) {
-                $comment->setParent($comments[mt_rand(0, count($comments) - 1)]);
+            if (count($comments) > 0 && \random_int(0, 1)) {
+                $comment->setParent($comments[\random_int(0, count($comments) - 1)]);
             }
 
             $post->addComment($comment);

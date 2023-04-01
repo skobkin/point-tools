@@ -1,16 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DataFixtures\ORM;
+namespace App\DataFixtures;
 
-use Doctrine\Common\DataFixtures\{AbstractFixture, OrderedFixtureInterface};
-use Doctrine\Common\Persistence\ObjectManager;
-use src\PointToolsBundle\Entity\{Blogs\Post};
-use src\PointToolsBundle\DataFixtures\ORM\LoadUserData;
-use src\PointToolsBundle\Entity\User;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\Blog\Post;
+use App\Entity\User;
 
-class LoadPostData extends AbstractFixture implements OrderedFixtureInterface
+class LoadPostData extends Fixture implements OrderedFixtureInterface
 {
-    public const POST_ID_LONG = 'longpost';
+    private const POST_ID_LONG = 'longpost';
     public const POST_ID_SHORT = 'shortpost';
     public const POST_ID_PR_USER = 'prusrpst';
     public const POST_ID_WL_USER = 'wlusrpst';

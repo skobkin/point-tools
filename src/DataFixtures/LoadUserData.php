@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\DataFixtures\ORM;
+namespace App\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use src\PointToolsBundle\Entity\User;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\User;
 
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
+class LoadUserData extends Fixture implements OrderedFixtureInterface
 {
     public const USER_MAIN_ID = 99999;
     public const USER_SCND_ID = 99998;
