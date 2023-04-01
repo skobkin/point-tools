@@ -17,7 +17,7 @@ services:
             # Point API
             $pointDomain: 'point.im'
             $pointScheme: 'https'
-            $pointApiDelay: ''
+            $pointApiDelay: 5000
             $pointAppUserId: ''
             $pointApiClient: '@app.point.http_client'
 
