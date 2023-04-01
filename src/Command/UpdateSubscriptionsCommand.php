@@ -81,7 +81,7 @@ class UpdateSubscriptionsCommand extends Command
         $progress->start(count($usersForUpdate));
 
         foreach ($usersForUpdate as $user) {
-            usleep($this->pointApiDelay);
+            \usleep($this->pointApiDelay);
 
             $progress->advance();
             $this->logger->info('Processing @'.$user->getLogin());
