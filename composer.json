@@ -6,8 +6,8 @@
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
-        "ext-json": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.8",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
@@ -30,6 +30,7 @@
         "symfony/monolog-bundle": "^3.0",
         "symfony/property-access": "6.2.*",
         "symfony/property-info": "6.2.*",
+        "symfony/runtime": "6.2.*",
         "symfony/security-bundle": "6.2.*",
         "symfony/string": "6.2.*",
         "symfony/translation": "6.2.*",
@@ -43,7 +44,8 @@
     "config": {
         "allow-plugins": {
             "php-http/discovery": true,
-            "symfony/flex": true
+            "symfony/flex": true,
+            "symfony/runtime": true
         },
         "sort-packages": true
     },
