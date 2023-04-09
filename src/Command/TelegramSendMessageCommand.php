@@ -39,7 +39,7 @@ class TelegramSendMessageCommand extends Command
         } elseif (null !== $input->getArgument('message')) {
             $message = $input->getArgument('message');
         } else {
-            $io->error('Either \'--stdin\' option or \'message\' argument should be specified.')
+            $io->error('Either \'--stdin\' option or \'message\' argument should be specified.');
 
             return Command::FAILURE;
         }
