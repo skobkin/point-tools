@@ -1,3 +1,0 @@
-skobkin_point_tools:
-    resource: "@SkobkinPointToolsBundle/Resources/config/routing.yml"
-    prefix:   /

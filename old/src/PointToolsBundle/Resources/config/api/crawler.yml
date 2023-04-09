@@ -1,4 +1,0 @@
-api_crawler_receive_all_page:
-    path:     /all/page
-    defaults: { _controller: SkobkinPointToolsBundle:Api/Crawler:receiveAllPage, _format: json }
-    methods: [POST]

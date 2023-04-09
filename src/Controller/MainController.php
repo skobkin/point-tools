@@ -45,7 +45,7 @@ class MainController extends AbstractController
             $form->get('login')->addError(new FormError('Login not found'));
         }
 
-        return $this->render('SkobkinPointToolsBundle:Main:index.html.twig', [
+        return $this->render('Web/index.html.twig', [
             'form' => $form->createView(),
             'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
             'users_count' => $userRepository->getUsersCount(),

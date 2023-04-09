@@ -1,4 +1,4 @@
-{% extends '::layout.html.twig' %}
+{% extends 'Web/layout.html.twig' %}
 
 {% block header_title %}Point Tools{% endblock %}
 
@@ -30,7 +30,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="https://t.me/PointToolsBot" target="_blank"><span class="glyphicon glyphicon-send"></span> {{ 'Telegram Bot'|trans }}</a></li>
-                            <li><a href="https://bitbucket.org/skobkin/point-tools/issues?status=new&status=open" target="_blank"><span class="glyphicon glyphicon-envelope"></span> {{ 'Report a bug'|trans }}</a></li>
+                            <li><a href="https://git.skobk.in/skobkin/point-tools/issues" target="_blank"><span class="glyphicon glyphicon-envelope"></span> {{ 'Report a bug'|trans }}</a></li>
                         </ul>
                     {% endblock %}
                 </div>
@@ -50,14 +50,14 @@
         <div class="copyright col-xs-8">
             <p>
                 &copy; 2015{% if 2015 != 'now'|date('Y') %}-{{ 'now'|date('Y') }}{% endif %}
-                <a href="https://skobk.in/" target="_blank">Alexey Skobkin</a> aka <a href="https://skobkin-ru.point.im/" target="_blank">@skobkin-ru</a>
+                <a href="https://skobk.in/" target="_blank">Alexey Skobkin</a> aka <a href="https://lor.sh/@skobkin" target="_blank">@skobkin</a>
             </p>
         </div>
         <div class="powered-by col-xs-4">
             <p class="pull-right">
-                <a href="https://bitbucket.org/skobkin/point-tools" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> {{ 'Source code'|trans }}</a>
+                <a href="https://github.com/skobkin/point-tools" target="_blank"><span class="glyphicon glyphicon-download-alt"></span> {{ 'Source code'|trans }}</a>
             </p>
         </div>
     </div>
-    {% include 'counters.html.twig' %}
+    {% include 'Web/counters.html.twig' %}
 {% endblock %}

@@ -15,12 +15,12 @@
 
   {% block css %}
     {# Bootstrap core CSS #}
-    <link href="//yastatic.net/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/lib/bootstrap.min.css') }}" rel="stylesheet">
   {% endblock %}
 
   {% block head_js %}
-    <script src="//yastatic.net/jquery/2.2.3/jquery.min.js"></script>
-    <script src="//yastatic.net/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/lib/bootstrap.min.js') }}"></script>
   {% endblock %}
 </head>
 

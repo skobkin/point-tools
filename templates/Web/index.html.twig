@@ -1,9 +1,9 @@
-{% extends "::base.html.twig" %}
+{% extends 'Web/base.html.twig' %}
 
 {% block head_js %}
     {{ parent() }}
     {# https://github.com/bassjobsen/Bootstrap-3-Typeahead #}
-    <script src="{{ asset('js/bootstrap3-typeahead.min.js') }}"></script>
+    <script src="{{ asset('js/lib/bootstrap3-typeahead.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}

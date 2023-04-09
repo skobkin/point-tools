@@ -1,5 +1,66 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+#controllers:
+#    resource:
+#        path: ../src/Controller/
+#        namespace: App\Controller
+#    type: attribute
+
+index:
+    path:     /
+    defaults: { _controller: App\Controller\MainController::indexAction }
+    methods: [POST, GET]
+
+user_search_ajax:
+    path:     /ajax/users/search/{login}
+    defaults: { _controller: App\Controller\MainController::searchUserAjax, _format: json }
+    methods: [GET]
+    requirements:
+        login: '[\w-]*'
+        _format: json
+
+user_show:
+    path:     /user/{login}
+    defaults: { _controller: App\Controller\UserController::show }
+    methods: [GET]
+    requirements:
+        login: '[\w-]+'
+
+statistics:
+    path:     /statistics
+    defaults: { _controller: App\Controller\UserController::top }
+    methods: [GET]
+
+events_last:
+    path:     /events/last
+    defaults: { _controller: App\Controller\EventsController::last }
+    methods: [GET]
+
+feed_public:
+    path:     /posts/all
+    defaults: { _controller: App\Controller\PublicFeedController::index }
+    methods: [GET]
+
+post_show:
+    path:     /{id}
+    defaults: { _controller: App\Controller\PostController::show }
+    methods: [GET]
+    requirements:
+        id: '[a-z]+'
+
+telegram_webhook:
+    path:     /telegram/webhook/{token}
+    defaults: { _controller: App\Controller\Telegram\WebHookController::receiveUpdate, _format: json }
+    methods:  [POST]
+    requirements:
+        token: '\d+\:[\w-]+'
+        _format: json
+
+api_public_last_user_events:
+    path:     /api/v1/user/id/{id}/events/subscribers
+    defaults: { _controller: App\Controller\ApiController::lastUserSubscribersById, _format: json }
+    requirements:
+        id: \d+
+
+api_crawler_receive_all_page:
+    path:     /api/crawler/all/page
+    defaults: { _controller: App\Controller\Api\CrawlerController::receiveAllPage, _format: json }
+    methods: [POST]

@@ -18,7 +18,7 @@ class EventsController extends AbstractController
             20
         );
 
-        return $this->render('SkobkinPointToolsBundle:Events:last.html.twig', [
+        return $this->render('Web/Events/last.html.twig', [
             'last_events' => $eventsPagination,
         ]);
     }
