@@ -21,7 +21,7 @@ class TelegramSendMessageCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption('chat-id', 'c', InputOption::VALUE_OPTIONAL, 'ID of the chat')

@@ -28,7 +28,7 @@ class TelegramWebhookCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addArgument('mode', InputArgument::REQUIRED, 'Command mode (set or delete)')
