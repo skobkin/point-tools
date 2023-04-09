@@ -1,54 +1,37 @@
 <?php
+declare(strict_types=1);
 
-namespace src\PointToolsBundle\Service\Telegram;
+namespace App\Service\Telegram;
 
-use GuzzleHttp\Exception\ClientException;
-use src\PointToolsBundle\Entity\Telegram\Account;
-use unreal4u\TelegramAPI\Abstracts\KeyboardMethods;
-use unreal4u\TelegramAPI\Telegram\Methods\SendMessage;
-use unreal4u\TelegramAPI\TgLog;
+use App\Entity\Telegram\Account;
+use Psr\Log\LoggerInterface;
+use TelegramBot\Api\BotApi;
+use TelegramBot\Api\Types\ReplyKeyboardMarkup;
+use Twig\Environment;
 
-/**
- * Service which sends simple messages to Telegram users
- */
 class MessageSender
 {
     public const PARSE_PLAIN = '';
     public const PARSE_MARKDOWN = 'Markdown';
-    public const PARSE_HTML5 = 'HTML';
+    public const PARSE_MARKDOWN_V2 = 'MarkdownV2';
+    public const PARSE_HTML = 'HTML';
 
-    /** @var TgLog */
-    private $client;
-
-    /** @var \Twig_Environment */
-    private $twig;
-
-    /**
-     * @param TgLog $client
-     */
-    public function __construct(TgLog $client, \Twig_Environment $twig)
-    {
-        $this->client = $client;
-        $this->twig = $twig;
+    public function __construct(
+        private readonly BotApi $client,
+        private readonly Environment $twig,
+        private readonly LoggerInterface $log,
+    ) {
     }
 
-    /**
-     * @param Account[] $accounts
-     * @param string $template
-     * @param array $templateData
-     * @param KeyboardMethods|null $keyboardMarkup
-     * @param bool $disableWebPreview
-     * @param bool $disableNotifications
-     * @param string $parseMode
-     */
+    /** @param Account[] $accounts */
     public function sendMassTemplatedMessage(
         array $accounts,
         string $template,
         array $templateData = [],
-        KeyboardMethods $keyboardMarkup = null,
+        ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = true,
         bool $disableNotifications = false,
-        string $parseMode = self::PARSE_MARKDOWN
+        string $parseMode = self::PARSE_MARKDOWN_V2
     ): void
     {
         $text = $this->twig->render($template, $templateData);
@@ -62,10 +45,10 @@ class MessageSender
         Account $account,
         string $template,
         array $templateData = [],
-        KeyboardMethods $keyboardMarkup = null,
+        ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = true,
         bool $disableNotifications = false,
-        string $parseMode = self::PARSE_MARKDOWN
+        string $parseMode = self::PARSE_MARKDOWN_V2
     ): bool
     {
         $text = $this->twig->render($template, $templateData);
@@ -77,7 +60,7 @@ class MessageSender
         Account $account,
         string $text,
         string $parseMode = self::PARSE_PLAIN,
-        KeyboardMethods $keyboardMarkup = null,
+        ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
     ): bool
@@ -89,24 +72,28 @@ class MessageSender
         int $chatId,
         string $text,
         string $parseMode = self::PARSE_PLAIN,
-        KeyboardMethods $keyboardMarkup = null,
+        ReplyKeyboardMarkup $keyboardMarkup = null,
         bool $disableWebPreview = false,
         bool $disableNotifications = false
     ): bool
     {
-        $sendMessage = new SendMessage();
-        $sendMessage->chat_id = (string)$chatId;
-        $sendMessage->text = $text;
-        $sendMessage->parse_mode = $parseMode;
-        $sendMessage->disable_web_page_preview = $disableWebPreview;
-        $sendMessage->disable_notification = $disableNotifications;
-        $sendMessage->reply_markup = $keyboardMarkup;
-
         try {
-            $this->client->performApiRequest($sendMessage);
+            $this->client->sendMessage(
+                chatId: (string) $chatId,
+                text: $text,
+                parseMode: $parseMode,
+                disablePreview: $disableWebPreview,
+                replyMarkup: $keyboardMarkup,
+                disableNotification: $disableNotifications,
+            );
 
             return true;
-        } catch (ClientException $e) {
+        } catch (\Exception $e) {
+            $this->log->error('sendMessageToChat', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+
             return false;
         }
     }

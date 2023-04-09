@@ -14,8 +14,8 @@ class MainController extends AbstractController
     private const AJAX_AUTOCOMPLETE_SIZE = 10;
 
     public function __construct(
-        private readonly int $appUserId,
-        private readonly string $appUserLogin,
+        private readonly int $pointAppUserId,
+        private readonly string $pointAppUserLogin,
     ) {
     }
 
@@ -49,9 +49,9 @@ class MainController extends AbstractController
             'form' => $form->createView(),
             'autocomplete_size' => self::AJAX_AUTOCOMPLETE_SIZE,
             'users_count' => $userRepository->getUsersCount(),
-            'subscribers_count' => $subscriptionRepository->getUserSubscribersCountById($this->appUserId),
+            'subscribers_count' => $subscriptionRepository->getUserSubscribersCountById($this->pointAppUserId),
             'events_count' => $subscriptionEventRepository->getLastDayEventsCount(),
-            'service_login' => $this->appUserLogin,
+            'service_login' => $this->pointAppUserLogin,
         ]);
     }
 

@@ -1,6 +1,6 @@
 *Following users recently renamed themselves:*
 
-{# @var event \Skobkin\Bundle\PointToolsBundle\Entity\UserRenameEvent #}
+{# @var event \App\Entity\UserRenameEvent #}
 {% for event in events %}
 {% set login_old = event.oldLogin %}
 {% set login_new = event.user.login %}

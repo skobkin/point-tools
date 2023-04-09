@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Telegram;
 
+use App\Service\Telegram\IncomingUpdateDispatcher;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Service\Telegram\IncomingUpdateDispatcher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
-use unreal4u\Telegram\Types\Update;
+use TelegramBot\Api\Types\Update;
 
 class WebHookController extends AbstractController
 {
@@ -23,11 +23,13 @@ class WebHookController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $content = \json_decode($request->getContent(), flags: JSON_THROW_ON_ERROR);
+        try {
+            $content = \json_decode($request->getContent(), flags: JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return new JsonResponse('bad json', JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        $update = new Update(
-            $content,
-        );
+        $update = Update::fromResponse($content);
 
         try {
             $updateDispatcher->process($update);

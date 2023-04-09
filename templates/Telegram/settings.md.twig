@@ -1,4 +1,4 @@
-{# @var account \Skobkin\Bundle\PointToolsBundle\Entity\Telegram\Account #}
+{# @var account \App\Entity\Telegram\Account #}
 *Your current settings:*
 
 Account /link status: {% if account.user %}linked to [@{{ account.user.login }}]({{ account.user.login|point_user_url }}){% else %}Not linked{% endif %}

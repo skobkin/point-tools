@@ -7,7 +7,7 @@ use App\Factory\AbstractFactory;
 use Psr\Log\LoggerInterface;
 use App\Entity\Telegram\Account;
 use App\Repository\Telegram\AccountRepository;
-use unreal4u\Telegram\Types\Message;
+use TelegramBot\Api\Types\Message;
 
 class AccountFactory extends AbstractFactory
 {
@@ -20,17 +20,16 @@ class AccountFactory extends AbstractFactory
 
     public function findOrCreateFromMessage(Message $message): Account
     {
-        if (null === $account = $this->accountRepository->findOneBy(['id' => $message->from->id])) {
-            $account = new Account($message->from->id);
+        if (null === $account = $this->accountRepository->findOneBy(['id' => $message->getFrom()->getId()])) {
+            $account = new Account($message->getFrom()->getId());
             $this->accountRepository->save($account);
         }
 
-        // Setting/updating account data
         $account->updateFromMessageData(
-            $message->from->first_name,
-            $message->from->last_name,
-            $message->from->username,
-            $message->chat->id
+            $message->getFrom()->getFirstName(),
+            $message->getFrom()->getLastName(),
+            $message->getFrom()->getUsername(),
+            $message->getFrom()->getId(),
         );
 
         return $account;

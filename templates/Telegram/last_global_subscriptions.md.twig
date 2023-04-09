@@ -1,7 +1,7 @@
 *Last global subscription events:*
 
-{% set subscription = constant('\\Skobkin\\Bundle\\PointToolsBundle\\Entity\\SubscriptionEvent::ACTION_SUBSCRIBE') %}
-{# @var event \Skobkin\Bundle\PointToolsBundle\Entity\SubscriptionEvent #}
+{% set subscription = constant('\\App\\Entity\\SubscriptionEvent::ACTION_SUBSCRIBE') %}
+{# @var event \App\Entity\SubscriptionEvent #}
 {% for event in events %}
 {% set sub_login = event.subscriber.login %}
 {% set author_login = event.author.login %}

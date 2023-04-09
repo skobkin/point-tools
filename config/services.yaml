@@ -4,6 +4,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    env(APP_POINT_SCHEME): 'https'
+    env(APP_POINT_DOMAIN): 'point.im'
+    env(APP_POINT_BASE_URL): 'https://point.im'
+    env(APP_POINT_API_DELAY): 5000
+    env(APP_USER_ID): '435'
+    env(APP_USER_LOGIN): 'point-tools'
+    env(TELEGRAM_BOT_TOKEN): 'abc:123'
+    env(APP_CRAWLER_SECRET): 'some_secret_for_crawler_change_it_right_away'
 
 services:
     # default configuration for services in *this* file
@@ -11,19 +19,19 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            # Point Tools
-            $appUserId: '%env(int:APP_USER_ID)%'
-            $appUserLogin: 'env(string:APP_USER_LOGIN)'
             # Telegram Bot API
-            $telegramToken: 'env(string:TELEGRAM_BOT_TOKEN)'
+            $telegramToken: '%env(string:TELEGRAM_BOT_TOKEN)%'
+            $telegramWebhookMaxConnections: 'env(int:TELEGRAM_WEBHOOK_MAX_CONNECTIONS)'
             $debugEnabled: '%kernel.debug%'
             # Point API
-            $pointDomain: 'env(string:APP_POINT_DOMAIN)'
-            $pointScheme: 'env(string:APP_POINT_SCHEME)'
+            $pointDomain: '%env(string:APP_POINT_DOMAIN)%'
+            $pointScheme: '%env(string:APP_POINT_SCHEME)%'
             $pointApiDelay: '%env(int:APP_POINT_API_DELAY)%'
             $pointApiClient: '@app.point.http_client'
+            $pointAppUserId: '%env(int:APP_USER_ID)%'
+            $pointAppUserLogin: '%env(string:APP_USER_LOGIN)%'
             # Crawler API
-            $crawlerSecret: 'env(string:APP_CRAWLER_SECRET)'
+            $crawlerSecret: '%env(string:APP_CRAWLER_SECRET)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -39,5 +47,10 @@ services:
         class: Symfony\Component\HttpClient\HttpClient
         factory: [null, 'create']
         arguments:
-            base_uri: '%point_base_url%'
-            timeout: 5.0
+            -
+                base_uri: '%env(string:APP_POINT_SCHEME)%://%env(string:APP_POINT_DOMAIN)%'
+                timeout: 5.0
+
+    TelegramBot\Api\BotApi:
+        arguments:
+            $token: '%env(string:TELEGRAM_BOT_TOKEN)%'

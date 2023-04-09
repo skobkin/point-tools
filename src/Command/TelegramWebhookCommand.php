@@ -5,13 +5,11 @@ namespace App\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use unreal4u\Telegram\Methods\SetWebhook;
+use TelegramBot\Api\BotApi;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use unreal4u\TgLog;
 
 #[AsCommand(name: 'app:telegram:webhook', description: 'Set webhook')]
 class TelegramWebhookCommand extends Command
@@ -20,7 +18,7 @@ class TelegramWebhookCommand extends Command
     private const MODE_DELETE = 'delete';
 
     public function __construct(
-        private readonly TgLog $client,
+        private readonly BotApi $client,
         private readonly UrlGeneratorInterface $router,
         private readonly string $telegramToken,
         private readonly int $telegramWebhookMaxConnections,
@@ -49,15 +47,21 @@ class TelegramWebhookCommand extends Command
 
             $io->info('Setting webhook: ' . $url);
 
-            $setWebHook = new SetWebhook();
-            $setWebHook->url = $url;
-            $setWebHook->max_connections = $this->telegramWebhookMaxConnections;
-
-            $this->client->performApiRequest($setWebHook);
+            try {
+                $this->client->setWebhook(
+                    url: $url,
+                    max_connections: $this->telegramWebhookMaxConnections,
+                );
+            } catch (\Exception $e) {
+                $io->error(\sprintf(
+                    'setWebhook error: %s',
+                    $e->getMessage(),
+                ));
+            }
 
             $output->writeln('Done');
         } elseif (self::MODE_DELETE === strtolower($input->getArgument('mode'))) {
-            $io->warning('Unsupported until moving to another library.');
+            $this->client->deleteWebhook();
         } else {
             throw new \InvalidArgumentException(sprintf('Mode must be exactly one of: %s', implode(', ', [self::MODE_SET, self::MODE_DELETE])));
         }

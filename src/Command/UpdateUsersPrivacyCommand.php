@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\User;
-use App\Exception\Api\ForbiddenException;
-use App\Exception\Api\UserNotFoundException;
+use App\Exception\Api\{ForbiddenException, UserNotFoundException};
 use App\Repository\UserRepository;
 use App\Service\Api\UserApi;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,8 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\{InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -23,11 +21,11 @@ class UpdateUsersPrivacyCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface        $logger,
-        private readonly UserRepository         $userRepo,
-        private readonly UserApi                $api,
-        private readonly int                    $pointApiDelay,
-        private readonly int                    $pointAppUserId,
+        private readonly LoggerInterface $logger,
+        private readonly UserRepository $userRepo,
+        private readonly UserApi $api,
+        private readonly int $pointApiDelay,
+        private readonly int $pointAppUserId,
     ) {
         parent::__construct();
     }
