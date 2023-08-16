@@ -19,7 +19,7 @@ doctrine:
         dql:
             string_functions:
                 # TODO fix to receive correct DateTime instead of string
-                DAY: App\DQL\Day
+                DAY: App\Doctrine\DQL\Day
 
 when@test:
     doctrine:
