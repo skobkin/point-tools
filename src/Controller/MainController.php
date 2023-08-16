@@ -19,7 +19,7 @@ class MainController extends AbstractController
     ) {
     }
 
-    public function indexAction(
+    public function index(
         Request $request,
         UserRepository $userRepository,
         SubscriptionRepository $subscriptionRepository,
@@ -56,7 +56,7 @@ class MainController extends AbstractController
     }
 
     /** Returns user search autocomplete data in JSON */
-    public function searchUserAjaxAction(string $login, UserRepository $userRepository): JsonResponse
+    public function searchUserAjax(string $login, UserRepository $userRepository): JsonResponse
     {
         $result = [];
 

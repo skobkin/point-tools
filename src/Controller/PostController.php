@@ -14,7 +14,7 @@ class PostController extends AbstractController
     /**
      * @ParamConverter("post", class="SkobkinPointToolsBundle:Blogs\Post")
      */
-    public function showAction(Post $post, PostRepository $postRepository): Response
+    public function show(Post $post, PostRepository $postRepository): Response
     {
         if ((!$post->getAuthor()->isPublic()) || $post->getAuthor()->isWhitelistOnly()) {
             /**

@@ -15,7 +15,7 @@ class ApiController
      *
      * @ParamConverter("user", class="SkobkinPointToolsBundle:User")
      */
-    public function lastUserSubscribersByIdAction(User $user, SubscriptionEventRepository $subscriptionEventRepository): Response
+    public function lastUserSubscribersById(User $user, SubscriptionEventRepository $subscriptionEventRepository): Response
     {
         $qb = $subscriptionEventRepository->createQueryBuilder('se');
         $qb

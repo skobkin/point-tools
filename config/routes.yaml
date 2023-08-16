@@ -6,7 +6,7 @@
 
 index:
     path:     /
-    defaults: { _controller: App\Controller\MainController::indexAction }
+    defaults: { _controller: App\Controller\MainController::index }
     methods: [POST, GET]
 
 user_search_ajax:

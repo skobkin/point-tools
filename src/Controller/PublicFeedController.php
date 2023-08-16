@@ -12,7 +12,7 @@ class PublicFeedController extends AbstractController
 {
     private const POSTS_PER_PAGE = 20;
 
-    public function indexAction(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+    public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
     {
         $postsPagination = $paginator->paginate(
             $postRepository->createPublicFeedPostsQuery(),

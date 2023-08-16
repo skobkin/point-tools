@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\{Request, Response};
 
 class EventsController extends AbstractController
 {
-    public function lastAction(Request $request, SubscriptionEventRepository $eventRepository, PaginatorInterface $paginator): Response
+    public function last(Request $request, SubscriptionEventRepository $eventRepository, PaginatorInterface $paginator): Response
     {
         $eventsPagination = $paginator->paginate(
             $eventRepository->createLastSubscriptionEventsQuery(),

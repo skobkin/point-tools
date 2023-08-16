@@ -19,7 +19,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    public function showAction(
+    public function show(
         Request $request,
         string $login,
         SubscriptionEventRepository $subscriptionEventRepository,
@@ -40,7 +40,7 @@ class UserController extends AbstractController
             10
         );
 
-        return $this->render('SkobkinPointToolsBundle:User:show.html.twig', [
+        return $this->render('Web/User/show.html.twig', [
             'user' => $user,
             'subscribers' => $userRepository->findUserSubscribersById($user->getId()),
             'subscriptions_log' => $subscriberEventsPagination,
@@ -48,12 +48,12 @@ class UserController extends AbstractController
         ]);
     }
 
-    public function topAction(UserRepository $userRepository, SubscriptionEventRepository $subscriptionEventRepository): Response
+    public function top(UserRepository $userRepository, SubscriptionEventRepository $subscriptionEventRepository): Response
     {
         $topUsers = $userRepository->getTopUsers();
         $eventsByDay = $subscriptionEventRepository->getLastEventsByDay();
 
-        return $this->render('@SkobkinPointTools/User/top.html.twig', [
+        return $this->render('Web/User/top.html.twig', [
             'events_dynamic_chat' => $this->createEventsDynamicChart($eventsByDay),
             'top_chart' => $this->createTopUsersGraph($topUsers),
         ]);
