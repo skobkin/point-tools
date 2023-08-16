@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Factory\Blog;
 
+use App\Enum\Blog\PostTypeEnum;
 use App\Factory\AbstractFactory;
 use App\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -117,7 +118,7 @@ class PostFactory extends AbstractFactory
                 $postData->getId(),
                 $author,
                 new \DateTime($postData->getCreated()),
-                $postData->getType() ?: Post::TYPE_POST
+                PostTypeEnum::tryFrom($postData->getType()) ?? PostTypeEnum::Post,
             );
             $this->postRepository->save($post);
         }

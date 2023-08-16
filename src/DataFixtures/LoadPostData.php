@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Enum\Blog\PostTypeEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -28,31 +29,31 @@ class LoadPostData extends Fixture implements OrderedFixtureInterface
         /** @var User $prWlUser */
         $prWlUser = $this->getReference('test_user_'.LoadUserData::USER_PRWL_ID);
 
-        $longPost = (new Post(self::POST_ID_LONG, $mainUser, new \DateTime(), Post::TYPE_POST))
+        $longPost = (new Post(self::POST_ID_LONG, $mainUser, new \DateTime(), PostTypeEnum::Post))
             ->setText('Test post with many comments')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $shortPost = (new Post(self::POST_ID_SHORT, $mainUser, new \DateTime(), Post::TYPE_POST))
+        $shortPost = (new Post(self::POST_ID_SHORT, $mainUser, new \DateTime(), PostTypeEnum::Post))
             ->setText('Test short post')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $privateUserPost = (new Post(self::POST_ID_PR_USER, $privateUser, new \DateTime(), Post::TYPE_POST))
+        $privateUserPost = (new Post(self::POST_ID_PR_USER, $privateUser, new \DateTime(), PostTypeEnum::Post))
             ->setText('Post from private user. Should not be visible in the public feed.')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $wlUserPost = (new Post(self::POST_ID_WL_USER, $wlUser, new \DateTime(), Post::TYPE_POST))
+        $wlUserPost = (new Post(self::POST_ID_WL_USER, $wlUser, new \DateTime(), PostTypeEnum::Post))
             ->setText('Post from whitelist-only user. Should only be visible for whitelisted users.')
             ->setPrivate(false)
             ->setDeleted(false)
         ;
 
-        $privateWlUserPost = (new Post(self::POST_ID_PR_WL_USER, $prWlUser, new \DateTime(), Post::TYPE_POST))
+        $privateWlUserPost = (new Post(self::POST_ID_PR_WL_USER, $prWlUser, new \DateTime(), PostTypeEnum::Post))
             ->setText('Post from private AND whitelist-only user. Should not be visible in the public feed.')
             ->setPrivate(false)
             ->setDeleted(false)

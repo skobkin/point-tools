@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Entity\Blog;
 
 use App\Entity\User;
+use App\Enum\Blog\PostTypeEnum;
 use App\Repository\Blog\TagRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\{ArrayCollection, Collection};
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -14,9 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'tags', schema: 'posts')]
 class Post
 {
-    public const TYPE_POST = 'post';
-    public const TYPE_FEED = 'feed';
-
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'text')]
     private string $id;
@@ -30,9 +27,8 @@ class Post
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTime $updatedAt;
 
-    // TODO: Native Enum
-    #[ORM\Column(name: 'type', type: 'string', length: 6)]
-    private string $type = self::TYPE_POST;
+    #[ORM\Column(name: 'type', type: 'string', length: 6, enumType: PostTypeEnum::class)]
+    private PostTypeEnum $type;
 
     #[ORM\Column(name: 'private', type: 'boolean', nullable: true)]
     private bool $private;
@@ -60,7 +56,7 @@ class Post
     private Collection $comments;
 
 
-    public function __construct(string $id, User $author, \DateTime $createdAt, string $type)
+    public function __construct(string $id, User $author, \DateTime $createdAt, PostTypeEnum $type)
     {
         $this->id = $id;
         $this->author = $author;
@@ -105,7 +101,7 @@ class Post
         return $this->updatedAt;
     }
 
-    public function getType(): string
+    public function getType(): PostTypeEnum
     {
         return $this->type;
     }
