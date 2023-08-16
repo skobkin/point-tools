@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Entity\User;
+use App\Enum\AvatarSizeEnum;
 use Twig\Extension\AbstractExtension;
 use Twig\{TwigFilter, TwigFunction};
 
@@ -43,20 +43,20 @@ class PointUrlExtension extends AbstractExtension
 
     public function avatarSmallFunction(string $login): string
     {
-        return $this->avatarFunction($login, User::AVATAR_SIZE_SMALL);
+        return $this->avatarFunction($login, AvatarSizeEnum::Small);
     }
 
     public function avatarMediumFunction(string $login): string
     {
-        return $this->avatarFunction($login, User::AVATAR_SIZE_MEDIUM);
+        return $this->avatarFunction($login, AvatarSizeEnum::Medium);
     }
 
     public function avatarLargeFunction(string $login): string
     {
-        return $this->avatarFunction($login, User::AVATAR_SIZE_LARGE);
+        return $this->avatarFunction($login, AvatarSizeEnum::Large);
     }
 
-    public function avatarFunction(string $login, $size): string
+    public function avatarFunction(string $login, AvatarSizeEnum $size): string
     {
         return $this->getAvatarUrlByLogin($login, $size);
     }
@@ -76,12 +76,8 @@ class PointUrlExtension extends AbstractExtension
         return sprintf('%s://%s/%s', $this->pointScheme, $this->pointDomain, $postId);
     }
 
-    private function getAvatarUrlByLogin(string $login, string $size): string
+    private function getAvatarUrlByLogin(string $login, AvatarSizeEnum $size): string
     {
-        if (!in_array($size, [User::AVATAR_SIZE_SMALL, User::AVATAR_SIZE_MEDIUM, User::AVATAR_SIZE_LARGE], true)) {
-            throw new \InvalidArgumentException('Avatar size must be one of restricted variants. See User::AVATAR_SIZE_* constants.');
-        }
-
-        return sprintf('%s://%s/avatar/%s/%s', $this->pointScheme, $this->pointDomain, urlencode($login), $size);
+        return sprintf('%s://%s/avatar/%s/%s', $this->pointScheme, $this->pointDomain, \urlencode($login), $size->value);
     }
 }
