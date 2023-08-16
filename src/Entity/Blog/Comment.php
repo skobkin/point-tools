@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace App\Entity\Blog;
 
-use App\Entity\Blog\File;
-use App\Entity\Blog\Post;
 use App\Entity\User;
 use App\Repository\Blog\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
@@ -43,20 +42,20 @@ class Comment
     #[ORM\JoinColumn(name: 'author_id')]
     private User $author;
 
-    /** @var ArrayCollection|File[] */
+    /** @var Collection<int, File> */
     #[ORM\ManyToMany(targetEntity: File::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinTable(name: 'comments_files', schema: 'posts')]
     #[ORM\JoinColumn(name: 'comment_id')]
     #[ORM\InverseJoinColumn(name: 'file_id')]
-    private ArrayCollection $files;
+    private Collection $files;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', nullable: true)]
     private ?self $parent;
 
-    /** @var ArrayCollection|self[] */
+    /** @var Collection<int, self> */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, fetch: 'EXTRA_LAZY')]
-    private ArrayCollection $children;
+    private Collection $children;
 
 
     public function __construct()
@@ -159,10 +158,8 @@ class Comment
         $this->files->removeElement($files);
     }
 
-    /**
-     * @return File[]|ArrayCollection
-     */
-    public function getFiles(): iterable
+    /** @return Collection<int, File> */
+    public function getFiles(): Collection
     {
         return $this->files;
     }
@@ -208,8 +205,8 @@ class Comment
         $this->children->removeElement($children);
     }
 
-    /** @return ArrayCollection|self[] */
-    public function getChildren(): iterable
+    /** @return Collection<int, self> */
+    public function getChildren(): Collection
     {
         return $this->children;
     }

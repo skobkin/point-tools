@@ -6,6 +6,7 @@ namespace App\Entity\Blog;
 use App\Entity\User;
 use App\Repository\Blog\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -29,6 +30,7 @@ class Post
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTime $updatedAt;
 
+    // TODO: Native Enum
     #[ORM\Column(name: 'type', type: 'string', length: 6)]
     private string $type = self::TYPE_POST;
 
@@ -42,19 +44,20 @@ class Post
     #[ORM\JoinColumn(name: 'author')]
     private User $author;
 
-    /** @var ArrayCollection|File[] */
+    /** @var Collection<int, File> */
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ['persist'], fetch: 'EXTRA_LAZY')]
     #[ORM\JoinTable(name: 'posts_files', schema: 'posts')]
     #[ORM\JoinColumn(name: 'post_id')]
     #[ORM\InverseJoinColumn(name: 'file_id')]
-    private $files;
+    private Collection $files;
 
+    /** @var Collection<int, PostTag> */
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostTag::class, cascade: ['persist'], fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    private ArrayCollection $postTags;
+    private Collection $postTags;
 
-    /** @var ArrayCollection|Comment[] */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', cascade: ['persist'], )]
-    private ArrayCollection $comments;
+    /** @var Collection<int, Comment> */
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, cascade: ['persist'])]
+    private Collection $comments;
 
 
     public function __construct(string $id, User $author, \DateTime $createdAt, string $type)
@@ -124,8 +127,8 @@ class Post
         $this->files->removeElement($files);
     }
 
-    /** @return File[]|ArrayCollection */
-    public function getFiles(): iterable
+    /** @return Collection<int, File> */
+    public function getFiles(): Collection
     {
         return $this->files;
     }
@@ -142,8 +145,8 @@ class Post
         $this->postTags->removeElement($tag);
     }
 
-    /** @return PostTag[]|ArrayCollection */
-    public function getPostTags(): iterable
+    /** @return Collection<int, PostTag> */
+    public function getPostTags(): Collection
     {
         return $this->postTags;
     }
@@ -195,8 +198,8 @@ class Post
         $this->comments->removeElement($comment);
     }
 
-    /** @return Comment[]|ArrayCollection */
-    public function getComments(): iterable
+    /** @return Collection<int, Comment> */
+    public function getComments(): Collection
     {
         return $this->comments;
     }

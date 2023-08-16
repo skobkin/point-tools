@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -41,14 +42,17 @@ class User
     #[ORM\Column(name: 'whitelist_only', type: 'boolean', nullable: false, options: ['default' => false])]
     private bool $whitelistOnly = false;
 
+    /** @var Collection<int, Subscription>  */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Subscription::class, fetch: 'EXTRA_LAZY')]
-    private ArrayCollection $subscribers;
+    private Collection $subscribers;
 
+    /** @var Collection<int, Subscription>  */
     #[ORM\OneToMany(mappedBy: 'subscriber', targetEntity: Subscription::class, fetch: 'EXTRA_LAZY')]
-    private ArrayCollection $subscriptions;
+    private Collection $subscriptions;
 
+    /** @var Collection<int, SubscriptionEvent>  */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: SubscriptionEvent::class, fetch: 'EXTRA_LAZY')]
-    private ArrayCollection $newSubscriberEvents;
+    private Collection $newSubscriberEvents;
 
     #[ORM\Column(name: 'is_removed', type: 'boolean', options: ['default' => false])]
     private bool $removed = false;
@@ -110,14 +114,14 @@ class User
         $this->subscribers->removeElement($subscribers);
     }
 
-    /** @return Subscription[]|ArrayCollection */
-    public function getSubscribers(): ArrayCollection
+    /** @return Collection<int, Subscription> */
+    public function getSubscribers(): Collection
     {
         return $this->subscribers;
     }
 
-    /** @return Subscription[]|ArrayCollection */
-    public function getSubscriptions(): ArrayCollection
+    /** @return Collection<int, Subscription> */
+    public function getSubscriptions(): Collection
     {
         return $this->subscriptions;
     }
@@ -129,8 +133,8 @@ class User
         return $this;
     }
 
-    /** @return SubscriptionEvent[]|ArrayCollection */
-    public function getNewSubscriberEvents(): ArrayCollection
+    /** @return Collection<int, SubscriptionEvent> */
+    public function getNewSubscriberEvents(): Collection
     {
         return $this->newSubscriberEvents;
     }
