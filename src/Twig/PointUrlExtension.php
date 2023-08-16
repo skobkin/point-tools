@@ -5,8 +5,7 @@ namespace App\Twig;
 
 use App\Entity\User;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
+use Twig\{TwigFilter, TwigFunction};
 
 class PointUrlExtension extends AbstractExtension
 {
@@ -16,7 +15,7 @@ class PointUrlExtension extends AbstractExtension
     ) {
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('point_avatar', [$this, 'avatarFunction']),
@@ -29,7 +28,7 @@ class PointUrlExtension extends AbstractExtension
         ];
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('point_avatar', [$this, 'avatarFunction']),
