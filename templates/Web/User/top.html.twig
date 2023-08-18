@@ -4,8 +4,8 @@
 
 {% block head_js %}
     {{ parent() }}
-    <script src="//code.highcharts.com/5.0.6/highcharts.js"></script>
-    <script src="//code.highcharts.com/5.0.6/modules/exporting.js"></script>
+    <script src="{{ asset('js/lib/highcharts/highcharts.js') }}"></script>
+    <script src="{{ asset('js/lib/highcharts/exporting.js') }}"></script>
 {% endblock %}
 
 {% block content %}
