@@ -39,7 +39,7 @@
     {% block comment_children %}
         {% if comment.children|length > 0 %}
             <div class="children">
-                {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
+                {% include 'Web/Post/comments_tree.html.twig' with {
                 'comments': comment.children
                 } only %}
             </div>

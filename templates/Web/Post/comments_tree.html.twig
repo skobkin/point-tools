@@ -1,0 +1,5 @@
+{% if comments|length > 0 %}
+    {% for comment in comments %}
+        {% include 'Web/Post/comment_tree.html.twig' with {'comment': comment} only %}
+    {% endfor %}
+{% endif %}

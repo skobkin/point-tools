@@ -15,7 +15,9 @@
   </div>
   <div class="row post-text">
     <div class="col-xs-12">
-        {{ post.text|markdown('app.point.markdown_parser') }}
+                  {# Until Point native Markdown parser is ported, use Twig's parser #}
+      {# {{ post.text|markdown('app.point.markdown_parser') }}#}
+        {{ post.text | markdown_to_html }}
     </div>
   </div>
   <div class="row post-files">
@@ -33,13 +35,13 @@
 
     {% if is_feed is not defined and post.comments|length > 0 %}
       <div class="row comments">
-          {#
-          {% include '@SkobkinPointTools/Post/comments_tree.html.twig' with {
+                        {#
+          {% include 'Web/Post/comments_tree.html.twig' with {
               'comments': post.firstLevelComments
           } only %}
-          #}
+                        #}
 
-          {% include 'SkobkinPointToolsBundle:Post:comments_list.html.twig' with {
+          {% include 'Web/Post/comments_list.html.twig' with {
             'comments': post.comments
           } %}
       </div>

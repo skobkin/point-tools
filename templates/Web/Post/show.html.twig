@@ -1,0 +1,7 @@
+{% extends 'Web/Post/base_feed.html.twig' %}
+
+{% block header_title %}#{{ post.id }} @ Point Tools{% endblock %}
+
+{% block content %}
+    {% include 'Web/Post/post.html.twig' with {'post': post} %}
+{% endblock %}

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Blog\Post;
 use App\Repository\Blog\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,12 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends AbstractController
 {
-    /**
-     * @ParamConverter("post", class="SkobkinPointToolsBundle:Blogs\Post")
-     */
     public function show(Post $post, PostRepository $postRepository): Response
     {
-        if ((!$post->getAuthor()->isPublic()) || $post->getAuthor()->isWhitelistOnly()) {
+        if ($post->getAuthor()->isPrivate()) {
             /**
              * Throwing 404 instead of 403 because of
              * @see \Symfony\Component\Security\Http\Firewall\ExceptionListener::handleAccessDeniedException()
@@ -26,7 +22,7 @@ class PostController extends AbstractController
             //throw $this->createAccessDeniedException('Author\'s blog is private.');
         }
 
-        return $this->render('SkobkinPointToolsBundle:Post:show.html.twig', [
+        return $this->render('Web/Post/show.html.twig', [
             'post' => $postRepository->getPostWithComments($post->getId()),
         ]);
     }

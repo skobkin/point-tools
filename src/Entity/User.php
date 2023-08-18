@@ -155,6 +155,11 @@ class User
         return $this->public;
     }
 
+    public function isPrivate(): bool
+    {
+        return !$this->public || $this->whitelistOnly;
+    }
+
     public function isWhitelistOnly(): bool
     {
         return $this->whitelistOnly;

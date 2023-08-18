@@ -5,13 +5,13 @@ namespace App\Entity\Blog;
 
 use App\Entity\User;
 use App\Enum\Blog\PostTypeEnum;
-use App\Repository\Blog\TagRepository;
+use App\Repository\Blog\PostRepository;
 use Doctrine\Common\Collections\{ArrayCollection, Collection};
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\Table(name: 'tags', schema: 'posts')]
+#[ORM\Table(name: 'posts', schema: 'posts')]
 class Post
 {
     #[ORM\Id]

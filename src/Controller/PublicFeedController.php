@@ -21,10 +21,8 @@ class PublicFeedController extends AbstractController
         );
 
         return $this->render(
-            'SkobkinPointToolsBundle:Post:feed.html.twig',
+            'Web/Post/feed.html.twig',
             [
-                // @todo Move to translation
-                'feed_title' => 'Public feed',
                 'posts' => $postsPagination,
                 // Special feed mark (to not show comments and other)
                 'is_feed' => true,

@@ -1,6 +1,6 @@
-{% extends 'SkobkinPointToolsBundle:Post:base_feed.html.twig' %}
+{% extends 'Web/Post/base_feed.html.twig' %}
 
-{% block header_title %}{{ feed_title|trans }} @ Point Tools{% endblock %}
+{% block header_title %}{{ 'Public feed' | trans }} @ Point Tools{% endblock %}
 
 {% block content %}
     {% if is_feed is defined %}
@@ -11,7 +11,7 @@
 
     {% for post in posts %}
         <div class="feed-post panel panel-default">
-            {% include 'SkobkinPointToolsBundle:Post:post.html.twig' with {
+            {% include 'Web/Post/post.html.twig' with {
             'post': post,
             'is_feed': is_feed
             } %}
