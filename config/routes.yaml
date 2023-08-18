@@ -26,7 +26,7 @@ user_show:
 
 statistics:
     path:     /statistics
-    defaults: { _controller: App\Controller\UserController::top }
+    defaults: { _controller: App\Controller\StatsController::show }
     methods: [GET]
 
 events_last:

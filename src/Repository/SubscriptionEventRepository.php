@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\DTO\DailyEventsDTO;
-use App\Entity\SubscriptionEvent;
-use App\Entity\User;
+use App\Entity\{SubscriptionEvent, User};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,11 +62,7 @@ class SubscriptionEventRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * Get last user subscriber events
-     *
-     * @return SubscriptionEvent[]
-     */
+    /** @return list<SubscriptionEvent> */
     public function getUserLastSubscribersEvents(User $user, int $limit = 20): array
     {
         $qb = $this->createUserLastSubscribersEventsQuery($user);
@@ -89,11 +84,7 @@ class SubscriptionEventRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * Get last global subscription events
-     *
-     * @return SubscriptionEvent[]
-     */
+    /** @return SubscriptionEvent[] */
     public function getLastSubscriptionEvents(int $limit = 20): array
     {
         $qb = $this->createLastSubscriptionEventsQuery();
@@ -107,7 +98,7 @@ class SubscriptionEventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('se');
 
-        $rows =  $qb
+        $rows = $qb
             ->select([
                 'NEW App\DTO\DailyEventsDTO(DAY(se.date), COUNT(se))',
                 'DAY(se.date) as day',

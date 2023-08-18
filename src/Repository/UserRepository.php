@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\DTO\TopUserDTO;
-use App\Entity\Subscription;
-use App\Entity\User;
+use App\Entity\{Subscription, User};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -108,12 +107,8 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * Returns top users by subscribers count
-     *
-     * @return TopUserDTO[]
-     */
-    public function getTopUsers(int $limit = 30): array
+    /** @return list<TopUserDTO> */
+    public function getTopUsersBySubscribersCount(int $limit = 30): array
     {
         $qb = $this->getEntityManager()->getRepository(Subscription::class)->createQueryBuilder('s');
 

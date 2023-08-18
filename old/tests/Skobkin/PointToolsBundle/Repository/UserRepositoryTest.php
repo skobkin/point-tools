@@ -89,7 +89,7 @@ class UserRepositoryTest extends KernelTestCase
 
     public function testGetTopUsers()
     {
-        $topUsers = $this->userRepo->getTopUsers();
+        $topUsers = $this->userRepo->getTopUsersBySubscribersCount();
 
         $this->assertCount(3, $topUsers, 'Found not exactly 3 top users');
 
