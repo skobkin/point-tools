@@ -2,7 +2,7 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Controller;
 
-use src\PointToolsBundle\DataFixtures\ORM\LoadPostData;
+use App\DataFixtures\LoadPostData;
 use Symfony\Bundle\FrameworkBundle\{Client, Test\WebTestCase};
 use Symfony\Component\DomCrawler\Crawler;
 

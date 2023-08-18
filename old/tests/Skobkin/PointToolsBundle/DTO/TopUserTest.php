@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Skobkin\PointToolsBundle\DTO;
 
-use src\PointToolsBundle\DTO\TopUserDTO;
+use App\DTO\TopUserDTO;
 
 class TopUserTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,8 +17,8 @@ class TopUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetLogin(TopUserDTO $topUser)
     {
-        $this->assertInternalType('string', $topUser->getLogin());
-        $this->assertEquals('testuser', $topUser->getLogin());
+        $this->assertInternalType('string', $topUser->login);
+        $this->assertEquals('testuser', $topUser->login);
     }
 
     /**
@@ -25,7 +26,7 @@ class TopUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSubscribersCount(TopUserDTO $topUser)
     {
-        $this->assertInternalType('int', $topUser->getSubscribersCount());
-        $this->assertEquals(3, $topUser->getSubscribersCount());
+        $this->assertInternalType('int', $topUser->subscribersCount);
+        $this->assertEquals(3, $topUser->subscribersCount);
     }
 }

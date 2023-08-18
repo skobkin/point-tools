@@ -2,13 +2,13 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Service\Factory;
 
+use App\DTO\Api\User as UserDTO;
+use App\Exception\Factory\InvalidUserDataException;
+use App\Factory\UserFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\DTO\Api\User as UserDTO;
 use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Exception\Factory\InvalidUserDataException;
 use src\PointToolsBundle\Repository\UserRepository;
-use src\PointToolsBundle\Service\Factory\UserFactory;
 
 class UserFactoryTest extends TestCase
 {

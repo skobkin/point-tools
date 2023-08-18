@@ -2,8 +2,8 @@
 
 namespace Tests\Skobkin\PointToolsBundle\Repository;
 
+use App\DTO\TopUserDTO;
 use Doctrine\ORM\EntityManager;
-use src\PointToolsBundle\DTO\TopUserDTO;
 use src\PointToolsBundle\Entity\User;
 use src\PointToolsBundle\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
