@@ -50,7 +50,7 @@ class TelegramWebhookCommand extends Command
             try {
                 $this->client->setWebhook(
                     url: $url,
-                    max_connections: $this->telegramWebhookMaxConnections,
+                    maxConnections: $this->telegramWebhookMaxConnections,
                 );
             } catch (\Exception $e) {
                 $io->error(\sprintf(
