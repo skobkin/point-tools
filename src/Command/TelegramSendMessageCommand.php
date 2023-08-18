@@ -50,7 +50,7 @@ class TelegramSendMessageCommand extends Command
         try {
             $this->messenger->sendMessageToChat(
                 (int) $input->getOption('chat-id'),
-                $message
+                $message,
             );
         } catch (\Exception $e) {
             $io->error($e->getMessage());

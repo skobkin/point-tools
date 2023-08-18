@@ -40,7 +40,7 @@ class ImportUsersCommand extends Command
                 'CSV file path'
             )
             ->addOption(
-                'check-only',
+                'dry-run',
                 null,
                 InputOption::VALUE_NONE,
                 'If set, command will not perform write operations in the database'
@@ -89,7 +89,7 @@ class ImportUsersCommand extends Command
 
             $user = new User($row[0], $createdAt, $row[1], $row[2]);
 
-            if (!$input->getOption('check-only')) {
+            if (!$input->getOption('dry-run')) {
                 $this->em->persist($user);
                 $this->em->flush($user);
                 $this->em->detach($user);

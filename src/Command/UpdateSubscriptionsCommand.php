@@ -42,7 +42,7 @@ class UpdateSubscriptionsCommand extends Command
                 'If set, command will check subscribers of all service users instead of service subscribers only'
             )
             ->addOption(
-                'check-only',
+                'dry-run',
                 null,
                 InputOption::VALUE_NONE,
                 'If set, command will not perform write operations in the database'
@@ -59,7 +59,7 @@ class UpdateSubscriptionsCommand extends Command
         $progress = $io->createProgressBar();
         $progress->setFormat(ProgressBar::FORMAT_DEBUG);
 
-        if (!$input->getOption('check-only')) { // Beginning transaction for all changes
+        if (!$input->getOption('dry-run')) { // Beginning transaction for all changes
             $this->em->beginTransaction();
         }
 
