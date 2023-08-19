@@ -92,7 +92,7 @@ class UpdateSubscriptionsCommand extends Command
         $progress->finish();
 
         // Flushing all changes at once to the database
-        if (!$input->getOption('check-only')) {
+        if (!$input->getOption('dry-run')) {
             $this->em->flush();
             $this->em->commit();
         }
