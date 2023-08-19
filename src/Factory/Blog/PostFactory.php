@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace App\Factory\Blog;
 
 use App\Enum\Blog\PostTypeEnum;
-use App\Factory\AbstractFactory;
-use App\Factory\UserFactory;
+use App\Factory\{AbstractFactory, UserFactory};
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\DTO\Api\{MetaPost, PostsPage, Post as PostDTO};
@@ -23,7 +22,6 @@ class PostFactory extends AbstractFactory
         private readonly PostRepository $postRepository,
         private readonly UserFactory $userFactory,
         private readonly FileFactory $fileFactory,
-        private readonly CommentFactory $commentFactory,
         private readonly TagFactory $tagFactory,
     ) {
         parent::__construct($logger);
@@ -40,9 +38,10 @@ class PostFactory extends AbstractFactory
 
         $hasNew = false;
 
-        foreach ((array) $page->getPosts() as $postData) {
+        /** @var MetaPost $postData */
+        foreach ($page->posts ?? [] as $postData) {
             try {
-                if (null === $this->postRepository->find($postData->getPost()->getId())) {
+                if (null === $this->postRepository->find($postData->post->id)) {
                     $hasNew = true;
                 }
 
@@ -50,7 +49,7 @@ class PostFactory extends AbstractFactory
                 $posts[] = $post;
             } catch (\Exception $e) {
                 $this->logger->error('Error while processing post DTO', [
-                    'post_id' => $postData->getPost()->getId(),
+                    'post_id' => $postData->post->id,
                     'exception' => get_class($e),
                     'message' => $e->getMessage(),
                     'file' => $e->getFile(),
@@ -82,10 +81,10 @@ class PostFactory extends AbstractFactory
             throw new InvalidDataException('Invalid post data');
         }
 
-        $postData = $metaPost->getPost();
+        $postData = $metaPost->post;
 
         try {
-            $author = $this->userFactory->findOrCreateFromDTO($metaPost->getPost()->getAuthor());
+            $author = $this->userFactory->findOrCreateFromDTO($postData->author);
         } catch (\Exception $e) {
             $this->logger->error('Error while creating user from DTO');
             throw $e;
@@ -94,14 +93,14 @@ class PostFactory extends AbstractFactory
         $post = $this->findOrCreateFromDto($postData, $author);
 
         try {
-            $this->updatePostTags($post, $postData->getTags() ?: []);
+            $this->updatePostTags($post, $postData->tags ?? []);
         } catch (\Exception $e) {
             $this->logger->error('Error while updating post tags');
             throw $e;
         }
 
         try {
-            $this->updatePostFiles($post, $postData->getFiles() ?: []);
+            $this->updatePostFiles($post, $postData->files ?? []);
         } catch (\Exception $e) {
             $this->logger->error('Error while updating post files');
             throw $e;
@@ -112,20 +111,19 @@ class PostFactory extends AbstractFactory
 
     private function findOrCreateFromDto(PostDTO $postData, User $author): Post
     {
-        if (null === ($post = $this->postRepository->find($postData->getId()))) {
-            // Creating new post
+        if (null === ($post = $this->postRepository->find($postData->id))) {
             $post = new Post(
-                $postData->getId(),
+                $postData->id,
                 $author,
-                new \DateTime($postData->getCreated()),
-                PostTypeEnum::tryFrom($postData->getType()) ?? PostTypeEnum::Post,
+                $postData->created,
+                $postData->type ?? PostTypeEnum::Post,
             );
             $this->postRepository->save($post);
         }
 
         $post
-            ->setText($postData->getText())
-            ->setPrivate($postData->getPrivate())
+            ->setText($postData->text)
+            ->setPrivate($postData->private)
         ;
 
         return $post;

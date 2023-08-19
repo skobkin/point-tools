@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Skobkin\PointToolsBundle\Service\Factory;
 
@@ -7,8 +8,8 @@ use App\Exception\Factory\InvalidUserDataException;
 use App\Factory\UserFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use src\PointToolsBundle\Entity\User;
-use src\PointToolsBundle\Repository\UserRepository;
+use App\Entity\User;
+use App\Repository\UserRepository;
 
 class UserFactoryTest extends TestCase
 {
@@ -26,8 +27,8 @@ class UserFactoryTest extends TestCase
     {
         $testUser = new User(
             self::LOCAL_USER_ID,
-            \DateTime::createFromFormat(UserFactory::DATE_FORMAT, self::LOCAL_USER_CREATED),
             self::LOCAL_USER_LOGIN,
+            \DateTime::createFromFormat(UserFactory::DATE_FORMAT, self::LOCAL_USER_CREATED),
             self::LOCAL_USER_NAME
         );
 

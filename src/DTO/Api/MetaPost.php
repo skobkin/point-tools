@@ -3,34 +3,21 @@ declare(strict_types=1);
 
 namespace App\DTO\Api;
 
-/** TODO: Refactor to public readonly */
+use Symfony\Component\Serializer\Annotation\{MaxDepth, SerializedName};
+
 class MetaPost implements ValidableInterface
 {
-    private ?Post $post;
-    /** @var Comment[]|null */
-    private ?array $comments;
-
-
-    public function getPost(): ?Post
-    {
-        return $this->post;
-    }
-
-    public function setPost(?Post $post): void
-    {
-        $this->post = $post;
-    }
-
-    /** @return Comment[]|null */
-    public function getComments(): ?array
-    {
-        return $this->comments;
-    }
-
-    /** @param Comment[]|null $comments */
-    public function setComments(?array $comments): void
-    {
-        $this->comments = $comments;
+    /**
+     * @param Comment[] $comments
+     */
+    public function __construct(
+        #[SerializedName('post')]
+        #[MaxDepth(2)]
+        public readonly ?Post $post,
+        #[SerializedName('comments')]
+        #[MaxDepth(2)]
+        public readonly ?array $comments,
+    ) {
     }
 
     public function isValid(): bool

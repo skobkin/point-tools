@@ -29,7 +29,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $om)
     {
         foreach ($this->users as $userData) {
-            $user = new User($userData['id'], new \DateTime(), $userData['login'], $userData['name']);
+            $user = new User($userData['id'], $userData['login'], new \DateTime(), $userData['name']);
             $user->updatePrivacy(!$userData['private'], $userData['whitelist-only']);
 
             $om->persist($user);

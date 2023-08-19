@@ -3,108 +3,32 @@ declare(strict_types=1);
 
 namespace App\DTO\Api;
 
-/** TODO: Refactor to public readonly */
+use App\Enum\Blog\PostTypeEnum;
+use Symfony\Component\Serializer\Annotation\{Context, MaxDepth, SerializedName};
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+
 class Post implements ValidableInterface
 {
-    private ?string $id;
-    /** @var string[]|null */
-    private ?array $tags;
-    /** @var string[]|null */
-    private ?array $files;
-    private ?User $author;
-    private ?string $text;
-    private ?string $created;
-    private ?string $type;
-    private ?bool $private;
-
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
-
-    public function setId(?string $id): void
-    {
-        $this->id = $id;
-    }
-
-    /** @return string[]|null */
-    public function getTags(): ?array
-    {
-        return $this->tags;
-    }
-
-    public function setTags(?array $tags): void
-    {
-        $this->tags = $tags;
-    }
-
-    /** @return string[]|null */
-    public function getFiles(): ?array
-    {
-        return $this->files;
-    }
-
-    /**
-     * @param string[]|null $files
-     */
-    public function setFiles(?array $files): void
-    {
-        $this->files = $files;
-    }
-
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): void
-    {
-        $this->author = $author;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(?string $text): void
-    {
-        $this->text = $text;
-    }
-
-    public function getCreated(): ?string
-    {
-        return $this->created;
-    }
-
-    public function setCreated(?string $created): void
-    {
-        $this->created = $created;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(?string $type): void
-    {
-        $this->type = $type;
-    }
-
-    public function getPrivate(): ?bool
-    {
-        return $this->private;
-    }
-
-    public function isPrivate(): ?bool
-    {
-        return $this->private;
-    }
-
-    public function setPrivate(?bool $private): void
-    {
-        $this->private = $private;
+    public function __construct(
+        #[SerializedName('id')]
+        public readonly ?string $id,
+        #[SerializedName('tags')]
+        public readonly ?array $tags,
+        #[SerializedName('files')]
+        public readonly ?array $files,
+        #[SerializedName('author')]
+        #[MaxDepth(1)]
+        public readonly ?User $author,
+        #[SerializedName('text')]
+        public readonly ?string $text,
+        #[SerializedName('created')]
+        #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d_H:i:s'])]
+        public readonly ?\DateTimeImmutable $created,
+        #[SerializedName('type')]
+        public readonly ?PostTypeEnum $type,
+        #[SerializedName('private')]
+        public readonly ?bool $private,
+    ) {
     }
 
     public function isValid(): bool

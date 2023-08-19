@@ -9,14 +9,14 @@ use App\Exception\Api\{ApiException,
     NotFoundException,
     UnauthorizedException,
     ServerProblemException};
-use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
+use Symfony\Contracts\HttpClient\{HttpClientInterface, ResponseInterface};
 
-class AbstractApi
+abstract class AbstractApi
 {
     protected HttpClientInterface $client;
     // TODO: check if these are still needed
@@ -32,24 +32,24 @@ class AbstractApi
     }
 
     /** Make GET request and return DTO objects */
-    public function getGetJsonData(string $path, array $parameters = [], string $type, DeserializationContext $context = null): array|object|null
+    public function getGetJsonData(string $path, array $parameters = [], string $type, array $groups = []): array|object|null
     {
         return $this->serializer->deserialize(
             $this->getGetResponseBody($path, $parameters),
             $type,
             'json',
-            $context
+            $this->createContext($groups),
         );
     }
 
     /** Make POST request and return DTO objects */
-    public function getPostJsonData(string $path, array $parameters = [], string $type, DeserializationContext $context = null): array|object|null
+    public function getPostJsonData(string $path, array $parameters = [], string $type, array $groups = []): array|object|null
     {
         return $this->serializer->deserialize(
             $this->getPostResponseBody($path, $parameters),
             $type,
             'json',
-            $context
+            $this->createContext($groups)
         );
     }
 
@@ -65,6 +65,13 @@ class AbstractApi
         return $this->sendPostRequest($path, $parameters)->getContent();
     }
 
+    private function createContext(array $groups): array
+    {
+        return (new ObjectNormalizerContextBuilder())
+            ->withGroups($groups)
+            ->toArray();
+    }
+    
     private function sendGetRequest(string $path, array $parameters = []): ResponseInterface
     {
         $this->logger->debug('Sending GET request', ['path' => $path, 'parameters' => $parameters]);
@@ -103,7 +110,7 @@ class AbstractApi
         // Temporary fix until @arts fixes this bug
         if ('{"error": "UserNotFound"}' === $response->getContent()) {
             throw new NotFoundException('Not found', SymfonyResponse::HTTP_NOT_FOUND);
-        } elseif ('{"message": "Forbidden", "code": 403, "error": "Forbidden"}' === (string) $response->getBody()) {
+        } elseif ('{"message": "Forbidden", "code": 403, "error": "Forbidden"}' === (string) $response->getContent()) {
             throw new ForbiddenException('Forbidden', SymfonyResponse::HTTP_FORBIDDEN);
         }
 

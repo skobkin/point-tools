@@ -54,8 +54,8 @@ class User
 
     public function __construct(
         int $id,
+        string $login,
         \DateTime $createdAt = null,
-        string $login = null,
         string $name = null
     ) {
         $this->id = $id;

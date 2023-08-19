@@ -11,8 +11,8 @@ use App\Exception\Api\{ForbiddenException,
     UserNotFoundException
 };
 use App\Factory\UserFactory;
-use JMS\Serializer\{DeserializationContext, SerializerInterface};
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /** Basic Point.im user API functions from /api/user/* */
@@ -89,8 +89,8 @@ class UserApi extends AbstractApi
             $usersList = $this->getGetJsonData(
                 self::PREFIX.urlencode($login).'/subscribers',
                 [],
-                'array<'.UserDTO::class.'>',
-                DeserializationContext::create()->setGroups(['user_short']),
+                UserDTO::class.'[]',
+                ['user_short'],
             );
         } catch (NotFoundException $e) {
             throw new UserNotFoundException('User not found', 0, $e, null, $login);
@@ -108,8 +108,8 @@ class UserApi extends AbstractApi
             $usersList = $this->getGetJsonData(
                 self::PREFIX.'id/'.$id.'/subscribers',
                 [],
-                'array<'.UserDTO::class.'>',
-                DeserializationContext::create()->setGroups(['user_short']),
+                UserDTO::class.'[]',
+                ['user_short'],
             );
         } catch (NotFoundException $e) {
             throw new UserNotFoundException('User not found', 0, $e, $id);
@@ -128,7 +128,7 @@ class UserApi extends AbstractApi
                 self::PREFIX.'login/'.urlencode($login),
                 [],
                 UserDTO::class,
-                DeserializationContext::create()->setGroups(['user_full']),
+                ['user_full'],
             );
         } catch (NotFoundException $e) {
             throw new UserNotFoundException('User not found', 0, $e, null, $login);
@@ -147,7 +147,7 @@ class UserApi extends AbstractApi
                 self::PREFIX.'id/'.$id,
                 [],
                 UserDTO::class,
-                DeserializationContext::create()->setGroups(['user_full']),
+                ['user_full'],
             );
         } catch (NotFoundException $e) {
             throw new UserNotFoundException('User not found', 0, $e, $id);

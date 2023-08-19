@@ -6,8 +6,8 @@ namespace App\Controller\Api;
 use App\DTO\Api\PostsPage;
 use App\Factory\Blog\PostFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\{Request, Response};
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CrawlerController extends AbstractApiController
 {

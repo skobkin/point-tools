@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractFactory
 {
     public function __construct(
-        protected LoggerInterface $logger,
+        protected readonly LoggerInterface $logger,
     ) {
     }
 }

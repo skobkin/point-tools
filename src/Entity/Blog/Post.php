@@ -22,7 +22,7 @@ class Post
     private string $text;
 
     #[ORM\Column(name: 'created_at', type: 'datetime')]
-    private \DateTime $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTime $updatedAt;
@@ -56,7 +56,7 @@ class Post
     private Collection $comments;
 
 
-    public function __construct(string $id, User $author, \DateTime $createdAt, PostTypeEnum $type)
+    public function __construct(string $id, User $author, \DateTimeImmutable $createdAt, PostTypeEnum $type)
     {
         $this->id = $id;
         $this->author = $author;
@@ -91,7 +91,7 @@ class Post
         return $this->text;
     }
 
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

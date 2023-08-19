@@ -87,7 +87,7 @@ class ImportUsersCommand extends Command
 
             $createdAt = \DateTime::createFromFormat('Y-m-d_H:i:s', $row[3]) ?: new \DateTime();
 
-            $user = new User($row[0], $createdAt, $row[1], $row[2]);
+            $user = new User($row[0], $row[1], $createdAt, $row[2]);
 
             if (!$input->getOption('dry-run')) {
                 $this->em->persist($user);

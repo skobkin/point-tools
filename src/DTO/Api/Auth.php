@@ -3,41 +3,18 @@ declare(strict_types=1);
 
 namespace App\DTO\Api;
 
-/** TODO: Refactor to public readonly */
+use Symfony\Component\Serializer\Annotation\SerializedName;
+
 class Auth implements ValidableInterface
 {
-    private ?string $token;
-    private ?string $csRfToken;
-    private ?string $error;
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    public function setToken(?string $token): void
-    {
-        $this->token = $token;
-    }
-
-    public function getCsRfToken(): ?string
-    {
-        return $this->csRfToken;
-    }
-
-    public function setCsRfToken(?string $csRfToken): void
-    {
-        $this->csRfToken = $csRfToken;
-    }
-
-    public function getError(): ?string
-    {
-        return $this->error;
-    }
-
-    public function setError(?string $error): void
-    {
-        $this->error = $error;
+    public function __construct(
+        #[SerializedName('token')]
+        public readonly ?string $token,
+        #[SerializedName('error')]
+        public readonly ?string $error,
+        #[SerializedName('csrf_token')]
+        public readonly ?string $csRfToken,
+    ) {
     }
 
     public function isValid(): bool

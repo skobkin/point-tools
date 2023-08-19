@@ -29,18 +29,19 @@ class UserFactory extends AbstractFactory
         }
 
         /** @var User $user */
-        if (null === ($user = $this->userRepository->find($userData->getId()))) {
+        if (null === ($user = $this->userRepository->find($userData->id))) {
             $user = new User(
-                (int) $userData->getId(),
-                \DateTime::createFromFormat('Y-m-d_H:i:s', $userData->getCreated()) ?: new \DateTime()
+                $userData->id,
+                $userData->login,
+                $userData->created,
             );
-            $this->userRepository->add($user);
+            $this->userRepository->save($user);
         }
 
-        $user->updateLoginAndName($userData->getLogin(), $userData->getName());
+        $user->updateLoginAndName($userData->login, $userData->name);
 
-        if (null !== $userData->getDenyAnonymous() && null !== $userData->getPrivate()) {
-            $user->updatePrivacy(!$userData->getDenyAnonymous(), $userData->getPrivate());
+        if (null !== $userData->denyAnonymous && null !== $userData->private) {
+            $user->updatePrivacy(!$userData->denyAnonymous, $userData->private);
         }
 
         return $user;
